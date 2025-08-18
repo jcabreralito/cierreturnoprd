@@ -8,7 +8,7 @@
     <meta name="server" content="{{ env('APP_ENV') != "local" ? '/cierreturno' : env("APP_URL") }}">
     <base href="/cierreturno/" />
 
-    <title>Horas extra</title>
+    <title>Cierre de turno</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
