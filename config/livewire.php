@@ -160,6 +160,6 @@ return [
 
     // Solo para producción
     'asset_url' => (env('APP_ENV') === 'production')
-        ? '/horasextralito/vendor/livewire/livewire.js'
+        ? '/cierreturno/vendor/livewire/livewire.js'
         : null,
 ];

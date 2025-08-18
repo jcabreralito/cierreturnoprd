@@ -1,6 +1,6 @@
 <div class="w-[207px] blue-1 px-4 left-0 py-8 md:block hidden fixed h-full mt-[60px] md:mt-16 z-50" x-show="openLg">
     @php
-        $routeMain = (config('app.env') === 'production' ? '/horasextralito' : '');
+        $routeMain = (config('app.env') === 'production' ? '/cierreturno' : '');
 
         $permisosUsuario = (new App\Http\Controllers\PermisoController())->getPermisos();
     @endphp

@@ -5,8 +5,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta name="server" content="{{ env('APP_ENV') != "local" ? '/horasextralito' : env("APP_URL") }}">
-    <base href="/horasextra/" />
+    <meta name="server" content="{{ env('APP_ENV') != "local" ? '/cierreturno' : env("APP_URL") }}">
+    <base href="/cierreturno/" />
 
     <title>Horas extra</title>
 
@@ -41,7 +41,7 @@
         @include('components.home.sidebar')
 
         <div class="block w-full mt-[60px] md:mt-16 sm:mx-auto md:mr-0" :class="!openLg ? 'md:w-full' : 'md:w-[89%]'">
-            @if (auth()->user()->tipoUsuarioHorasExtra == 7)
+            @if (auth()->user()->tipoUsuarioCierreTurno == 7)
             <div class="mx-auto grid place-content-center h-[80%] absolute w-full">
                 <div>
                     <div class="mt-16 space-y-6">
@@ -50,8 +50,10 @@
                 </div>
             </div>
             @else
-            <livewire:solicitud.index />
+            <h1>Hello world</h1>
+            {{--  <livewire:solicitud.index />  --}}
             @endif
+
             @include('asistente.template',["assistantId"=>"asst_V9BBeZN8YrYETUS6jwFr1Szn"])
         </div>
     </main>

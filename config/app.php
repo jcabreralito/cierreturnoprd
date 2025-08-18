@@ -56,7 +56,7 @@ return [
     |
     */
 
-    'url' => env('APP_URL', '/horasextralito'),
+    'url' => env('APP_URL', '/cierreturno'),
 
     'asset_url' => env('ASSET_URL'),
 

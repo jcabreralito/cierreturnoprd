@@ -31,7 +31,7 @@ class HomeController extends Controller
         if (auth()->user() == null) {
 
             // Validamos si el usuario tiene permisos para acceder
-            if ($user->tipoUsuarioHorasExtra == null && $user->estatusHorasExtra == null) {
+            if ($user->tipoUsuarioCierreTurno == null && $user->estatusCierreTurno == null) {
                 return redirect('https://servicios.litoprocess.com/litoapps/index.php');
             }
 

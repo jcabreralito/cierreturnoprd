@@ -1,6 +1,6 @@
 <header class="fixed w-full z-50" @click.away="open = false">
     @php
-        $routeMain = (config('app.env') === 'production' ? '/horasextralito' : '');
+        $routeMain = (config('app.env') === 'production' ? '/cierreturno' : '');
 
         $permisosUsuario = (new App\Http\Controllers\PermisoController())->getPermisos();
     @endphp
