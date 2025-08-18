@@ -13,6 +13,6 @@ class PermisoController extends Controller
      */
     public function getPermisos()
     {
-        return collect();
+        return [];
     }
 }
