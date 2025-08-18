@@ -1,17 +1,29 @@
-<x-dialog-modal wire:model="modalCreateCierreTurno" maxWidth="5xl">
+<x-dialog-modal wire:model="modalCreateCierreTurno" maxWidth="7xl">
     <x-slot name="title">
         <h2 class="text-2xl font-semibold">Realizar cierre de turno</h2>
     </x-slot>
 
     <x-slot name="content">
         <form>
-            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 pb-2">
-                <div class="col-span-2 grid grid-cols-1 gap-4 sm:grid-cols-2 pb-2">
-                    <div class="col-span-2">
-                        <h6 class="text-sm font-semibold text-[#007BFF]">General</h6>
-                        <hr class="mt-1">
+            <div class="grid grid-cols-1 gap-4 pb-2">
+                @if (count($reporteActual) > 0)
+                    <div>
+                        @include('livewire.cierre-turno.components.eficiencia')
                     </div>
-                </div>
+                @endif
+                @if (!$esBueno)
+                    <div>
+                        <x-forms.text-area labelText="Observaciones" placeholder="Ingrese observaciones aquí..." />
+                    </div>
+
+                    <div>
+                        <x-forms.text-area labelText="Acciones Correctivas" placeholder="Ingrese acciones correctivas aquí..." />
+                    </div>
+
+                    <div>
+                        <x-forms.input type="password" labelText="Ingresa tu contraseña para poder continuar" placeholder="Ingrese tu contraseña aquí..." />
+                    </div>
+                @endif
             </div>
         </form>
     </x-slot>

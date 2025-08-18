@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 
 class CierreTurnoController extends Controller
@@ -117,7 +118,7 @@ class CierreTurnoController extends Controller
         if ($data['operador'] == null) {
             $operador = '';
         } else {
-            $operador = $data['operador'];
+            $operador = explode('-', $data['operador'])[0];
         }
 
         if ($data['maquina'] == null) {
@@ -144,22 +145,86 @@ class CierreTurnoController extends Controller
             } catch (\Throwable $th) {
                 $reporte = [];
             }
-        } else if ($data['tipo_reporte'] == 'Maquina' || $data['tipo_reporte'] == 'Grupo') {
-            try {
-                $reporte = DB::select('SET NOCOUNT ON; exec MetricsWeb.dbo.GrupoDetalleProcesoG ?, ?, ?, ?, ?', [
-                    $fecha_inicio,
-                    $fecha_fin,
-                    $operador,
-                    $turno,
-                    '',
-                ]);
-            } catch (\Throwable $th) {
-                $reporte = [];
-            }
         } else {
             $reporte = [];
         }
 
         return $reporte;
+    }
+
+    /**
+     * Función para imprimir el reporte
+     *
+     * @param $data
+     * @return mixed
+     */
+    public function imprimirReporte($data)
+    {
+        $fecha_inicio = Carbon::parse($data['fecha_cierre'])->format('d/m/Y');
+        $fecha_fin = Carbon::parse($data['fecha_cierre'])->format('d/m/Y');
+
+        if ($data['operador'] == null) {
+            $operador = '';
+        } else {
+            $operador = explode('-', $data['operador'])[0];
+        }
+
+        if ($data['maquina'] == null) {
+            $maquina = '';
+        } else {
+            $maquina = $data['maquina'];
+        }
+
+        if ($data['turno'] == 3) {
+            $turno = '';
+        } else {
+            $turno = $data['turno'];
+        }
+
+        $tipo_reporte = $data['tipo_reporte'];
+
+        if ($tipo_reporte == "Maquina") {
+            $reporte = 'M';
+        } else if ($tipo_reporte == "Operador") {
+            $reporte = 'O';
+        }
+
+        if ($reporte == 'M' || $reporte == 'O') {
+            try {
+                $reporte_eficiencia = DB::select('SET NOCOUNT ON; exec MetricsWeb.dbo.GrupoDetalleProceso ?, ?, ?, ?, ?', [
+                    $fecha_inicio,
+                    $fecha_fin,
+                    $operador,
+                    $turno,
+                    $maquina,
+                ]);
+            } catch (\Throwable $th) {
+                $reporte_eficiencia = [];
+            }
+        }
+
+        $reporte_detalle = DB::select('SET NOCOUNT ON; execute MetricsWeb.dbo.ListaProcesos ?, ?, ?, ?, ?, ?, ?', [
+            $fecha_inicio,
+            $fecha_fin,
+            $maquina,
+            $operador,
+            $turno,
+            '',
+            $reporte,
+        ]);
+
+        $maquinas = DB::select("SELECT *  FROM MetricsWeb.dbo.MaquinasMetrics WHERE maquina NOT LIKE '%SUAJE-01%' AND maquina NOT LIKE '%CORTE_TRI-01%'
+        AND Maquina NOT LIKE '%SUAJE-01%' AND Maquina NOT LIKE '%KOMORI 428%' ORDER BY Maquina ASC");
+        $Grupos = DB::select("SELECT DISTINCT Grupo FROM ETL_MSTR.dbo.etl_ParamStdMaquinas WHERE Grupo IS NOT NULL ORDER BY Grupo ASC");
+        $user = auth()->user()->Login;
+        $datos_usuario = DB::select('exec MetricsWeb.dbo.GetPermisosReportesProduccion @Login=' . $user);
+        $permiso = $datos_usuario[0]->Permiso;
+        $titulo = 'Cierre de turno';
+
+        $dompdf = App::make("dompdf.wrapper");
+        $dompdf->loadView("pdf/reporteMaquina", ['reporte_eficiencia' => $reporte_eficiencia, 'reporte_detalle' => $reporte_detalle, 'titulo' => $titulo, 'Grupos' => $Grupos, 'maquinas' => $maquinas, 'permiso' => $permiso, 'tiporeporte' => $reporte, 'fecha_inicio' => $fecha_inicio, 'fecha_fin' => $fecha_fin, 'operador' => $operador, 'maquina' => $maquina, 'grupo' => '', 'reporte' => $reporte])
+        ;
+
+        return $dompdf->stream('Reporte Producción.pdf'); //Para visualizar en el navegador
     }
 }

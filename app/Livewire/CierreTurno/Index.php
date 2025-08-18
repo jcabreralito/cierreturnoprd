@@ -4,7 +4,6 @@ namespace App\Livewire\CierreTurno;
 
 use App\Http\Controllers\CierreTurnoController;
 use Illuminate\Contracts\View\View;
-use Livewire\Attributes\Computed;
 use Livewire\Component;
 
 class Index extends Component
@@ -20,6 +19,8 @@ class Index extends Component
     public $reporteActual = [];
 
     public $modalCreateCierreTurno = false;
+    public $color = '';
+    public $esBueno = false;
 
     /**
      * Montamos los registros que se utilizaran para los desplegables
@@ -60,6 +61,7 @@ class Index extends Component
 
         $this->list = (new CierreTurnoController())->getActividades($data);
         $this->reporteActual = (new CierreTurnoController())->getReporte($data);
+        $this->color = $this->getEficienciaColor();
 
         if ($this->list && $this->reporteActual) {
             $this->realizarCierre = true;
@@ -83,8 +85,6 @@ class Index extends Component
     public function realizarCierreAccion(): void
     {
         $this->modalCreateCierreTurno = true;
-
-        dd($this->reporteActual);
     }
 
     /**
@@ -95,5 +95,48 @@ class Index extends Component
     public function closeModalCreate(): void
     {
         $this->modalCreateCierreTurno = false;
+    }
+
+    /**
+     * Función para obtener el color de la eficiencia
+     *
+     * @return string
+     */
+    public function getEficienciaColor(): string
+    {
+        if (count($this->reporteActual) > 0) {
+            $global = $this->reporteActual[0]->GLOBAL;
+            $convencional = $this->reporteActual[0]->CONVENCIONAL;
+
+            $color = '';
+
+            if ($global == null) {
+                if ($convencional < 75) {
+                    $color = "#F8696B"; // Rojo
+                    $this->esBueno = false;
+                } else if ($convencional >= 75 && $convencional < 90) {
+                    $color = "#FDD17F";
+                    $this->esBueno = false;
+                } else if ($convencional >= 90) {
+                    $color = "#63BE7B";
+                    $this->esBueno = true;
+                }
+            } else {
+                if ($global < 60) {
+                    $color = "#F8696B";
+                    $this->esBueno = false;
+                } else if ($global >= 60 && $global < 70) {
+                    $color = "#FDD17F";
+                    $this->esBueno = false;
+                } else if ($global >= 70) {
+                    $color = "#63BE7B";
+                    $this->esBueno = true;
+                }
+            }
+
+            return $color;
+        }
+
+        return '#000000'; // Default color
     }
 }
