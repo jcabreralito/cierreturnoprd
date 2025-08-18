@@ -1,0 +1,199 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+[x-cloak] {
+    display: none;
+}
+
+.blue-1 {
+    background-color: #343A40;
+}
+
+.text-blue-1 {
+    color: #343A40;
+}
+
+.blue-2 {
+    background-color: #007BFF;
+}
+
+.text-blue-2 {
+    color: #007BFF;
+}
+
+.hover\:text-blue-1:hover {
+    color: #343A40;
+}
+
+.hover\:blue-1:hover {
+    background-color: #4793DB;
+}
+
+.bg-blue-gray-50 {
+    background-color: #ADB5BD;
+}
+
+.border-blue-gray-100 {
+    border-color: #ADB5BD;
+}
+
+.hover\:bg-blue-gray-200:hover {
+    background-color: #e5e7eb80;
+}
+
+.btn-sidebar-active {
+    @apply px-4 py-2 text-sm rounded-md text-white shadow-sm blue-2 font-semibold w-full;
+}
+
+.btn-sidebar-green-active {
+    @apply px-4 py-2 text-sm rounded-md text-white shadow-sm bg-green-500 font-semibold w-full;
+}
+
+.btn-sidebar-active-cancel {
+    @apply px-4 py-2 text-sm rounded-md text-white shadow-sm bg-gray-500 font-semibold w-full;
+}
+
+.btn-sidebar {
+    @apply px-4 py-2 text-sm rounded-md bg-white shadow-sm text-blue-2 font-semibold w-full;
+}
+
+.btn-logout {
+    @apply px-4 py-2 text-sm rounded-md bg-white shadow-sm text-blue-1 font-semibold w-full leading-5 hover:blue-1 hover:text-white border-transparent hover:border-white border-2;
+}
+
+.label-component-input {
+    @apply py-2 text-sm block w-full text-blue-1;
+}
+
+.label-component-input-x {
+    @apply py-2 text-sm text-blue-1 mr-2;
+}
+
+.input-component {
+    @apply border-b-2 border-t-0 border-x-0 focus:outline-0 focus:border-x-0 focus:border-t-0 focus:ring-0 focus:border-[#365C7B] bg-transparent text-sm;
+}
+
+.select-input {
+    @apply border-b-2 border-t-0 border-x-0 focus:outline-0 focus:border-x-0 focus:border-t-0 focus:ring-0 focus:border-[#365C7B] bg-transparent text-sm;
+}
+
+.item-sub-menu {
+    @apply hover:bg-white transition-all duration-300 hover:text-blue-1 px-8 py-3;
+}
+
+.card {
+    @apply bg-white rounded-md shadow-md px-6 py-6;
+}
+
+.btn-sidebar-active-disabled {
+    @apply px-4 py-2 text-sm rounded-md text-white shadow-sm bg-gray-500 font-semibold w-full cursor-not-allowed;
+}
+
+.tblCapacitaciones tbody > tr:nth-child(even) {
+    @apply bg-gray-300;
+}
+
+.tblCapacitaciones tbody > tr:nth-child(4n+3) {
+    @apply bg-gray-200 border-blue-400;
+}
+
+.tblNormal tbody > tr:nth-child(odd) {
+    @apply bg-gray-200;
+}
+
+.tblNormal tbody > tr:nth-child(even) {
+    @apply bg-gray-100;
+}
+
+.tblNormal tbody > tr:nth-child(odd):hover {
+    @apply bg-gray-300;
+}
+
+.tblNormal tbody > tr:nth-child(even):hover {
+    @apply bg-gray-300;
+}
+
+.tblCapacitaciones tbody > tr:nth-child(4n+3):hover {
+    @apply bg-gray-300;
+}
+
+.text-xxs {
+    font-size: 0.72rem;
+}
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: auto;
+    background-color: #494949;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1000;
+    bottom: 125%; /* Posición del tooltip */
+    left: 10%;
+    margin-left: -15px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-size: 0.8rem;
+}
+
+.tooltip .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%; /* Posición de la flecha */
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #494949 transparent transparent transparent;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Estilos personalizados para el scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #ADB5BD;
+    border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #ADB5BD;
+}
+
+.btn {
+    @apply inline-flex items-center px-4 py-2 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest focus:outline-none focus:ring-0 focus:ring-offset-2 transition ease-in-out duration-150;
+}
+
+.select-tbl {
+    @apply form-input rounded-md shadow-md mt-1 py-2 border-gray-200 focus:outline-none focus:ring-0 focus:border-gray-300;
+
+    width: 120px;
+    font-size: 0.8rem;
+    padding: 2px 8px;
+}
+
+option {
+    background-color: #fff !important;
+    color: #343A40 !important;
+}
