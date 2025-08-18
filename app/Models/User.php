@@ -8,7 +8,6 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable
 {
     use HasRoles;
-
     protected $table = 'ControlLogin.dbo.cat_Usuarios';
     protected $primaryKey = 'Id_Usuario';
 }

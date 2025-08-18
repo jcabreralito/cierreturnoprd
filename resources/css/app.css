@@ -197,3 +197,15 @@ option {
     background-color: #fff !important;
     color: #343A40 !important;
 }
+
+
+.select2-container--default .select2-selection--single {
+    height: 34px;
+    @apply w-full rounded-md shadow-md text-xs border-gray-200 focus:outline-none focus:ring-0 focus:border-gray-300
+}
+
+.select2-selection {
+    font-size: 14px;
+    padding-top: 2px;
+    text-align: left;
+}

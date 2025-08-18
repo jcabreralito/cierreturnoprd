@@ -16,6 +16,10 @@
 
     {{--  <link href="{{ asset('assets/css/fonts.css') }}" rel="stylesheet" />  --}}
 
+    <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
@@ -28,6 +32,7 @@
     {{--  Font Awesome  --}}
     {{--  <script src="https://kit.fontawesome.com/814278b0bf.js" crossorigin="anonymous"></script>  --}}
     <script src="{{ asset('assets/fontawesome/js/all.min.js') }}"></script>
+
 </head>
 
 <body class="antialiased h-full overflow-x-hidden" x-data="{ open: false, openLg: false }" @resize.window="openLg = window.innerWidth >= 1024">
@@ -41,7 +46,9 @@
         @include('components.home.sidebar')
 
         <div class="block w-full mt-[60px] md:mt-16 sm:mx-auto md:mr-0" :class="!openLg ? 'md:w-full' : 'md:w-[89%]'">
-            @if (auth()->user()->tipoUsuarioCierreTurno == 7)
+            @can('acceder-modulo')
+            <livewire:cierre-turno.index />
+            @else
             <div class="mx-auto grid place-content-center h-[80%] absolute w-full">
                 <div>
                     <div class="mt-16 space-y-6">
@@ -49,9 +56,6 @@
                     </div>
                 </div>
             </div>
-            @else
-            <h1>Hello world</h1>
-            {{--  <livewire:solicitud.index />  --}}
             @endif
 
             @include('asistente.template',["assistantId"=>"asst_V9BBeZN8YrYETUS6jwFr1Szn"])

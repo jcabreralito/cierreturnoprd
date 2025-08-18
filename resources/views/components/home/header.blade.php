@@ -1,8 +1,6 @@
 <header class="fixed w-full z-50" @click.away="open = false">
     @php
         $routeMain = (config('app.env') === 'production' ? '/cierreturno' : '');
-
-        $permisosUsuario = (new App\Http\Controllers\PermisoController())->getPermisos();
     @endphp
 
     <div class="blue-1 w-full mx-auto px-8 py-4 h-[64px] flex justify-between items-center border-b-2">
@@ -48,9 +46,9 @@
                 <nav class="mt-5 px-2 space-y-1 flex flex-col justify-between min-h-[95%]">
                     <div class="space-y-2">
                         {{--  Inicio  --}}
-                        @if (in_array(7, $permisosUsuario))
-                        <a href="{{ $routeMain }}/dashboard" class="item-sub-menu block text-white px-2 py-2 rounded-md text-base font-medium {{ request()->is('dashboard') ? 'bg-white text-blue-1' : '' }}">Cierre turno</a>
-                        @endif
+                        @can('acceder-modulo')
+                            <a href="{{ $routeMain }}/dashboard" class="item-sub-menu block text-white px-2 py-2 rounded-md text-base font-medium {{ request()->is('dashboard') ? 'bg-white text-blue-1' : '' }}">Cierre turno</a>
+                        @endcan
                     </div>
 
                     <div class="bottom-0 top-0">
