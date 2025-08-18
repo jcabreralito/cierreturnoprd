@@ -9,25 +9,9 @@
         <div class="space-y-4 w-full">
             @if (in_array(7, $permisosUsuario))
             <div class="w-full">
-                <a href="{{ $routeMain }}/dashboard" class="{{ request()->is('dashboard') ? 'btn-sidebar-active' : 'btn-sidebar' }} block">Solicitudes</a>
+                <a href="{{ $routeMain }}/dashboard" class="{{ request()->is('dashboard') ? 'btn-sidebar-active' : 'btn-sidebar' }} block">Cierre turno</a>
             </div>
             @endif
-
-            @if (in_array(11, $permisosUsuario))
-            <div class="w-full">
-                <a href="{{ $routeMain }}/relacion" class="{{ request()->is('relacion') ? 'btn-sidebar-active' : 'btn-sidebar' }} block">Relación horas</a>
-            </div>
-            @endif
-
-            @if (in_array(12, $permisosUsuario))
-            <div class="w-full">
-                <a href="{{ $routeMain }}/relacion-jornadas" class="{{ request()->is('relacion-jornadas') ? 'btn-sidebar-active' : 'btn-sidebar' }} block">Relación jornadas</a>
-            </div>
-            @endif
-
-            <div class="w-full">
-                <a href="{{ $routeMain }}/indicadores" class="{{ request()->is('indicators') ? 'btn-sidebar-active' : 'btn-sidebar' }} block">Indicadores</a>
-            </div>
         </div>
 
         <div class="w-full end-0 mb-5">

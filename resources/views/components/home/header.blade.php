@@ -49,18 +49,8 @@
                     <div class="space-y-2">
                         {{--  Inicio  --}}
                         @if (in_array(7, $permisosUsuario))
-                        <a href="{{ $routeMain }}/dashboard" class="item-sub-menu block text-white px-2 py-2 rounded-md text-base font-medium {{ request()->is('dashboard') ? 'bg-white text-blue-1' : '' }}">Solicitudes</a>
+                        <a href="{{ $routeMain }}/dashboard" class="item-sub-menu block text-white px-2 py-2 rounded-md text-base font-medium {{ request()->is('dashboard') ? 'bg-white text-blue-1' : '' }}">Cierre turno</a>
                         @endif
-
-                        @if (in_array(11, $permisosUsuario))
-                        <a href="{{ $routeMain }}/relacion" class="item-sub-menu block text-white px-2 py-2 rounded-md text-base font-medium {{ request()->is('relacion') ? 'bg-white text-blue-1' : '' }}">Relación horas</a>
-                        @endif
-
-                        @if (in_array(12, $permisosUsuario))
-                        <a href="{{ $routeMain }}/relacion-jornadas" class="item-sub-menu block text-white px-2 py-2 rounded-md text-base font-medium {{ request()->is('relacion-jornadas') ? 'bg-white text-blue-1' : '' }}">Relación jornadas</a>
-                        @endif
-
-                        <a href="{{ $routeMain }}/indicadores" class="item-sub-menu block text-white px-2 py-2 rounded-md text-base font-medium {{ request()->is('indicators') ? 'bg-white text-blue-1' : '' }}">Indicadores</a>
                     </div>
 
                     <div class="bottom-0 top-0">
