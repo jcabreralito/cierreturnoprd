@@ -7,5 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Bitacora extends Model
 {
-    use HasFactory;
+    protected $table = 'bitacora';
+    public $timestamps = false;
+    protected $fillable = [
+        'cambio_anterior',
+        'cambio_nuevo',
+        'reporte_id',
+        'usuario_id'
+    ];
 }

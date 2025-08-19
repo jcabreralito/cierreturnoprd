@@ -5,6 +5,7 @@ use App\Http\Controllers\JornadasController;
 use App\Http\Controllers\PrdController;
 use App\Http\Controllers\SolicitudController;
 use App\Http\Controllers\SolicitudesRelacionController;
+use App\Http\Controllers\UserController;
 use App\Livewire\Solicitud\Indicadores;
 use App\Livewire\Solicitud\RelacionHoras;
 use App\Livewire\Solicitud\RelacionJornadas;
@@ -33,3 +34,5 @@ Route::get('/litoapps', function () {
 Livewire::setUpdateRoute(function ($handle) {
     return Route::post('/cierreturno/livewire/update', $handle);
 });
+
+Route::post('/validate-user', [UserController::class, 'validateUser']);

@@ -12,7 +12,7 @@
                 <div class="grid grid-cols-1 lg:grid-cols-5 md:gap-x-4 md:gap-y-0 gap-y-4 w-full">
                     <div>
                         <x-filters.select name="tipo_reporte" labelText="Tipo de Reporte" :isLive="true"
-                            onchange="initSelect2()" :isDisabled="$limpiarBuscadores">
+                            onchange="initSelect2()">
                             <option value="">Seleccione un tipo de reporte</option>
                             <option value="Operador">Operador</option>
                             <option value="Maquina">Máquina</option>
@@ -21,7 +21,7 @@
 
                     @if ($tipo_reporte === 'Operador')
                         <div wire:ignore>
-                            <x-filters.select name="operador" labelText="Operador" id="operador" :isDisabled="$limpiarBuscadores">
+                            <x-filters.select name="operador" labelText="Operador" id="operador">
                                 <option value="">Seleccione un operador</option>
                                 @foreach ($operadores as $operador)
                                     <option value="{{ $operador['label'] }}">{{ $operador['label'] }}</option>
@@ -32,7 +32,7 @@
 
                     @if ($tipo_reporte === 'Maquina')
                         <div wire:ignore>
-                            <x-filters.select name="maquina" labelText="Máquina" id="maquina" :isDisabled="$limpiarBuscadores">
+                            <x-filters.select name="maquina" labelText="Máquina" id="maquina">
                                 <option value="">Seleccione una máquina</option>
                                 @foreach ($maquinas as $maquina)
                                     <option value="{{ $maquina['value'] }}">{{ $maquina['value'] }}</option>
@@ -42,7 +42,7 @@
                     @endif
 
                     <div>
-                        <x-filters.select name="turno" labelText="Turno" :isDisabled="(!$tipo_reporte && (!$operador || !$maquina)) || $limpiarBuscadores" :isLive="true">
+                        <x-filters.select name="turno" labelText="Turno" :isDisabled="(!$tipo_reporte && (!$operador || !$maquina))" :isLive="true">
                             <option value="">Seleccione un turno</option>
                             <option value="1">Turno 1</option>
                             <option value="2">Turno 2</option>
@@ -51,7 +51,7 @@
 
                     <div>
                         <x-filters.input name="fecha_cierre" labelText="Fecha de Cierre" type="date"
-                            :isDisabled="(!$tipo_reporte && (!$operador || !$maquina)) || $limpiarBuscadores" :isLive="true" />
+                            :isDisabled="(!$tipo_reporte && (!$operador || !$maquina))" :isLive="true" />
                     </div>
 
                     @if (
@@ -60,17 +60,10 @@
                             ($turno != null && $turno != '') &&
                             ($fecha_cierre != null && $fecha_cierre != ''))
                         <div class="h-full flex justify-center w-full items-center space-x-4">
-                            @if ($limpiarBuscadores)
-                                <button wire:click="reiniciarConsulta()"
-                                    class="text-xs py-2 px-4 bg-gray-500 hover:bg-gray-600 text-white rounded">
-                                    Nueva consulta
-                                </button>
-                            @else
-                                <button wire:click="obtenerData()"
-                                    class="text-xs py-2 px-4 bg-cyan-500 hover:bg-cyan-600 text-white rounded">
-                                    Consultar reporte
-                                </button>
-                            @endif
+                            <button wire:click="obtenerData()"
+                                class="text-xs py-2 px-4 bg-cyan-500 hover:bg-cyan-600 text-white rounded">
+                                Consultar reporte
+                            </button>
 
                             @if ($realizarCierre)
                                 <button wire:click="realizarCierreAccion"
@@ -92,56 +85,58 @@
             </div>
         @endif
 
-        @if ($list)
-            <x-home.table.table :headers="[
-                [0 => 'N° ORDEN', 1 => false, 2 => 'text-center', 3 => ''],
-                [0 => 'NOMBRE TRABAJO', 1 => false, 2 => 'text-center', 3 => ''],
-                [0 => 'ID ACT', 1 => false, 2 => '', 3 => ''],
-                [0 => 'DESCRIPCIÓN', 1 => false, 2 => 'text-center', 3 => ''],
-                [0 => 'PROCESO', 1 => false, 2 => 'text-center', 3 => ''],
-                [0 => 'CANTIDAD', 1 => false, 2 => 'text-center', 3 => ''],
-                [0 => 'TURNO', 1 => false, 2 => 'text-center', 3 => ''],
-                [0 => 'TIEMPO', 1 => false, 2 => 'text-center', 3 => ''],
-                [0 => 'FECHA PRODUCCIÓN', 1 => false, 2 => 'text-center', 3 => ''],
-                [0 => 'OPERADOR', 1 => false, 2 => 'text-center', 3 => ''],
-                [0 => 'MAQUINA', 1 => false, 2 => 'text-center', 3 => ''],
-            ]" tblClass="tblNormal">
-                @forelse ($this->list as $item)
-                    <tr class="hover:bg-gray-100 transition-all duration-300">
-                        <x-home.table.td class="text-center">{{ $item->numOrden }}</x-home.table.td>
-                        <x-home.table.td class="text-center">{{ $item->NombreTrabajo }}</x-home.table.td>
-                        <x-home.table.td class="text-center">{{ $item->idAct }}</x-home.table.td>
-                        <x-home.table.td class="text-center">{{ $item->observacion }}</x-home.table.td>
-                        <x-home.table.td class="text-center">{{ $item->proceso }}</x-home.table.td>
-                        <x-home.table.td class="text-center">{{ number_format($item->Cantidad, 2) }}</x-home.table.td>
-                        <x-home.table.td class="text-center">{{ $item->Turno }}</x-home.table.td>
-                        <x-home.table.td class="text-center">{{ number_format($item->Tiempo, 2) }}</x-home.table.td>
-                        <x-home.table.td
-                            class="text-center">{{ Carbon\Carbon::parse($item->fechaproduccion)->format('Y/m/d') }}</x-home.table.td>
-                        <x-home.table.td class="text-center">{{ $item->Empleado }}</x-home.table.td>
-                        <x-home.table.td class="text-center">{{ $item->Maquina }}</x-home.table.td>
-                    </tr>
-                @empty
-                    <tr>
-                        <x-home.table.td colspan="10" class="text-center">
-                            <div class="flex justify-center flex-col items-center space-y-2">
-                                <span>No se encontraron registros</span>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    viewBox="0 0 24 24">
-                                    <g fill="none" stroke="#484848" stroke-linecap="round" stroke-linejoin="round"
-                                        stroke-width="1.5">
-                                        <path fill="#484848"
-                                            d="M8.5 9a.5.5 0 1 1 0-1a.5.5 0 0 1 0 1m7 0a.5.5 0 1 1 0-1a.5.5 0 0 1 0 1" />
-                                        <path
-                                            d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2S2 6.477 2 12s4.477 10 10 10" />
-                                        <path d="M7.5 15.5s1.5-2 4.5-2s4.5 2 4.5 2" />
-                                    </g>
-                                </svg>
-                            </div>
-                        </x-home.table.td>
-                    </tr>
-                @endforelse
-            </x-home.table.table>
+        @if (count($list) > 0)
+            <div>
+                <x-home.table.table :headers="[
+                    [0 => 'N° ORDEN', 1 => false, 2 => 'text-center', 3 => ''],
+                    [0 => 'NOMBRE TRABAJO', 1 => false, 2 => 'text-center', 3 => ''],
+                    [0 => 'ID ACT', 1 => false, 2 => '', 3 => ''],
+                    [0 => 'DESCRIPCIÓN', 1 => false, 2 => 'text-center', 3 => ''],
+                    [0 => 'PROCESO', 1 => false, 2 => 'text-center', 3 => ''],
+                    [0 => 'CANTIDAD', 1 => false, 2 => 'text-center', 3 => ''],
+                    [0 => 'TURNO', 1 => false, 2 => 'text-center', 3 => ''],
+                    [0 => 'TIEMPO', 1 => false, 2 => 'text-center', 3 => ''],
+                    [0 => 'FECHA PRODUCCIÓN', 1 => false, 2 => 'text-center', 3 => ''],
+                    [0 => 'OPERADOR', 1 => false, 2 => 'text-center', 3 => ''],
+                    [0 => 'MAQUINA', 1 => false, 2 => 'text-center', 3 => ''],
+                ]" tblClass="tblNormal">
+                    @forelse ($this->list as $item)
+                        <tr class="hover:bg-gray-100 transition-all duration-300" wire:key="item-{{ $item->idAct }}">
+                            <x-home.table.td class="text-center">{{ $item->numOrden }}</x-home.table.td>
+                            <x-home.table.td class="text-center">{{ $item->NombreTrabajo }}</x-home.table.td>
+                            <x-home.table.td class="text-center">{{ $item->idAct }}</x-home.table.td>
+                            <x-home.table.td class="text-center">{{ $item->observacion }}</x-home.table.td>
+                            <x-home.table.td class="text-center">{{ $item->proceso }}</x-home.table.td>
+                            <x-home.table.td class="text-center">{{ number_format($item->Cantidad, 2) }}</x-home.table.td>
+                            <x-home.table.td class="text-center">{{ $item->Turno }}</x-home.table.td>
+                            <x-home.table.td class="text-center">{{ number_format($item->Tiempo, 2) }}</x-home.table.td>
+                            <x-home.table.td
+                                class="text-center">{{ Carbon\Carbon::parse($item->fechaproduccion)->format('Y/m/d') }}</x-home.table.td>
+                            <x-home.table.td class="text-center">{{ $item->Empleado }}</x-home.table.td>
+                            <x-home.table.td class="text-center">{{ $item->Maquina }}</x-home.table.td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <x-home.table.td colspan="10" class="text-center">
+                                <div class="flex justify-center flex-col items-center space-y-2">
+                                    <span>No se encontraron registros</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24">
+                                        <g fill="none" stroke="#484848" stroke-linecap="round" stroke-linejoin="round"
+                                            stroke-width="1.5">
+                                            <path fill="#484848"
+                                                d="M8.5 9a.5.5 0 1 1 0-1a.5.5 0 0 1 0 1m7 0a.5.5 0 1 1 0-1a.5.5 0 0 1 0 1" />
+                                            <path
+                                                d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2S2 6.477 2 12s4.477 10 10 10" />
+                                            <path d="M7.5 15.5s1.5-2 4.5-2s4.5 2 4.5 2" />
+                                        </g>
+                                    </svg>
+                                </div>
+                            </x-home.table.td>
+                        </tr>
+                    @endforelse
+                </x-home.table.table>
+            </div>
 
             @if (count($reporteActual) > 0)
                 @include('livewire.cierre-turno.components.eficiencia')
@@ -182,45 +177,54 @@
                 }, 500);
             }
 
-            document.addEventListener('bloquearSelect2', () => {
-                $('#operador').prop('disabled', true);
-                $('#maquina').prop('disabled', true);
-            });
-
-            document.addEventListener('confirmarCierre', () => {
+            document.addEventListener('confirmarCierre', (event) => {
                 Swal.fire({
                     title: 'Confirmación',
                     text: '¿Está seguro de que desea realizar el cierre de turno?',
                     html: `
-                        <div>
-                            <div>
-                                <label for="usuario" class="block font-medium text-gray-700">Usuario:</label>
-                                <input type="text" id="usuario" class="form-control py-2 rounded-md shadow-md mt-1 w-full border-gray-200 focus:outline-none focus:ring-0 focus:border-gray-300" />
-                            </div>
+                        <form onsubmit="return false;">
                             <div class="mt-2">
                                 <label for="password" class="block font-medium text-gray-700">Contraseña:</label>
                                 <input type="password" id="password" class="form-control py-2 rounded-md shadow-md mt-1 w-full border-gray-200 focus:outline-none focus:ring-0 focus:border-gray-300" />
                             </div>
-                        </div>
+                        </form>
                     `,
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonText: 'Sí, realizar cierre',
                     cancelButtonText: 'Cancelar',
                     preConfirm: () => {
-                        const usuario = Swal.getPopup().querySelector('#usuario').value;
                         const password = Swal.getPopup().querySelector('#password').value;
-                        if (!usuario || !password) {
-                            Swal.showValidationMessage(`Por favor ingrese el usuario y la contraseña`);
+                        if (!password) {
+                            Swal.showValidationMessage(`Por favor ingrese la contraseña`);
+                            return;
                         }
-                        return {
-                            usuario: usuario,
-                            password: password
-                        }
+                        // Retorna una promesa para controlar el cierre
+                        return fetch(serve + '/validate-user', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            },
+                            body: JSON.stringify({ password: password }),
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log(data);
+                            if (!data.response) {
+                                Swal.showValidationMessage('Contraseña incorrecta');
+                                // Rechaza la promesa para mantener el modal abierto
+                                return Promise.reject();
+                            }
+                            // Si todo está bien, retorna los datos y el modal se cierra
+                            return { login: data.user, password: password };
+                        }).catch(() => {
+                            // No hace falta nada aquí, el modal sigue abierto
+                        });
                     }
                 }).then((result) => {
-                    if (result.isConfirmed) {
-                        @this.set('login', result.value.usuario);
+                    if (result.isConfirmed && result.value) {
+                        @this.set('login', result.value.login);
                         @this.set('password', result.value.password);
                         @this.finalizarCierre();
                     } else {

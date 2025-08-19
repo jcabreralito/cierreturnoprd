@@ -59,6 +59,15 @@ class Index extends Component
      */
     public function obtenerData()
     {
+        $this->reset([
+            'list',
+            'reporteActual',
+            'color',
+            'limpiarBuscadores',
+            'sinResultados',
+            'realizarCierre',
+        ]);
+
         $data = [
             'operador' => $this->operador,
             'maquina' => $this->maquina,
@@ -72,15 +81,20 @@ class Index extends Component
         $this->color = $this->getEficienciaColor();
         $this->limpiarBuscadores = true;
 
-        if ($this->list && $this->reporteActual) {
+        if (count($this->list) > 0) {
+            if (count($this->reporteActual) == 0) {
+                $this->realizarCierre = false;
+                $this->dispatch('toast', type: 'info', title: 'No se encontraron datos para el cálculo de eficiencia, por ende no se puede realizar un cierre de turno');
+                return;
+            }
+
             $this->realizarCierre = true;
             $this->dispatch('toast', type: 'success', title: 'Consulta realizada con éxito');
         } else {
+            $this->realizarCierre = false;
             $this->sinResultados = true;
             $this->dispatch('toast', type: 'info', title: 'No se encontraron resultados para la consulta');
         }
-
-        $this->dispatch('bloquearSelect2');
     }
 
     /**
@@ -90,6 +104,12 @@ class Index extends Component
     {
         $this->realizarCierre = false;
         $this->list = [];
+
+        if ($this->tipo_reporte == 'Operador') {
+            $this->maquina = '';
+        } else {
+            $this->operador = '';
+        }
     }
 
     /**
@@ -126,12 +146,6 @@ class Index extends Component
      */
     public function finalizarCierre(): void
     {
-        // Validamos que la contraseña ingresada sea del usuario que va realizar la acción
-        if ($this->password !== auth()->user()->Password || $this->login !== auth()->user()->Login) {
-            $this->dispatch('toast', type: 'error', title: 'Contraseña o usuario incorrecto');
-            return;
-        }
-
         $this->modalCreateCierreTurno = true;
 
         $data = [
@@ -142,6 +156,7 @@ class Index extends Component
                 'fecha_cierre' => $this->fecha_cierre,
                 'tipo_reporte' => $this->tipo_reporte,
                 'estatus' => 1,
+                'usuario_cerro' => $this->login,
             ],
             'reporteActual' => $this->reporteActual,
             'razones' => [

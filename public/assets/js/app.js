@@ -1,3 +1,5 @@
+serve = document.querySelector('meta[name="server"]').getAttribute('content');
+
 //  Iniciamos a sweetalert para mostrar mensajes de alerta cuando se emite un evento de laravel
 window.addEventListener('alert', event => {
     Swal.fire({

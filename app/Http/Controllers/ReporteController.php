@@ -26,6 +26,7 @@ class ReporteController extends Controller
             $reporte->maquina = $data['maquina'];
             $reporte->fecha_cierre = $data['fecha_cierre'];
             $reporte->turno = $data['turno'];
+            $reporte->usuario_cerro = $data['usuario_cerro']; // Asigna el usuario que cerró el reporte
             $reporte->usuario_id = auth()->user()->Id_Usuario; // Asigna el ID del usuario autenticado
             $reporte->save();
             DB::commit();

@@ -288,6 +288,14 @@ class CierreTurnoController extends Controller
                         'archivo' => $pdf['archivo'],
                         'reporte_id' => $reporte->id,
                     ]);
+
+                // 5 Guardamos la bitacora
+                $bitacora = (new BitacoraController())->registrarBitacora([
+                    'cambio_anterior' => null,
+                    'cambio_nuevo' => 'Registro de cierre de turno',
+                    'usuario_id' => auth()->user()->Id_Usuario,
+                    'reporte_id' => $reporte->id,
+                ]);
             }
         } catch (\Exception $e) {
             return "Lo siento, ocurrió un error al realizar el cierre de turno.";
