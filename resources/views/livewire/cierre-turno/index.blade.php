@@ -67,7 +67,7 @@
 
                             @if ($yaRealizoCierre)
                                 <div>
-                                    <p class="text-xs text-green-100 bg-green-500 rounded-md shadow-md shadow-green-700 py-1 px-2 text-xxs my-auto">Cierre ya realizado</p>
+                                    <p class="text-xs text-amber-100 bg-amber-500 rounded-md shadow-md shadow-amber-700 py-1 px-2 text-xxs my-auto">Cierre concluido</p>
                                 </div>
                             @endif
 
