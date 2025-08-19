@@ -16,15 +16,19 @@ class Index extends Component
 
     public $list = [];
     public $realizarCierre = false;
+    public $limpiarBuscadores = false;
     public $reporteActual = [];
 
     public $modalCreateCierreTurno = false;
     public $color = '';
     public $esBueno = false;
+    public $sinResultados = false;
 
     public $observaciones = '';
     public $acciones_correctivas = '';
+
     public $password = '';
+    public $login = '';
 
     /**
      * Montamos los registros que se utilizaran para los desplegables
@@ -66,10 +70,17 @@ class Index extends Component
         $this->list = (new CierreTurnoController())->getActividades($data);
         $this->reporteActual = (new CierreTurnoController())->getReporte($data);
         $this->color = $this->getEficienciaColor();
+        $this->limpiarBuscadores = true;
 
         if ($this->list && $this->reporteActual) {
             $this->realizarCierre = true;
+            $this->dispatch('toast', type: 'success', title: 'Consulta realizada con éxito');
+        } else {
+            $this->sinResultados = true;
+            $this->dispatch('toast', type: 'info', title: 'No se encontraron resultados para la consulta');
         }
+
+        $this->dispatch('bloquearSelect2');
     }
 
     /**
@@ -89,6 +100,23 @@ class Index extends Component
     public function realizarCierreAccion(): void
     {
         $this->modalCreateCierreTurno = true;
+        $this->resetErrorBag();
+        $this->reset([
+            'observaciones',
+            'acciones_correctivas',
+            'login',
+            'password'
+        ]);
+    }
+
+    /**
+     * Función para realizar nueva consulta
+     *
+     * @return void
+     */
+    public function reiniciarConsulta(): void
+    {
+        $this->limpiarCampos();
     }
 
     /**
@@ -98,22 +126,13 @@ class Index extends Component
      */
     public function finalizarCierre(): void
     {
-        // Validamos
-        $this->validate([
-            'observaciones' => 'required|string|max:500',
-            'acciones_correctivas' => 'required|string|max:500',
-            'password' => 'required|string',
-        ], [
-            'observaciones.required' => 'El campo observaciones es obligatorio.',
-            'acciones_correctivas.required' => 'El campo acciones correctivas es obligatorio.',
-            'password.required' => 'El campo contraseña es obligatorio.',
-        ]);
-
         // Validamos que la contraseña ingresada sea del usuario que va realizar la acción
-        if ($this->password !== auth()->user()->Password) {
-            $this->addError('password', 'La contraseña ingresada es incorrecta.');
+        if ($this->password !== auth()->user()->Password || $this->login !== auth()->user()->Login) {
+            $this->dispatch('toast', type: 'error', title: 'Contraseña o usuario incorrecto');
             return;
         }
+
+        $this->modalCreateCierreTurno = true;
 
         $data = [
             'reporte' => [
@@ -132,15 +151,10 @@ class Index extends Component
         ];
 
         $resultado = (new CierreTurnoController())->cerrarTurno($data);
-        $this->dispatch('toast', icon: 'success', title: 'Cierre de turno exitoso');
+        $this->dispatch('toast', type: 'success', title: 'Cierre de turno exitoso');
 
         // Limpiamos lo campos
-        $this->reset([
-            'modalCreateCierreTurno',
-            'observaciones',
-            'acciones_correctivas',
-            'password',
-        ]);
+        $this->limpiarCampos();
     }
 
     /**
@@ -150,6 +164,28 @@ class Index extends Component
      */
     public function closeModalCreate(): void
     {
+        $this->modalCreateCierreTurno = false;
+    }
+
+    /**
+     * Función para confirmar cierre
+     *
+     * @return mixed
+     */
+    public function confirmarCierre()
+    {
+        if (!$this->esBueno) {
+            $this->validate([
+                'observaciones' => 'required|string|max:500',
+                'acciones_correctivas' => 'required|string|max:500',
+            ], [
+                'observaciones.required' => 'El campo observaciones es obligatorio.',
+                'acciones_correctivas.required' => 'El campo acciones correctivas es obligatorio.',
+            ]);
+        }
+
+        $this->dispatch('confirmarCierre');
+
         $this->modalCreateCierreTurno = false;
     }
 
@@ -194,5 +230,31 @@ class Index extends Component
         }
 
         return '#000000'; // Default color
+    }
+
+    /**
+     * Función para limpiar todos los campos
+     *
+     * @return void
+     */
+    public function limpiarCampos(): void
+    {
+        $this->tipo_reporte = null;
+        $this->operador = null;
+        $this->maquina = null;
+        $this->turno = null;
+        $this->fecha_cierre = null;
+        $this->observaciones = null;
+        $this->acciones_correctivas = null;
+        $this->password = null;
+
+        $this->list = [];
+        $this->realizarCierre = false;
+        $this->reporteActual = [];
+        $this->modalCreateCierreTurno = false;
+        $this->color = '';
+        $this->esBueno = false;
+        $this->limpiarBuscadores = false;
+        $this->sinResultados = false;
     }
 }

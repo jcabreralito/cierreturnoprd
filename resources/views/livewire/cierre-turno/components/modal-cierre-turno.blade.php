@@ -5,7 +5,7 @@
 
     <x-slot name="content">
         <form>
-            <div class="grid grid-cols-1 gap-4 pb-2">
+            <div class="grid grid-cols-1 gap-2 pb-2">
                 @if (count($reporteActual) > 0)
                     <div>
                         @include('livewire.cierre-turno.components.eficiencia')
@@ -19,10 +19,6 @@
                     <div>
                         <x-forms.text-area name="acciones_correctivas" labelText="Acciones Correctivas" placeholder="Ingrese acciones correctivas aquí..." />
                     </div>
-
-                    <div>
-                        <x-forms.input type="password" name="password" labelText="Ingresa tu contraseña para poder continuar" placeholder="Ingrese tu contraseña aquí..." />
-                    </div>
                 @endif
             </div>
         </form>
@@ -34,8 +30,8 @@
                 Cancelar
             </x-secondary-button>
 
-            <x-button wire:click="finalizarCierre" wire:loading.attr="disabled">
-                Guardar
+            <x-button wire:click="confirmarCierre" wire:loading.attr="disabled">
+                Realizar cierre
             </x-button>
         </div>
     </x-slot>

@@ -10,9 +10,9 @@
         <div class="mb-4">
             <div class="flex items-start bg-[#E9E9E9] py-1 px-4 shadow-md rounded-md mb-5">
                 <div class="grid grid-cols-1 lg:grid-cols-5 md:gap-x-4 md:gap-y-0 gap-y-4 w-full">
-                    <div wire:ignore>
+                    <div>
                         <x-filters.select name="tipo_reporte" labelText="Tipo de Reporte" :isLive="true"
-                            onchange="initSelect2()">
+                            onchange="initSelect2()" :isDisabled="$limpiarBuscadores">
                             <option value="">Seleccione un tipo de reporte</option>
                             <option value="Operador">Operador</option>
                             <option value="Maquina">Máquina</option>
@@ -21,8 +21,8 @@
 
                     @if ($tipo_reporte === 'Operador')
                         <div wire:ignore>
-                            <x-filters.select name="operador" labelText="Operador" id="operador">
-                                <option value="" selected disabled>Seleccione un operador</option>
+                            <x-filters.select name="operador" labelText="Operador" id="operador" :isDisabled="$limpiarBuscadores">
+                                <option value="">Seleccione un operador</option>
                                 @foreach ($operadores as $operador)
                                     <option value="{{ $operador['label'] }}">{{ $operador['label'] }}</option>
                                 @endforeach
@@ -32,8 +32,8 @@
 
                     @if ($tipo_reporte === 'Maquina')
                         <div wire:ignore>
-                            <x-filters.select name="maquina" labelText="Máquina" id="maquina">
-                                <option value="" selected disabled>Seleccione una máquina</option>
+                            <x-filters.select name="maquina" labelText="Máquina" id="maquina" :isDisabled="$limpiarBuscadores">
+                                <option value="">Seleccione una máquina</option>
                                 @foreach ($maquinas as $maquina)
                                     <option value="{{ $maquina['value'] }}">{{ $maquina['value'] }}</option>
                                 @endforeach
@@ -42,8 +42,8 @@
                     @endif
 
                     <div>
-                        <x-filters.select name="turno" labelText="Turno" :isDisabled="!$tipo_reporte && (!$operador || !$maquina)" :isLive="true">
-                            <option value="" selected disabled>Seleccione un turno</option>
+                        <x-filters.select name="turno" labelText="Turno" :isDisabled="(!$tipo_reporte && (!$operador || !$maquina)) || $limpiarBuscadores" :isLive="true">
+                            <option value="">Seleccione un turno</option>
                             <option value="1">Turno 1</option>
                             <option value="2">Turno 2</option>
                         </x-filters.select>
@@ -51,7 +51,7 @@
 
                     <div>
                         <x-filters.input name="fecha_cierre" labelText="Fecha de Cierre" type="date"
-                            :isDisabled="!$tipo_reporte && (!$operador || !$maquina)" :isLive="true" />
+                            :isDisabled="(!$tipo_reporte && (!$operador || !$maquina)) || $limpiarBuscadores" :isLive="true" />
                     </div>
 
                     @if (
@@ -60,10 +60,17 @@
                             ($turno != null && $turno != '') &&
                             ($fecha_cierre != null && $fecha_cierre != ''))
                         <div class="h-full flex justify-center w-full items-center space-x-4">
-                            <button wire:click="obtenerData()"
-                                class="text-xs py-2 px-4 bg-cyan-500 hover:bg-cyan-600 text-white rounded">
-                                Consultar reporte
-                            </button>
+                            @if ($limpiarBuscadores)
+                                <button wire:click="reiniciarConsulta()"
+                                    class="text-xs py-2 px-4 bg-gray-500 hover:bg-gray-600 text-white rounded">
+                                    Nueva consulta
+                                </button>
+                            @else
+                                <button wire:click="obtenerData()"
+                                    class="text-xs py-2 px-4 bg-cyan-500 hover:bg-cyan-600 text-white rounded">
+                                    Consultar reporte
+                                </button>
+                            @endif
 
                             @if ($realizarCierre)
                                 <button wire:click="realizarCierreAccion"
@@ -78,7 +85,13 @@
         </div>
     </div>
 
-    <div class="max-w-full overflow-x-auto px-8">
+    <div class="max-w-full overflow-x-auto px-8 pb-6">
+        @if ($sinResultados)
+            <div class="text-center py-4 text-lg font-semibold text-gray-700">
+                <span>No se encontraron resultados</span>
+            </div>
+        @endif
+
         @if ($list)
             <x-home.table.table :headers="[
                 [0 => 'N° ORDEN', 1 => false, 2 => 'text-center', 3 => ''],
@@ -131,7 +144,7 @@
             </x-home.table.table>
 
             @if (count($reporteActual) > 0)
-            @include('livewire.cierre-turno.components.eficiencia')
+                @include('livewire.cierre-turno.components.eficiencia')
             @endif
         @endif
     </div>
@@ -168,6 +181,53 @@
                     });
                 }, 500);
             }
+
+            document.addEventListener('bloquearSelect2', () => {
+                $('#operador').prop('disabled', true);
+                $('#maquina').prop('disabled', true);
+            });
+
+            document.addEventListener('confirmarCierre', () => {
+                Swal.fire({
+                    title: 'Confirmación',
+                    text: '¿Está seguro de que desea realizar el cierre de turno?',
+                    html: `
+                        <div>
+                            <div>
+                                <label for="usuario" class="block font-medium text-gray-700">Usuario:</label>
+                                <input type="text" id="usuario" class="form-control py-2 rounded-md shadow-md mt-1 w-full border-gray-200 focus:outline-none focus:ring-0 focus:border-gray-300" />
+                            </div>
+                            <div class="mt-2">
+                                <label for="password" class="block font-medium text-gray-700">Contraseña:</label>
+                                <input type="password" id="password" class="form-control py-2 rounded-md shadow-md mt-1 w-full border-gray-200 focus:outline-none focus:ring-0 focus:border-gray-300" />
+                            </div>
+                        </div>
+                    `,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, realizar cierre',
+                    cancelButtonText: 'Cancelar',
+                    preConfirm: () => {
+                        const usuario = Swal.getPopup().querySelector('#usuario').value;
+                        const password = Swal.getPopup().querySelector('#password').value;
+                        if (!usuario || !password) {
+                            Swal.showValidationMessage(`Por favor ingrese el usuario y la contraseña`);
+                        }
+                        return {
+                            usuario: usuario,
+                            password: password
+                        }
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        @this.set('login', result.value.usuario);
+                        @this.set('password', result.value.password);
+                        @this.finalizarCierre();
+                    } else {
+                        @this.set('modalCreateCierreTurno', true);
+                    }
+                });
+            });
         </script>
     </div>
 </div>
