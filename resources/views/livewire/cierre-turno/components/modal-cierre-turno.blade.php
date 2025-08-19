@@ -13,15 +13,15 @@
                 @endif
                 @if (!$esBueno)
                     <div>
-                        <x-forms.text-area labelText="Observaciones" placeholder="Ingrese observaciones aquí..." />
+                        <x-forms.text-area name="observaciones" labelText="Observaciones" placeholder="Ingrese observaciones aquí..." />
                     </div>
 
                     <div>
-                        <x-forms.text-area labelText="Acciones Correctivas" placeholder="Ingrese acciones correctivas aquí..." />
+                        <x-forms.text-area name="acciones_correctivas" labelText="Acciones Correctivas" placeholder="Ingrese acciones correctivas aquí..." />
                     </div>
 
                     <div>
-                        <x-forms.input type="password" labelText="Ingresa tu contraseña para poder continuar" placeholder="Ingrese tu contraseña aquí..." />
+                        <x-forms.input type="password" name="password" labelText="Ingresa tu contraseña para poder continuar" placeholder="Ingrese tu contraseña aquí..." />
                     </div>
                 @endif
             </div>
@@ -34,7 +34,7 @@
                 Cancelar
             </x-secondary-button>
 
-            <x-button wire:click="storeSolicitud" wire:loading.attr="disabled">
+            <x-button wire:click="finalizarCierre" wire:loading.attr="disabled">
                 Guardar
             </x-button>
         </div>

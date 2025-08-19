@@ -22,6 +22,10 @@ class Index extends Component
     public $color = '';
     public $esBueno = false;
 
+    public $observaciones = '';
+    public $acciones_correctivas = '';
+    public $password = '';
+
     /**
      * Montamos los registros que se utilizaran para los desplegables
      *
@@ -85,6 +89,58 @@ class Index extends Component
     public function realizarCierreAccion(): void
     {
         $this->modalCreateCierreTurno = true;
+    }
+
+    /**
+     * Finalizar el cierre de turno
+     *
+     * @return void
+     */
+    public function finalizarCierre(): void
+    {
+        // Validamos
+        $this->validate([
+            'observaciones' => 'required|string|max:500',
+            'acciones_correctivas' => 'required|string|max:500',
+            'password' => 'required|string',
+        ], [
+            'observaciones.required' => 'El campo observaciones es obligatorio.',
+            'acciones_correctivas.required' => 'El campo acciones correctivas es obligatorio.',
+            'password.required' => 'El campo contraseña es obligatorio.',
+        ]);
+
+        // Validamos que la contraseña ingresada sea del usuario que va realizar la acción
+        if ($this->password !== auth()->user()->Password) {
+            $this->addError('password', 'La contraseña ingresada es incorrecta.');
+            return;
+        }
+
+        $data = [
+            'reporte' => [
+                'operador' => explode('-', $this->operador)[0],
+                'maquina' => $this->maquina,
+                'turno' => $this->turno,
+                'fecha_cierre' => $this->fecha_cierre,
+                'tipo_reporte' => $this->tipo_reporte,
+                'estatus' => 1,
+            ],
+            'reporteActual' => $this->reporteActual,
+            'razones' => [
+                'observaciones' => $this->observaciones,
+                'acciones_correctivas' => $this->acciones_correctivas,
+            ]
+        ];
+
+        $resultado = (new CierreTurnoController())->cerrarTurno($data);
+        $this->dispatch('toast', icon: 'success', title: 'Cierre de turno exitoso');
+
+        // Limpiamos lo campos
+        $this->reset([
+            'modalCreateCierreTurno',
+            'observaciones',
+            'acciones_correctivas',
+            'password',
+        ]);
     }
 
     /**

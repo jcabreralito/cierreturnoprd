@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DetalleReporte;
 use Carbon\Carbon;
+use Dom\Document;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class CierreTurnoController extends Controller
 {
@@ -225,6 +228,69 @@ class CierreTurnoController extends Controller
         $dompdf->loadView("pdf/reporteMaquina", ['reporte_eficiencia' => $reporte_eficiencia, 'reporte_detalle' => $reporte_detalle, 'titulo' => $titulo, 'Grupos' => $Grupos, 'maquinas' => $maquinas, 'permiso' => $permiso, 'tiporeporte' => $reporte, 'fecha_inicio' => $fecha_inicio, 'fecha_fin' => $fecha_fin, 'operador' => $operador, 'maquina' => $maquina, 'grupo' => '', 'reporte' => $reporte])
         ;
 
-        return $dompdf->stream('Reporte Producción.pdf'); //Para visualizar en el navegador
+        // Guardar el PDF en storage/app/public/pdfarchivo.pdf
+        $output = $dompdf->output();
+        $filename = 'pdfarchivo.pdf';
+        Storage::disk('public')->put($filename, $output);
+
+        // Obtener el contenido y convertirlo a base64
+        $pdfContent = Storage::disk('public')->get($filename);
+        $base64 = base64_encode($pdfContent);
+
+        // Puedes retornar el base64, guardarlo en la base de datos, etc.
+        return [
+            'archivo' => $base64
+        ];
+    }
+
+    /**
+     * Función para realizar el cierre de turno
+     *
+     * @param array $data
+     */
+    public function cerrarTurno(array $data)
+    {
+        try {
+            // 1 Realizar registro de cierre de turno
+            $reporte = (new ReporteController())->guardarReporte($data['reporte']);
+
+            if ($reporte) {
+
+                // 2 Guardar adicional del reporte
+                $dataAdicional = [
+                    'ajustes_normales' => $data['reporteActual'][0]->AjustesNormales,
+                    'ajustes_literatura' => $data['reporteActual'][0]->AjustesLiteratura,
+                    'tiros' => $data['reporteActual'][0]->CantTiros,
+                    'en' => $data['reporteActual'][0]->EnTiempoTiros,
+                    'se_debio_hacer_en' => $data['reporteActual'][0]->SeDebioHacer,
+                    'tiempo_reportado' => $data['reporteActual'][0]->TiempoReportado,
+                    'tiempo_ajuste' => $data['reporteActual'][0]->TiempoDeAjuste,
+                    'tiempo_tiro' => $data['reporteActual'][0]->TiempoDeTiro,
+                    'tiempo_muerto' => $data['reporteActual'][0]->TotalTiempoMuerto,
+                    'std_ajuste_normal' => $data['reporteActual'][0]->AjusteStd,
+                    'std_ajuste_literatura' => $data['reporteActual'][0]->AjusteVWStd,
+                    'std_velocidad_tiro' => $data['reporteActual'][0]->VelocidadStd,
+                    'reporte_id' => $reporte->id,
+                ];
+
+                $adicional = (new DetalleReporteController())->registrarDetalles($dataAdicional);
+
+                // 3 Guardar razones del cierre
+                $razones = (new RazonReporteController())->registrarRazon([
+                        'observaciones' => $data['razones']['observaciones'],
+                        'acciones_correctivas' => $data['razones']['acciones_correctivas'],
+                        'reporte_id' => $reporte->id,
+                    ]);
+
+                // 4 Guardamos el archivo PDF
+                $pdf = (new CierreTurnoController())->imprimirReporte($data['reporte']);
+                $archivo = (new DocumentoReporteController())->registrarDocumentos([
+                        'archivo' => $pdf['archivo'],
+                        'reporte_id' => $reporte->id,
+                    ]);
+            }
+        } catch (\Exception $e) {
+            return "Lo siento, ocurrió un error al realizar el cierre de turno.";
+        }
     }
 }

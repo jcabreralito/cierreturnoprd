@@ -163,7 +163,7 @@ return [
 
         CustomSqlServerConnectorServiceProvider::class,
         Maatwebsite\Excel\ExcelServiceProvider::class,
-        OwenIt\Auditing\AuditingServiceProvider::class,
+        // OwenIt\Auditing\AuditingServiceProvider::class,
 
         /*
          * Application Service Providers...
