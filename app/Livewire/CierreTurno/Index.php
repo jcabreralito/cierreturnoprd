@@ -23,6 +23,7 @@ class Index extends Component
     public $color = '';
     public $esBueno = false;
     public $sinResultados = false;
+    public $yaRealizoCierre = false;
 
     public $observaciones = '';
     public $acciones_correctivas = '';
@@ -78,6 +79,7 @@ class Index extends Component
 
         $this->list = (new CierreTurnoController())->getActividades($data);
         $this->reporteActual = (new CierreTurnoController())->getReporte($data);
+        $this->yaRealizoCierre = (new CierreTurnoController())->yaRealizoCierre($data);
         $this->color = $this->getEficienciaColor();
         $this->limpiarBuscadores = true;
 
@@ -162,7 +164,8 @@ class Index extends Component
             'razones' => [
                 'observaciones' => $this->observaciones,
                 'acciones_correctivas' => $this->acciones_correctivas,
-            ]
+            ],
+            'contieneRazones' => $this->esBueno
         ];
 
         $resultado = (new CierreTurnoController())->cerrarTurno($data);
@@ -199,7 +202,7 @@ class Index extends Component
             ]);
         }
 
-        $this->dispatch('confirmarCierre');
+        $this->dispatch('confirmarCierre', operador: $this->operador);
 
         $this->modalCreateCierreTurno = false;
     }

@@ -33,8 +33,22 @@ class ReporteController extends Controller
             return $reporte;
         } catch (\Throwable $th) {
             DB::rollBack();
-            dd($th);
             return "Lo siento, ocurrió un error al guardar el reporte.";
         }
+    }
+
+    /**
+     * Función para obtener un reporte específico
+     *
+     * @param array $data
+     * @return mixed
+     */
+    public function obtenerReporte(array $data)
+    {
+        return Reporte::where('tipo_reporte', $data['tipo_reporte'])
+                        ->where('operador', explode('-', $data['operador'])[0])
+                        ->where('turno', $data['turno'])
+                        ->where('fecha_cierre', $data['fecha_cierre'])
+                        ->first();
     }
 }

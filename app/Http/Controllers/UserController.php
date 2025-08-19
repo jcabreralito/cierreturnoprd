@@ -15,10 +15,23 @@ class UserController extends Controller
      */
     public function validateUser(Request $request)
     {
-        $user = User::where('password', $request->input('password'))->first();
+
+        if (auth()->user()->hasRole('admin')) {
+            $user = User::where('password', $request->input('password'))
+                        ->where('estatus', 'ACTIVO')
+                        ->first();
+        } else {
+            $operadorNombre = explode('-', $request->input('operador'));
+            $user = User::where('password', $request->input('password'))->where(function($q) use ($operadorNombre) {
+                        $q->where('Nombre', $operadorNombre[1])
+                            ->orWhere('Personal', $operadorNombre[0]);
+                    })
+                    ->where('estatus', 'ACTIVO')
+                    ->first();
+        }
 
         return response()->json([
-            'user' => $user ? $user->Login : null,
+            'user' => $user != null ? $user->Login : null,
             'response' => $user != null
         ]);
     }

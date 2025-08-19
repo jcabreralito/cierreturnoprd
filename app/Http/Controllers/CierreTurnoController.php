@@ -255,32 +255,35 @@ class CierreTurnoController extends Controller
             $reporte = (new ReporteController())->guardarReporte($data['reporte']);
 
             if ($reporte) {
-
-                // 2 Guardar adicional del reporte
-                $dataAdicional = [
-                    'ajustes_normales' => $data['reporteActual'][0]->AjustesNormales,
-                    'ajustes_literatura' => $data['reporteActual'][0]->AjustesLiteratura,
-                    'tiros' => $data['reporteActual'][0]->CantTiros,
-                    'en' => $data['reporteActual'][0]->EnTiempoTiros,
-                    'se_debio_hacer_en' => $data['reporteActual'][0]->SeDebioHacer,
-                    'tiempo_reportado' => $data['reporteActual'][0]->TiempoReportado,
-                    'tiempo_ajuste' => $data['reporteActual'][0]->TiempoDeAjuste,
-                    'tiempo_tiro' => $data['reporteActual'][0]->TiempoDeTiro,
-                    'tiempo_muerto' => $data['reporteActual'][0]->TotalTiempoMuerto,
-                    'std_ajuste_normal' => $data['reporteActual'][0]->AjusteStd,
-                    'std_ajuste_literatura' => $data['reporteActual'][0]->AjusteVWStd,
-                    'std_velocidad_tiro' => $data['reporteActual'][0]->VelocidadStd,
-                    'reporte_id' => $reporte->id,
-                ];
-
-                $adicional = (new DetalleReporteController())->registrarDetalles($dataAdicional);
-
-                // 3 Guardar razones del cierre
-                $razones = (new RazonReporteController())->registrarRazon([
-                        'observaciones' => $data['razones']['observaciones'],
-                        'acciones_correctivas' => $data['razones']['acciones_correctivas'],
+                if (count($data['reporteActual']) > 0) {
+                    // 2 Guardar adicional del reporte
+                    $dataAdicional = [
+                        'ajustes_normales' => $data['reporteActual'][0]->AjustesNormales,
+                        'ajustes_literatura' => $data['reporteActual'][0]->AjustesLiteratura,
+                        'tiros' => $data['reporteActual'][0]->CantTiros,
+                        'en' => $data['reporteActual'][0]->EnTiempoTiros,
+                        'se_debio_hacer_en' => $data['reporteActual'][0]->SeDebioHacer,
+                        'tiempo_reportado' => $data['reporteActual'][0]->TiempoReportado,
+                        'tiempo_ajuste' => $data['reporteActual'][0]->TiempoDeAjuste,
+                        'tiempo_tiro' => $data['reporteActual'][0]->TiempoDeTiro,
+                        'tiempo_muerto' => $data['reporteActual'][0]->TotalTiempoMuerto,
+                        'std_ajuste_normal' => $data['reporteActual'][0]->AjusteStd,
+                        'std_ajuste_literatura' => $data['reporteActual'][0]->AjusteVWStd,
+                        'std_velocidad_tiro' => $data['reporteActual'][0]->VelocidadStd,
                         'reporte_id' => $reporte->id,
-                    ]);
+                    ];
+
+                    $adicional = (new DetalleReporteController())->registrarDetalles($dataAdicional);
+                }
+
+                if (!$data['contieneRazones']) {
+                    // 3 Guardar razones del cierre
+                    $razones = (new RazonReporteController())->registrarRazon([
+                            'observaciones' => $data['razones']['observaciones'],
+                            'acciones_correctivas' => $data['razones']['acciones_correctivas'],
+                            'reporte_id' => $reporte->id,
+                        ]);
+                }
 
                 // 4 Guardamos el archivo PDF
                 $pdf = (new CierreTurnoController())->imprimirReporte($data['reporte']);
@@ -300,5 +303,18 @@ class CierreTurnoController extends Controller
         } catch (\Exception $e) {
             return "Lo siento, ocurrió un error al realizar el cierre de turno.";
         }
+    }
+
+    /**
+     * Función para validar si ya se realizó el cierre de turno de una consulta
+     *
+     * @param array $data
+     * @return bool
+     */
+    public function yaRealizoCierre(array $data): bool
+    {
+        $reporte = (new ReporteController())->obtenerReporte($data);
+
+        return $reporte != null;
     }
 }

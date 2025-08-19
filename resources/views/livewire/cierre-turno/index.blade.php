@@ -15,7 +15,7 @@
                             onchange="initSelect2()">
                             <option value="">Seleccione un tipo de reporte</option>
                             <option value="Operador">Operador</option>
-                            <option value="Maquina">Máquina</option>
+                            {{--  <option value="Maquina">Máquina</option>  --}}
                         </x-filters.select>
                     </div>
 
@@ -65,7 +65,13 @@
                                 Consultar reporte
                             </button>
 
-                            @if ($realizarCierre)
+                            @if ($yaRealizoCierre)
+                                <div>
+                                    <p class="text-xs text-green-100 bg-green-500 rounded-md shadow-md shadow-green-700 py-1 px-2 text-xxs my-auto">Cierre ya realizado</p>
+                                </div>
+                            @endif
+
+                            @if ($realizarCierre && !$yaRealizoCierre)
                                 <button wire:click="realizarCierreAccion"
                                     class="text-xs py-2 px-4 bg-green-500 hover:bg-green-600 text-white rounded">
                                     Realizar cierre
@@ -178,12 +184,14 @@
             }
 
             document.addEventListener('confirmarCierre', (event) => {
+                let operador = event.detail.operador;
+
                 Swal.fire({
                     title: 'Confirmación',
                     text: '¿Está seguro de que desea realizar el cierre de turno?',
                     html: `
                         <form onsubmit="return false;">
-                            <div class="mt-2">
+                            <div>
                                 <label for="password" class="block font-medium text-gray-700">Contraseña:</label>
                                 <input type="password" id="password" class="form-control py-2 rounded-md shadow-md mt-1 w-full border-gray-200 focus:outline-none focus:ring-0 focus:border-gray-300" />
                             </div>
@@ -206,11 +214,10 @@
                                 'Content-Type': 'application/json',
                                 'X-CSRF-TOKEN': '{{ csrf_token() }}',
                             },
-                            body: JSON.stringify({ password: password }),
+                            body: JSON.stringify({ password: password, operador: operador }),
                         })
                         .then(response => response.json())
                         .then(data => {
-                            console.log(data);
                             if (!data.response) {
                                 Swal.showValidationMessage('Contraseña incorrecta');
                                 // Rechaza la promesa para mantener el modal abierto
