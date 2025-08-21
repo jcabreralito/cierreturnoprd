@@ -337,22 +337,12 @@
                         <br>
                         <br>
 
-                        ___________________________
-                    </td>
-                    <td colspan="3" style="text-align: center">
-                        <br>
-                        <br>
-                        <br>
-                        <br>
-                        <br>
-
-                        ___________________________
+                        <span style="text-decoration: underline;">
+                            {{ $reporte_detalle[0]->Empleado }}
+                        </span>
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="3" style="text-align: center">
-                        Firma Supervisor
-                    </td>
                     <td colspan="3" style="text-align: center">
                         Firma Operador
                     </td>

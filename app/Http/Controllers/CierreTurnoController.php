@@ -166,6 +166,8 @@ class CierreTurnoController extends Controller
         $fecha_inicio = Carbon::parse($data['fecha_cierre'])->format('d/m/Y');
         $fecha_fin = Carbon::parse($data['fecha_cierre'])->format('d/m/Y');
 
+        $nombre_operador = $data['operador'];
+
         if ($data['operador'] == null) {
             $operador = '';
         } else {
@@ -225,17 +227,20 @@ class CierreTurnoController extends Controller
         $titulo = 'Cierre de turno';
 
         $dompdf = App::make("dompdf.wrapper");
-        $dompdf->loadView("pdf/reporteMaquina", ['reporte_eficiencia' => $reporte_eficiencia, 'reporte_detalle' => $reporte_detalle, 'titulo' => $titulo, 'Grupos' => $Grupos, 'maquinas' => $maquinas, 'permiso' => $permiso, 'tiporeporte' => $reporte, 'fecha_inicio' => $fecha_inicio, 'fecha_fin' => $fecha_fin, 'operador' => $operador, 'maquina' => $maquina, 'grupo' => '', 'reporte' => $reporte])
-        ;
+        $dompdf->loadView("pdf/reporteMaquina", ['reporte_eficiencia' => $reporte_eficiencia, 'reporte_detalle' => $reporte_detalle, 'titulo' => $titulo, 'Grupos' => $Grupos, 'maquinas' => $maquinas, 'permiso' => $permiso, 'tiporeporte' => $reporte, 'fecha_inicio' => $fecha_inicio, 'fecha_fin' => $fecha_fin, 'operador' => $nombre_operador, 'maquina' => $maquina, 'grupo' => '', 'reporte' => $reporte]);
 
         // Guardar el PDF en storage/app/public/pdfarchivo.pdf
         $output = $dompdf->output();
-        $filename = 'pdfarchivo.pdf';
+        $filename = 'pdfarchivo-'. date('YmdHis').'.pdf';
         Storage::disk('public')->put($filename, $output);
 
         // Obtener el contenido y convertirlo a base64
         $pdfContent = Storage::disk('public')->get($filename);
+
         $base64 = base64_encode($pdfContent);
+
+        // Al guardarlo lo eliminamos
+        Storage::disk('public')->delete($filename);
 
         // Puedes retornar el base64, guardarlo en la base de datos, etc.
         return [
