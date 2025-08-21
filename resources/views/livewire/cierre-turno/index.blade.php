@@ -155,7 +155,7 @@
     @include('livewire.cierre-turno.components.loader')
 
     {{--  Configuracion e insercion de select2  --}}
-    <div>
+    <div wire:ignore>
         <script>
             function initSelect2() {
                 setTimeout(() => {
@@ -180,7 +180,7 @@
                         var data = $(this).val();
                         @this.set('maquina', data);
                     });
-                }, 500);
+                }, 1000);
             }
 
             document.addEventListener('confirmarCierre', (event) => {

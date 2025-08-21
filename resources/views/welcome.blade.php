@@ -46,7 +46,7 @@
         @include('components.home.sidebar')
 
         <div class="block w-full mt-[60px] md:mt-16 sm:mx-auto md:mr-0" :class="!openLg ? 'md:w-full' : 'md:w-[89%]'">
-            @can('acceder-modulo')
+            @if(auth()->user()->tipoUsuarioCierreTurno != 4)
             <livewire:cierre-turno.index />
             @else
             <div class="mx-auto grid place-content-center h-[80%] absolute w-full">

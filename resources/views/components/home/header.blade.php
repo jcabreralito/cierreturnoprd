@@ -46,9 +46,9 @@
                 <nav class="mt-5 px-2 space-y-1 flex flex-col justify-between min-h-[95%]">
                     <div class="space-y-2">
                         {{--  Inicio  --}}
-                        @can('acceder-modulo')
+                        @if(auth()->user()->tipoUsuarioCierreTurno != 4)
                             <a href="{{ $routeMain }}/dashboard" class="item-sub-menu block text-white px-2 py-2 rounded-md text-base font-medium {{ request()->is('dashboard') ? 'bg-white text-blue-1' : '' }}">Cierre turno</a>
-                        @endcan
+                        @endif
                     </div>
 
                     <div class="bottom-0 top-0">

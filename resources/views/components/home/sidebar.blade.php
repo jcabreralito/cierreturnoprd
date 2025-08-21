@@ -5,11 +5,11 @@
 
     <div class="flex-col justify-between items-center flex min-h-[94%]">
         <div class="space-y-4 w-full">
-            @can('acceder-modulo')
+            @if(auth()->user()->tipoUsuarioCierreTurno != 4)
             <div class="w-full">
                 <a href="{{ $routeMain }}/dashboard" class="{{ request()->is('dashboard') ? 'btn-sidebar-active' : 'btn-sidebar' }} block">Cierre turno</a>
             </div>
-            @endcan
+            @endif
         </div>
 
         <div class="w-full end-0 mb-5">

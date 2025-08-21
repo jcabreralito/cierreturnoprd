@@ -16,7 +16,7 @@ class UserController extends Controller
     public function validateUser(Request $request)
     {
 
-        if (auth()->user()->hasRole('admin')) {
+        if (auth()->user()->tipoUsuarioCierreTurno == 1) {
             $user = User::where('password', $request->input('password'))
                         ->where('estatus', 'ACTIVO')
                         ->first();
