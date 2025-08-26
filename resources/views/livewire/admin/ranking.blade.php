@@ -12,8 +12,8 @@
         //
 
         baseRestURL = "https://servicios.litoprocess.com/MicroStrategyLibrary";
-        projectID = "4144A4A74427236922F4B197856EB90B";
-        dossierHrsExtras = "9770A6194B88033B7B8910804E03ED2C/share";
+        projectID = "4144A4A74427236922F4B197856EB90B1";
+        dossierHrsExtras = "9770A6194B88033B7B8910804E03ED2C1/share";
 
         // console.log(baseRestURL);
         let usernameA = "capitalh";
