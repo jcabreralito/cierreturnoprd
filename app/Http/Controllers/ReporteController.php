@@ -26,7 +26,8 @@ class ReporteController extends Controller
             $reporte->maquina = $data['maquina'];
             $reporte->fecha_cierre = $data['fecha_cierre'];
             $reporte->turno = $data['turno'];
-            $reporte->usuario_cerro = $data['usuario_cerro']; // Asigna el usuario que cerró el reporte
+            $reporte->firma_supervisor = $data['firma_supervisor']; // Asigna el usuario que cerró el reporte
+            $reporte->firma_operador = $data['firma_operador']; // Asigna el usuario que cerró el reporte
             $reporte->usuario_id = auth()->user()->Id_Usuario; // Asigna el ID del usuario autenticado
             $reporte->save();
             DB::commit();
@@ -60,7 +61,8 @@ class ReporteController extends Controller
      */
     public function getReportesRealizados(array $data)
     {
-        return Reporte::when($data['fecha_cierre'], function ($query) use ($data) {
+        return DB::table('v_Reportes')
+                        ->when($data['fecha_cierre'], function ($query) use ($data) {
                             $query->where('fecha_cierre', $data['fecha_cierre']);
                         })
                         ->when($data['turno'], function ($query) use ($data) {

@@ -12,7 +12,7 @@
             @endif
 
             @if (auth()->user()->tipoUsuarioCierreTurno == 1)
-            <div class="w-full">
+            {{--  <div class="w-full">
                 <a href="{{ $routeMain }}/re-cierres" class="{{ request()->is('re-cierres') ? 'btn-sidebar-active' : 'btn-sidebar' }} block">Re-cierres</a>
             </div>
             <div class="w-full">
@@ -20,7 +20,7 @@
             </div>
             <div class="w-full">
                 <a href="{{ $routeMain }}/ranking" class="{{ request()->is('ranking') ? 'btn-sidebar-active' : 'btn-sidebar' }} block">Ranking</a>
-            </div>
+            </div>  --}}
             @endif
         </div>
 

@@ -17,7 +17,8 @@ class Reporte extends Model
         'maquina',
         'fecha_cierre',
         'turno',
-        'usuario_cerro',
+        'firma_supervisor',
+        'firma_operador',
         'usuario_id',
     ];
 }

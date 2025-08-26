@@ -158,7 +158,8 @@ class Index extends Component
                 'fecha_cierre' => $this->fecha_cierre,
                 'tipo_reporte' => $this->tipo_reporte,
                 'estatus' => 1,
-                'usuario_cerro' => $this->login,
+                'firma_supervisor' => $this->login,
+                'firma_operador' => $this->login,
             ],
             'reporteActual' => $this->reporteActual,
             'razones' => [

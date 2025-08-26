@@ -2,13 +2,14 @@
 
 namespace App\Livewire\Admin;
 
+use App\Http\Controllers\CierreTurnoController;
 use App\Http\Controllers\ReporteController;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
 class ReCierre extends Component
 {
-    public $fechaCierre;
+    public $fecha_cierre;
     public $turno;
     public $operador;
 
@@ -21,10 +22,11 @@ class ReCierre extends Component
     {
         return view('livewire.admin.re-cierre', [
             'cierresRealizados' => (new ReporteController())->getReportesRealizados([
-                'fecha_cierre' => $this->fechaCierre,
+                'fecha_cierre' => $this->fecha_cierre,
                 'turno' => $this->turno,
                 'operador' => $this->operador,
-            ])
+            ]),
+            'operadores' => (new CierreTurnoController())->getOperadores(),
         ])->layout('layouts.main');
     }
 }
