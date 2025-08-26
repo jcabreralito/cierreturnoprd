@@ -8,7 +8,7 @@ use Livewire\Component;
 
 class Index extends Component
 {
-    public $tipo_reporte;
+    public $tipo_reporte = 'Operador';
     public $operador = '';
     public $maquina = '';
     public $turno = '';

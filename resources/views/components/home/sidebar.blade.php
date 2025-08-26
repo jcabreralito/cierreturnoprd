@@ -10,6 +10,18 @@
                 <a href="{{ $routeMain }}/dashboard" class="{{ request()->is('dashboard') ? 'btn-sidebar-active' : 'btn-sidebar' }} block">Cierre turno</a>
             </div>
             @endif
+
+            @if (auth()->user()->tipoUsuarioCierreTurno == 1)
+            <div class="w-full">
+                <a href="{{ $routeMain }}/re-cierres" class="{{ request()->is('re-cierres') ? 'btn-sidebar-active' : 'btn-sidebar' }} block">Re-cierres</a>
+            </div>
+            <div class="w-full">
+                <a href="{{ $routeMain }}/historico" class="{{ request()->is('historico') ? 'btn-sidebar-active' : 'btn-sidebar' }} block">Historico</a>
+            </div>
+            <div class="w-full">
+                <a href="{{ $routeMain }}/ranking" class="{{ request()->is('ranking') ? 'btn-sidebar-active' : 'btn-sidebar' }} block">Ranking</a>
+            </div>
+            @endif
         </div>
 
         <div class="w-full end-0 mb-5">

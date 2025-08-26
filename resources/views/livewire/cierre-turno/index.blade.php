@@ -9,26 +9,15 @@
 
         <div class="mb-4">
             <div class="flex items-start bg-[#E9E9E9] py-1 px-4 shadow-md rounded-md mb-5">
-                <div class="grid grid-cols-1 lg:grid-cols-5 md:gap-x-4 md:gap-y-0 gap-y-4 w-full">
-                    <div>
-                        <x-filters.select name="tipo_reporte" labelText="Tipo de Reporte" :isLive="true"
-                            onchange="initSelect2()">
-                            <option value="">Seleccione un tipo de reporte</option>
-                            <option value="Operador">Operador</option>
-                            {{--  <option value="Maquina">Máquina</option>  --}}
+                <div class="grid grid-cols-1 lg:grid-cols-4 md:gap-x-4 md:gap-y-0 gap-y-4 w-full">
+                    <div wire:ignore>
+                        <x-filters.select name="operador" labelText="Operador" id="operador">
+                            <option value="">Seleccione un operador</option>
+                            @foreach ($operadores as $operador)
+                                <option value="{{ $operador['label'] }}">{{ $operador['label'] }}</option>
+                            @endforeach
                         </x-filters.select>
                     </div>
-
-                    @if ($tipo_reporte === 'Operador')
-                        <div wire:ignore>
-                            <x-filters.select name="operador" labelText="Operador" id="operador">
-                                <option value="">Seleccione un operador</option>
-                                @foreach ($operadores as $operador)
-                                    <option value="{{ $operador['label'] }}">{{ $operador['label'] }}</option>
-                                @endforeach
-                            </x-filters.select>
-                        </div>
-                    @endif
 
                     @if ($tipo_reporte === 'Maquina')
                         <div wire:ignore>
@@ -42,7 +31,7 @@
                     @endif
 
                     <div>
-                        <x-filters.select name="turno" labelText="Turno" :isDisabled="(!$tipo_reporte && (!$operador || !$maquina))" :isLive="true">
+                        <x-filters.select name="turno" labelText="Turno" :isLive="true">
                             <option value="">Seleccione un turno</option>
                             <option value="1">Turno 1</option>
                             <option value="2">Turno 2</option>
@@ -50,15 +39,13 @@
                     </div>
 
                     <div>
-                        <x-filters.input name="fecha_cierre" labelText="Fecha de Cierre" type="date"
-                            :isDisabled="(!$tipo_reporte && (!$operador || !$maquina))" :isLive="true" />
+                        <x-filters.input name="fecha_cierre" labelText="Fecha de Cierre" type="date" :isLive="true" />
                     </div>
 
                     @if (
-                        $tipo_reporte != null &&
-                            $tipo_reporte != '' &&
                             ($turno != null && $turno != '') &&
-                            ($fecha_cierre != null && $fecha_cierre != ''))
+                            ($fecha_cierre != null && $fecha_cierre != '')
+                        )
                         <div class="h-full flex justify-center w-full items-center space-x-4">
                             <button wire:click="obtenerData()"
                                 class="text-xs py-2 px-4 bg-cyan-500 hover:bg-cyan-600 text-white rounded">
@@ -102,6 +89,8 @@
                     [0 => 'CANTIDAD', 1 => false, 2 => 'text-center', 3 => ''],
                     [0 => 'TURNO', 1 => false, 2 => 'text-center', 3 => ''],
                     [0 => 'TIEMPO', 1 => false, 2 => 'text-center', 3 => ''],
+                    [0 => 'HORA INICIO', 1 => false, 2 => 'text-center', 3 => ''],
+                    [0 => 'HORA FIN', 1 => false, 2 => 'text-center', 3 => ''],
                     [0 => 'FECHA PRODUCCIÓN', 1 => false, 2 => 'text-center', 3 => ''],
                     [0 => 'OPERADOR', 1 => false, 2 => 'text-center', 3 => ''],
                     [0 => 'MAQUINA', 1 => false, 2 => 'text-center', 3 => ''],
@@ -116,8 +105,9 @@
                             <x-home.table.td class="text-center">{{ number_format($item->Cantidad, 2) }}</x-home.table.td>
                             <x-home.table.td class="text-center">{{ $item->Turno }}</x-home.table.td>
                             <x-home.table.td class="text-center">{{ number_format($item->Tiempo, 2) }}</x-home.table.td>
-                            <x-home.table.td
-                                class="text-center">{{ Carbon\Carbon::parse($item->fechaproduccion)->format('Y/m/d') }}</x-home.table.td>
+                            <x-home.table.td class="text-center">{{ Carbon\Carbon::parse($item->HoraInicio)->format('Y/m/d H:i') }}</x-home.table.td>
+                            <x-home.table.td class="text-center">{{ Carbon\Carbon::parse($item->HoraFin)->format('Y/m/d H:i') }}</x-home.table.td>
+                            <x-home.table.td class="text-center">{{ Carbon\Carbon::parse($item->fechaproduccion)->format('Y/m/d') }}</x-home.table.td>
                             <x-home.table.td class="text-center">{{ $item->Empleado }}</x-home.table.td>
                             <x-home.table.td class="text-center">{{ $item->Maquina }}</x-home.table.td>
                         </tr>
@@ -157,6 +147,10 @@
     {{--  Configuracion e insercion de select2  --}}
     <div wire:ignore>
         <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                initSelect2();
+            });
+
             function initSelect2() {
                 setTimeout(() => {
                     $('#operador').select2({
@@ -201,6 +195,7 @@
                     showCancelButton: true,
                     confirmButtonText: 'Sí, realizar cierre',
                     cancelButtonText: 'Cancelar',
+                    reverseButtons: true,
                     preConfirm: () => {
                         const password = Swal.getPopup().querySelector('#password').value;
                         if (!password) {

@@ -6,6 +6,9 @@ use App\Http\Controllers\PrdController;
 use App\Http\Controllers\SolicitudController;
 use App\Http\Controllers\SolicitudesRelacionController;
 use App\Http\Controllers\UserController;
+use App\Livewire\Admin\Historico;
+use App\Livewire\Admin\Ranking;
+use App\Livewire\Admin\ReCierre;
 use App\Livewire\Solicitud\Indicadores;
 use App\Livewire\Solicitud\RelacionHoras;
 use App\Livewire\Solicitud\RelacionJornadas;
@@ -36,3 +39,6 @@ Livewire::setUpdateRoute(function ($handle) {
 });
 
 Route::post('/validate-user', [UserController::class, 'validateUser']);
+Route::middleware(['authcustom'])->get('/re-cierres', ReCierre::class)->name('re-cierres');
+Route::middleware(['authcustom'])->get('/historico', Historico::class)->name('historico');
+Route::middleware(['authcustom'])->get('/ranking', Ranking::class)->name('ranking');

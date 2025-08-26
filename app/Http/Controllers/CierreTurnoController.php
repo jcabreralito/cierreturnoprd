@@ -2,10 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\DetalleReporte;
 use Carbon\Carbon;
-use Dom\Document;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;

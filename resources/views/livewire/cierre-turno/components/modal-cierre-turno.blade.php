@@ -13,11 +13,11 @@
                 @endif
                 @if (!$esBueno)
                     <div>
-                        <x-forms.text-area name="observaciones" labelText="Observaciones" placeholder="Ingrese observaciones aquí..." />
+                        <x-forms.text-area name="observaciones" labelText="Causa de la ineficiencia (¿A que consideras que se deba la ineficiencia?)" placeholder="Ingrese observaciones aquí..." />
                     </div>
 
                     <div>
-                        <x-forms.text-area name="acciones_correctivas" labelText="Acciones Correctivas" placeholder="Ingrese acciones correctivas aquí..." />
+                        <x-forms.text-area name="acciones_correctivas" labelText="Compromiso de mejora (¿Qué acciones vas a realizar para mejorar la eficiencia?)" placeholder="Ingrese acciones correctivas aquí..." />
                     </div>
                 @endif
             </div>

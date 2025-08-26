@@ -22,7 +22,7 @@ class ReporteController extends Controller
             $reporte->folio = Reporte::max('folio') + 1; // Genera un nuevo folio
             $reporte->estatus = $data['estatus'];
             $reporte->tipo_reporte = $data['tipo_reporte'];
-            $reporte->operador = $data['operador'];
+            $reporte->operador = trim($data['operador']);
             $reporte->maquina = $data['maquina'];
             $reporte->fecha_cierre = $data['fecha_cierre'];
             $reporte->turno = $data['turno'];
@@ -50,5 +50,25 @@ class ReporteController extends Controller
                         ->where('turno', $data['turno'])
                         ->where('fecha_cierre', $data['fecha_cierre'])
                         ->first();
+    }
+
+    /**
+     * Función para obtener todos los cierres realizados
+     *
+     * @param array $data
+     * @return mixed
+     */
+    public function getReportesRealizados(array $data)
+    {
+        return Reporte::when($data['fecha_cierre'], function ($query) use ($data) {
+                            $query->where('fecha_cierre', $data['fecha_cierre']);
+                        })
+                        ->when($data['turno'], function ($query) use ($data) {
+                            $query->where('turno', $data['turno']);
+                        })
+                        ->when($data['operador'], function ($query) use ($data) {
+                            $query->where('operador', explode('-', $data['operador'])[0]);
+                        })
+                        ->paginate(50);
     }
 }
