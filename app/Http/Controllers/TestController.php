@@ -20,6 +20,5 @@ class TestController extends Controller
             1,
             Carbon::parse('2025-08-21')->format('d/m/Y')
         ]);
-        dd($a);
     }
 }

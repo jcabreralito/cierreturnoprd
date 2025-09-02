@@ -335,7 +335,6 @@ class CierreTurnoController extends Controller
                 ]);
             }
         } catch (\Exception $e) {
-            dd($e->getMessage());
             return "Lo siento, ocurrió un error al realizar el cierre de turno.";
         }
     }
