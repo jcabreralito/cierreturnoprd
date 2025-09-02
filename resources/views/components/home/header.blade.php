@@ -51,9 +51,9 @@
                         @endif
 
                         @if (auth()->user()->tipoUsuarioCierreTurno == 1)
-                        <a href="{{ $routeMain }}/re-cierres" class="item-sub-menu block text-white px-2 py-2 rounded-md text-base font-medium {{ request()->is('re-cierres') ? 'bg-white text-blue-1' : '' }}">Re-cierres</a>
+                        {{--  <a href="{{ $routeMain }}/re-cierres" class="item-sub-menu block text-white px-2 py-2 rounded-md text-base font-medium {{ request()->is('re-cierres') ? 'bg-white text-blue-1' : '' }}">Re-cierres</a>
                         <a href="{{ $routeMain }}/historico" class="item-sub-menu block text-white px-2 py-2 rounded-md text-base font-medium {{ request()->is('historico') ? 'bg-white text-blue-1' : '' }}">Historico</a>
-                        <a href="{{ $routeMain }}/ranking" class="item-sub-menu block text-white px-2 py-2 rounded-md text-base font-medium {{ request()->is('ranking') ? 'bg-white text-blue-1' : '' }}">Ranking</a>
+                        <a href="{{ $routeMain }}/ranking" class="item-sub-menu block text-white px-2 py-2 rounded-md text-base font-medium {{ request()->is('ranking') ? 'bg-white text-blue-1' : '' }}">Ranking</a>  --}}
                         @endif
                     </div>
 

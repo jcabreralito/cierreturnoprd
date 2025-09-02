@@ -5,6 +5,7 @@ use App\Http\Controllers\JornadasController;
 use App\Http\Controllers\PrdController;
 use App\Http\Controllers\SolicitudController;
 use App\Http\Controllers\SolicitudesRelacionController;
+use App\Http\Controllers\TestController;
 use App\Http\Controllers\UserController;
 use App\Livewire\Admin\Historico;
 use App\Livewire\Admin\Ranking;
@@ -42,3 +43,5 @@ Route::post('/validate-user', [UserController::class, 'validateUser']);
 Route::middleware(['authcustom'])->get('/re-cierres', ReCierre::class)->name('re-cierres');
 Route::middleware(['authcustom'])->get('/historico', Historico::class)->name('historico');
 Route::middleware(['authcustom'])->get('/ranking', Ranking::class)->name('ranking');
+
+Route::get('/test', [TestController::class, 'pruebaStore'])->name('pruebaStore');

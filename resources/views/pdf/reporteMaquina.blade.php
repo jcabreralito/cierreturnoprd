@@ -6,8 +6,8 @@
     <title>Reporte de Producción</title>
     {{-- <meta charset="UTF-8"> --}}
 
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="vendor/Bootstrap4/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
 
     <style>
         @page {
@@ -162,39 +162,39 @@
                         <div class="row d-flex mt-1 mb-1">
                             <div class="col-12 text-center">
                                 @if ($reporte_eficiencia != null)
-                                    @if ($reporte_eficiencia[0]->GLOBAL != null)
-                                        @if ($reporte_eficiencia[0]->GLOBAL < 60)
+                                    @if ($reporte_eficiencia[0]['GLOBAL'] != null)
+                                        @if ($reporte_eficiencia[0]['GLOBAL'] < 60)
                                             <span
                                                 style="color: #F8696B; text-align: right; vertical-align: middle">EFICIENCIA
                                                 GLOBAL
-                                                {{ number_format($reporte_eficiencia[0]->GLOBAL, 2) }}%
+                                                {{ number_format($reporte_eficiencia[0]['GLOBAL'], 2) }}%
                                             </span>
                                             <img style="text-align: left;" src="img/no-me-gusta.png" height="30px">
-                                        @elseif ($reporte_eficiencia[0]->GLOBAL >= 60 && $reporte_eficiencia[0]->GLOBAL < 70)
+                                        @elseif ($reporte_eficiencia[0]['GLOBAL'] >= 60 && $reporte_eficiencia[0]['GLOBAL'] < 70)
                                             <span style="color: #FDD17F; text-align: right; vertical-align: middle">EFICIENCIA GLOBAL
-                                                {{ number_format($reporte_eficiencia[0]->GLOBAL, 2) }}%
+                                                {{ number_format($reporte_eficiencia[0]['GLOBAL'], 2) }}%
                                                 <img src="img/me-gusta-a.png" height="30px" style="text-align: left;">
                                             </span>
-                                        @elseif ($reporte_eficiencia[0]->GLOBAL >= 70)
+                                        @elseif ($reporte_eficiencia[0]['GLOBAL'] >= 70)
                                             <span style="color: #63BE7B; text-align: right; vertical-align: middle">EFICIENCIA GLOBAL
-                                                {{ number_format($reporte_eficiencia[0]->GLOBAL, 2) }}%
+                                                {{ number_format($reporte_eficiencia[0]['GLOBAL'], 2) }}%
                                                 <img src="img/me-gusta-v.png" height="30px" style="text-align: left;">
                                             </span>
                                         @endif
                                     @else
-                                        @if ($reporte_eficiencia[0]->CONVENCIONAL < 75)
+                                        @if ($reporte_eficiencia[0]['CONVENCIONAL'] < 75)
                                             <span style="color: #F8696B; text-align: right; vertical-align: middle">EFICIENCIA CONVENCIONAL
-                                                {{ number_format($reporte_eficiencia[0]->CONVENCIONAL, 2) }}%
+                                                {{ number_format($reporte_eficiencia[0]['CONVENCIONAL'], 2) }}%
                                                 <img src="img/no-me-gusta.png" height="30px" style="text-align: left;">
                                             </span>
-                                        @elseif ($reporte_eficiencia[0]->CONVENCIONAL >= 75 && $reporte_eficiencia[0]->CONVENCIONAL < 90)
+                                        @elseif ($reporte_eficiencia[0]['CONVENCIONAL'] >= 75 && $reporte_eficiencia[0]['CONVENCIONAL'] < 90)
                                             <span style="color: #FDD17F; text-align: right; vertical-align: middle">EFICIENCIA CONVENCIONAL
-                                                {{ number_format($reporte_eficiencia[0]->CONVENCIONAL, 2) }}%
+                                                {{ number_format($reporte_eficiencia[0]['CONVENCIONAL'], 2) }}%
                                                 <img src="img/me-gusta-a.png" height="30px" style="text-align: left;">
                                             </span>
-                                        @elseif ($reporte_eficiencia[0]->CONVENCIONAL >= 90)
+                                        @elseif ($reporte_eficiencia[0]['CONVENCIONAL'] >= 90)
                                             <span style="color: #63BE7B; text-align: right; vertical-align: middle">EFICIENCIA CONVENCIONAL
-                                                {{ number_format($reporte_eficiencia[0]->CONVENCIONAL, 2) }}%
+                                                {{ number_format($reporte_eficiencia[0]['CONVENCIONAL'], 2) }}%
                                                 <img src="img/me-gusta-v.png" height="30px" style="text-align: left;">
                                             </span>
                                         @endif
@@ -221,20 +221,20 @@
                         AJUSTES NORMALES:
                     </td>
                     <td style="text-align: left">
-                        <b>{{ number_format($reporte_eficiencia[0]->AjustesNormales, 2) }}</b>
+                        <b>{{ number_format($reporte_eficiencia[0]['AjustesNormales'], 2) }}</b>
                     </td>
 
                     <td style="text-align: right" class="pr-2">
                         TIROS:
                     </td>
                     <td style="text-align: left">
-                        <b>{{ number_format($reporte_eficiencia[0]->CantTiros) }}</b>
+                        <b>{{ number_format($reporte_eficiencia[0]['CantTiros']) }}</b>
                     </td>
                     <td style="text-align: right" class="pr-2">
                         EN
                     </td>
                     <td style="text-align: left">
-                        <b>{{ number_format($reporte_eficiencia[0]->EnTiempoTiros, 2) }}</b> HRS
+                        <b>{{ number_format($reporte_eficiencia[0]['EnTiempoTiros'], 2) }}</b> HRS
                     </td>
 
                 </tr>
@@ -243,7 +243,7 @@
                         AJUSTES LITERATURA:
                     </td>
                     <td style="text-align: left">
-                        <b>{{ $reporte_eficiencia[0]->AjustesLiteratura }}</b>
+                        <b>{{ $reporte_eficiencia[0]['AjustesLiteratura'] }}</b>
                     </td>
                     <td></td>
                     <td></td>
@@ -251,7 +251,7 @@
                         SE DEBIO DE HABER HECHO EN:
                     </td>
                     <td style="text-align: left">
-                        <b>{{ number_format($reporte_eficiencia[0]->SeDebioHacer, 2) }}</b> HRS.
+                        <b>{{ number_format($reporte_eficiencia[0]['SeDebioHacer'], 2) }}</b> HRS.
                     </td>
                 </tr>
                 <tr>
@@ -262,19 +262,19 @@
                         TIEMPO REPORTADO:
                     </td>
                     <td style="text-align: left">
-                        <b>{{ number_format($reporte_eficiencia[0]->TiempoReportado, 2) }}</b>
+                        <b>{{ number_format($reporte_eficiencia[0]['TiempoReportado'], 2) }}</b>
                     </td>
                     <td style="text-align: right" class="pr-2">
                         TIEMPO MUERTO:
                     </td>
                     <td style="text-align: left">
-                        <b>{{ number_format($reporte_eficiencia[0]->TotalTiempoMuerto, 2) }}</b>
+                        <b>{{ number_format($reporte_eficiencia[0]['TotalTiempoMuerto'], 2) }}</b>
                     </td>
                     <td style="text-align: right" class="pr-2">
                         STD AJUSTE NORMAL:
                     </td>
                     <td style="text-align: left">
-                        <b>{{ number_format($reporte_eficiencia[0]->AjusteStd, 2) }}</b>
+                        <b>{{ number_format($reporte_eficiencia[0]['AjusteStd'], 2) }}</b>
                     </td>
                 </tr>
                 <tr>
@@ -282,19 +282,19 @@
                         TIEMPO DE AJUSTE:
                     </td>
                     <td style="text-align: left">
-                        <b>{{ number_format($reporte_eficiencia[0]->TiempoDeAjuste, 2) }}</b>
+                        <b>{{ number_format($reporte_eficiencia[0]['TiempoDeAjuste'], 2) }}</b>
                     </td>
                     <td style="text-align: right" class="pr-2">
                         {{-- TIEMPO MUERTO AJENO: --}}
                     </td>
                     <td style="text-align: left">
-                        {{-- <b>{{ number_format($reporte_eficiencia[0]->TiempoMuertoAjeno, 2) }}</b> --}}
+                        {{-- <b>{{ number_format($reporte_eficiencia[0]['TiempoMuertoAjeno'], 2) }}</b> --}}
                     </td>
                     <td style="text-align: right" class="pr-2">
                         STD AJUSTE LITERATURA:
                     </td>
                     <td style="text-align: left">
-                        <b>{{ number_format($reporte_eficiencia[0]->AjusteVWStd, 2) }}</b>
+                        <b>{{ number_format($reporte_eficiencia[0]['AjusteVWStd'], 2) }}</b>
                     </td>
                 </tr>
                 <tr>
@@ -302,19 +302,19 @@
                         TIEMPO DE TIRO:
                     </td>
                     <td style="text-align: left">
-                        <b>{{ number_format($reporte_eficiencia[0]->TiempoDeTiro, 2) }}</b>
+                        <b>{{ number_format($reporte_eficiencia[0]['TiempoDeTiro'], 2) }}</b>
                     </td>
                     <td style="text-align: right" class="pr-2">
                         {{-- TIEMPO MUERTO SIN TURNO: --}}
                     </td>
                     <td style="text-align: left">
-                        {{-- <b>{{ number_format($reporte_eficiencia[0]->TiempoMuertoSinTurno, 2) }}</b> --}}
+                        {{-- <b>{{ number_format($reporte_eficiencia[0]['TiempoMuertoSinTurno'], 2) }}</b> --}}
                     </td>
                     <td style="text-align: right" class="pr-2">
                         STD VELOCIDAD DE TIRO:
                     </td>
                     <td style="text-align: left">
-                        <b>{{ number_format($reporte_eficiencia[0]->VelocidadStd, 0) }}</b>
+                        <b>{{ number_format($reporte_eficiencia[0]['VelocidadStd'], 0) }}</b>
                     </td>
                 </tr>
                 <tr>
@@ -338,11 +338,27 @@
                         <br>
 
                         <span style="text-decoration: underline;">
-                            {{ $reporte_detalle[0]->Empleado }}
+                            {{ $supervisorFirma }}
+                        </span>
+                    </td>
+
+                    <td colspan="3" style="text-align: center">
+                        <br>
+                        <br>
+                        <br>
+                        <br>
+                        <br>
+
+                        <span style="text-decoration: underline;">
+                            {{ $operadorFirma }}
                         </span>
                     </td>
                 </tr>
                 <tr>
+                    <td colspan="3" style="text-align: center">
+                        Firma Supervisor
+                    </td>
+
                     <td colspan="3" style="text-align: center">
                         Firma Operador
                     </td>

@@ -19,17 +19,6 @@
                         </x-filters.select>
                     </div>
 
-                    @if ($tipo_reporte === 'Maquina')
-                        <div wire:ignore>
-                            <x-filters.select name="maquina" labelText="Máquina" id="maquina">
-                                <option value="">Seleccione una máquina</option>
-                                @foreach ($maquinas as $maquina)
-                                    <option value="{{ $maquina['value'] }}">{{ $maquina['value'] }}</option>
-                                @endforeach
-                            </x-filters.select>
-                        </div>
-                    @endif
-
                     <div>
                         <x-filters.select name="turno" labelText="Turno" :isLive="true">
                             <option value="">Seleccione un turno</option>
@@ -159,11 +148,6 @@
                         width: '100%'
                     });
 
-                    $('#operador').on('change', function(e) {
-                        var data = $(this).val();
-                        @this.set('operador', data);
-                    });
-
                     $('#maquina').select2({
                         placeholder: 'Seleccione una máquina',
                         allowClear: true,
@@ -174,11 +158,19 @@
                         var data = $(this).val();
                         @this.set('maquina', data);
                     });
+
+                    console.log('Select2 initialized');
                 }, 1000);
             }
 
+            $('#operador').on('change', function(e) {
+                var data = $(this).val();
+                @this.set('operador', data);
+            });
+
             document.addEventListener('confirmarCierre', (event) => {
                 let operador = event.detail.operador;
+                let isRequiredPasswordOperador = event.detail.isRequiredPasswordOperador;
 
                 Swal.fire({
                     title: 'Confirmación',
@@ -186,8 +178,13 @@
                     html: `
                         <form onsubmit="return false;">
                             <div>
-                                <label for="password" class="block font-medium text-gray-700">Contraseña:</label>
-                                <input type="password" id="password" class="form-control py-2 rounded-md shadow-md mt-1 w-full border-gray-200 focus:outline-none focus:ring-0 focus:border-gray-300" />
+                                <label for="passwordSupervisor" class="block font-medium text-gray-700">Contraseña Supervisor:</label>
+                                <input type="password" id="passwordSupervisor" class="form-control py-2 rounded-md shadow-md mt-1 w-full border-gray-200 focus:outline-none focus:ring-0 focus:border-gray-300" />
+                            </div>
+                            <br>
+                            <div>
+                                <label for="passwordOperador" class="block font-medium text-gray-700">Contraseña Operador:</label>
+                                <input type="password" id="passwordOperador" class="form-control py-2 rounded-md shadow-md mt-1 w-full border-gray-200 focus:outline-none focus:ring-0 focus:border-gray-300" />
                             </div>
                         </form>
                     `,
@@ -197,9 +194,11 @@
                     cancelButtonText: 'Cancelar',
                     reverseButtons: true,
                     preConfirm: () => {
-                        const password = Swal.getPopup().querySelector('#password').value;
-                        if (!password) {
-                            Swal.showValidationMessage(`Por favor ingrese la contraseña`);
+                        const passwordSupervisor = Swal.getPopup().querySelector('#passwordSupervisor').value;
+                        const passwordOperador = Swal.getPopup().querySelector('#passwordOperador').value;
+
+                        if (!passwordSupervisor || (!passwordOperador && isRequiredPasswordOperador)) {
+                            Swal.showValidationMessage(`Por favor ingrese las contraseñas`);
                             return;
                         }
                         // Retorna una promesa para controlar el cierre
@@ -209,7 +208,12 @@
                                 'Content-Type': 'application/json',
                                 'X-CSRF-TOKEN': '{{ csrf_token() }}',
                             },
-                            body: JSON.stringify({ password: password, operador: operador }),
+                            body: JSON.stringify({
+                                passwordSupervisor: passwordSupervisor,
+                                passwordOperador: passwordOperador,
+                                operador: operador,
+                                isRequiredPasswordOperador: isRequiredPasswordOperador
+                            }),
                         })
                         .then(response => response.json())
                         .then(data => {
@@ -219,20 +223,27 @@
                                 return Promise.reject();
                             }
                             // Si todo está bien, retorna los datos y el modal se cierra
-                            return { login: data.user, password: password };
+                            return { loginOperador: data.operador, loginSupervisor: data.supervisor, passwordSupervisor: passwordSupervisor, passwordOperador: passwordOperador };
                         }).catch(() => {
                             // No hace falta nada aquí, el modal sigue abierto
                         });
                     }
                 }).then((result) => {
                     if (result.isConfirmed && result.value) {
-                        @this.set('login', result.value.login);
-                        @this.set('password', result.value.password);
+                        @this.set('loginOperador', result.value.loginOperador);
+                        @this.set('loginSupervisor', result.value.loginSupervisor);
+                        @this.set('passwordOperador', result.value.passwordOperador);
+                        @this.set('passwordSupervisor', result.value.passwordSupervisor);
                         @this.finalizarCierre();
                     } else {
                         @this.set('modalCreateCierreTurno', true);
                     }
                 });
+            });
+
+            document.addEventListener('limpiarOperador', () => {
+                $('#operador').val(null).trigger('change');
+                initSelect2()
             });
         </script>
     </div>

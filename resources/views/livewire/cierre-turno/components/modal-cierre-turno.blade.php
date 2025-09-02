@@ -12,12 +12,48 @@
                     </div>
                 @endif
                 @if (!$esBueno)
+                    {{-- Causas de la ineficiencia --}}
                     <div>
-                        <x-forms.text-area name="observaciones" labelText="Causa de la ineficiencia (¿A que consideras que se deba la ineficiencia?)" placeholder="Ingrese observaciones aquí..." />
+                        <label class="block font-semibold mb-1">Causas de la ineficiencia</label>
+                        @foreach ($observaciones as $index => $observacion)
+                            <div class="flex items-center mb-2 w-full">
+                                <x-forms.text-area
+                                    name="observaciones.{{ $index }}"
+                                    labelText="Causa #{{ $index + 1 }}"
+                                    placeholder="Ingrese observación aquí..."
+                                />
+                                @if ($index > 0)
+                                <button type="button" class="ml-2 text-red-500" wire:click="removeObservacion({{ $index }})">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                                @endif
+                            </div>
+                        @endforeach
+                        <button type="button" class="mt-2 bg-sky-600 rounded-full text-white w-5" wire:click="addObservacion">
+                            <i class="fas fa-plus"></i>
+                        </button>
                     </div>
 
-                    <div>
-                        <x-forms.text-area name="acciones_correctivas" labelText="Compromiso de mejora (¿Qué acciones vas a realizar para mejorar la eficiencia?)" placeholder="Ingrese acciones correctivas aquí..." />
+                    {{-- Compromisos de mejora --}}
+                    <div class="mt-4">
+                        <label class="block font-semibold mb-1">Compromisos de mejora</label>
+                        @foreach ($acciones_correctivas as $index => $accion)
+                            <div class="flex items-center mb-2 w-full">
+                                <x-forms.text-area
+                                    name="acciones_correctivas.{{ $index }}"
+                                    labelText="Compromiso #{{ $index + 1 }}"
+                                    placeholder="Ingrese acción correctiva aquí..."
+                                />
+                                @if ($index > 0)
+                                <button type="button" class="ml-2 text-red-500" wire:click="removeAccionCorrectiva({{ $index }})">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                                @endif
+                            </div>
+                        @endforeach
+                        <button type="button" class="mt-2 bg-sky-600 rounded-full text-white w-5" wire:click="addAccionCorrectiva">
+                            <i class="fas fa-plus"></i>
+                        </button>
                     </div>
                 @endif
             </div>

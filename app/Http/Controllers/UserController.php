@@ -15,24 +15,40 @@ class UserController extends Controller
      */
     public function validateUser(Request $request)
     {
+        $passwordSupervisor = $request->input('passwordSupervisor');
+        $passwordOperador = $request->input('passwordOperador');
 
         if (auth()->user()->tipoUsuarioCierreTurno == 1) {
-            $user = User::where('password', $request->input('password'))
+            $user = User::where('password', $passwordSupervisor)
                         ->where('estatus', 'ACTIVO')
                         ->first();
+
+            return response()->json([
+                'operador' => $user != null ? $user->Login : null,
+                'supervisor' => $user != null ? $user->Login : null,
+                'response' => $user != null
+            ]);
         } else {
             $operadorNombre = explode('-', $request->input('operador'));
-            $user = User::where('password', $request->input('password'))->where(function($q) use ($operadorNombre) {
-                        $q->where('Nombre', $operadorNombre[1])
-                            ->orWhere('Personal', $operadorNombre[0]);
-                    })
-                    ->where('estatus', 'ACTIVO')
-                    ->first();
+            $operador = User::where('password', $passwordOperador)
+                        ->where(function($q) use ($operadorNombre) {
+                            $q->where('Nombre', $operadorNombre[1])
+                                ->orWhere('Personal', $operadorNombre[0]);
+                        })
+                        ->where('estatus', 'ACTIVO')
+                        ->first();
+
+            $supervisor = User::where('password', $passwordOperador)
+                        ->where('Puesto', 'like', '%SUPERVISOR%')
+                        ->where('estatus', 'ACTIVO')
+                        ->first();
+
+            return response()->json([
+                'operador' => $operador != null ? $operador->Login : null,
+                'supervisor' => $supervisor != null ? $supervisor->Login : null,
+                'response' => $operador != null || $supervisor != null
+            ]);
         }
 
-        return response()->json([
-            'user' => $user != null ? $user->Login : null,
-            'response' => $user != null
-        ]);
     }
 }

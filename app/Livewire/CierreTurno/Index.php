@@ -25,19 +25,30 @@ class Index extends Component
     public $sinResultados = false;
     public $yaRealizoCierre = false;
 
-    public $observaciones = '';
-    public $acciones_correctivas = '';
+    // public $observaciones = '';
+    // public $acciones_correctivas = '';
 
     public $password = '';
     public $login = '';
 
+    public $loginOperador = '';
+    public $loginSupervisor = '';
+    public $passwordOperador = '';
+    public $passwordSupervisor = '';
+
+    public $observaciones = [''];
+    public $acciones_correctivas = [''];
+
     /**
-     * Montamos los registros que se utilizaran para los desplegables
+     * Montamos algunas variables para que tengan valor
      *
      * @return void
      */
     public function mount(): void
     {
+        if (auth()->user()->tipoUsuarioCierreTurno == 3 || auth()->user()->tipoUsuarioCierreTurno == 2) {
+            $this->fecha_cierre = now()->format('Y-m-d');
+        }
     }
 
     /**
@@ -158,19 +169,20 @@ class Index extends Component
                 'fecha_cierre' => $this->fecha_cierre,
                 'tipo_reporte' => $this->tipo_reporte,
                 'estatus' => 1,
-                'firma_supervisor' => $this->login,
-                'firma_operador' => $this->login,
+                'firma_supervisor' => $this->loginSupervisor,
+                'firma_operador' => $this->loginOperador,
             ],
             'reporteActual' => $this->reporteActual,
             'razones' => [
-                'observaciones' => $this->observaciones,
-                'acciones_correctivas' => $this->acciones_correctivas,
+                'causas' => $this->observaciones,
+                'compromisos' => $this->acciones_correctivas,
             ],
             'contieneRazones' => $this->esBueno
         ];
 
         $resultado = (new CierreTurnoController())->cerrarTurno($data);
         $this->dispatch('toast', type: 'success', title: 'Cierre de turno exitoso');
+        $this->dispatch('limpiarOperador');
 
         // Limpiamos lo campos
         $this->limpiarCampos();
@@ -195,15 +207,15 @@ class Index extends Component
     {
         if (!$this->esBueno) {
             $this->validate([
-                'observaciones' => 'required|string|max:500',
-                'acciones_correctivas' => 'required|string|max:500',
+                'observaciones.*' => 'required|string',
+                'acciones_correctivas.*' => 'required|string',
             ], [
-                'observaciones.required' => 'El campo observaciones es obligatorio.',
-                'acciones_correctivas.required' => 'El campo acciones correctivas es obligatorio.',
+                'observaciones.*.required' => 'El campo observaciones es obligatorio.',
+                'acciones_correctivas.*.required' => 'El campo acciones correctivas es obligatorio.',
             ]);
         }
 
-        $this->dispatch('confirmarCierre', operador: $this->operador);
+        $this->dispatch('confirmarCierre', operador: $this->operador, isRequiredPasswordOperador: !$this->esBueno);
 
         $this->modalCreateCierreTurno = false;
     }
@@ -216,19 +228,19 @@ class Index extends Component
     public function getEficienciaColor(): string
     {
         if (count($this->reporteActual) > 0) {
-            $global = $this->reporteActual[0]->GLOBAL;
-            $convencional = $this->reporteActual[0]->CONVENCIONAL;
+            $global = $this->reporteActual[0]['GLOBAL'];
+            $convencional = $this->reporteActual[0]['CONVENCIONAL'];
 
             $color = '';
 
             if ($global == null) {
-                if ($convencional < 75) {
+                if ($convencional < 60) {
                     $color = "#F8696B"; // Rojo
                     $this->esBueno = false;
-                } else if ($convencional >= 75 && $convencional < 90) {
+                } else if ($convencional >= 60 && $convencional <= 70) {
                     $color = "#FDD17F";
-                    $this->esBueno = false;
-                } else if ($convencional >= 90) {
+                    $this->esBueno = true;
+                } else if ($convencional > 70) {
                     $color = "#63BE7B";
                     $this->esBueno = true;
                 }
@@ -236,10 +248,10 @@ class Index extends Component
                 if ($global < 60) {
                     $color = "#F8696B";
                     $this->esBueno = false;
-                } else if ($global >= 60 && $global < 70) {
+                } else if ($global >= 60 && $global <= 70) {
                     $color = "#FDD17F";
                     $this->esBueno = false;
-                } else if ($global >= 70) {
+                } else if ($global > 70) {
                     $color = "#63BE7B";
                     $this->esBueno = true;
                 }
@@ -258,13 +270,12 @@ class Index extends Component
      */
     public function limpiarCampos(): void
     {
-        $this->tipo_reporte = null;
         $this->operador = null;
         $this->maquina = null;
         $this->turno = null;
         $this->fecha_cierre = null;
-        $this->observaciones = null;
-        $this->acciones_correctivas = null;
+        $this->observaciones = [''];
+        $this->acciones_correctivas = [''];
         $this->password = null;
 
         $this->list = [];
@@ -275,5 +286,49 @@ class Index extends Component
         $this->esBueno = false;
         $this->limpiarBuscadores = false;
         $this->sinResultados = false;
+    }
+
+    /**
+     * Agrega una nueva observación.
+     *
+     * @return void
+     */
+    public function addObservacion()
+    {
+        $this->observaciones[] = '';
+    }
+
+    /**
+     * Elimina una observación existente.
+     *
+     * @param int $index
+     * @return void
+     */
+    public function removeObservacion($index)
+    {
+        unset($this->observaciones[$index]);
+        $this->observaciones = array_values($this->observaciones);
+    }
+
+    /**
+     * Agrega una nueva acción correctiva.
+     *
+     * @return void
+     */
+    public function addAccionCorrectiva()
+    {
+        $this->acciones_correctivas[] = '';
+    }
+
+    /**
+     * Elimina una acción correctiva existente.
+     *
+     * @param int $index
+     * @return void
+     */
+    public function removeAccionCorrectiva($index)
+    {
+        unset($this->acciones_correctivas[$index]);
+        $this->acciones_correctivas = array_values($this->acciones_correctivas);
     }
 }
