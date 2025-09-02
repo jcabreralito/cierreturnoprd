@@ -14,7 +14,7 @@
                 @if (!$esBueno)
                     {{-- Causas de la ineficiencia --}}
                     <div>
-                        <label class="block font-semibold mb-1">Causas de la ineficiencia</label>
+                        <label class="block font-semibold mb-1">Causa de la ineficiencia (¿A que consideras que se deba la ineficiencia?)</label>
                         @foreach ($observaciones as $index => $observacion)
                             <div class="flex items-center mb-2 w-full">
                                 <x-forms.text-area
@@ -36,7 +36,7 @@
 
                     {{-- Compromisos de mejora --}}
                     <div class="mt-4">
-                        <label class="block font-semibold mb-1">Compromisos de mejora</label>
+                        <label class="block font-semibold mb-1">Compromiso de mejora (¿Qué acciones vas a realizar para mejorar la eficiencia?)</label>
                         @foreach ($acciones_correctivas as $index => $accion)
                             <div class="flex items-center mb-2 w-full">
                                 <x-forms.text-area

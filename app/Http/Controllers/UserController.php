@@ -19,14 +19,19 @@ class UserController extends Controller
         $passwordOperador = $request->input('passwordOperador');
 
         if (auth()->user()->tipoUsuarioCierreTurno == 1) {
-            $user = User::where('password', $passwordSupervisor)
+            $userOperador = User::where('password', $passwordSupervisor)
+                        ->where('estatus', 'ACTIVO')
+                        ->first();
+
+            $userSupervisor = User::where('password', $passwordSupervisor)
+                        ->where('Puesto', 'like', '%SUPERVISOR%')
                         ->where('estatus', 'ACTIVO')
                         ->first();
 
             return response()->json([
-                'operador' => $user != null ? $user->Login : null,
-                'supervisor' => $user != null ? $user->Login : null,
-                'response' => $user != null
+                'operador' => $userOperador != null ? $userOperador->Login : null,
+                'supervisor' => $userSupervisor != null ? $userSupervisor->Login : null,
+                'response' => $userSupervisor != null || $userOperador != null
             ]);
         } else {
             $operadorNombre = explode('-', $request->input('operador'));
