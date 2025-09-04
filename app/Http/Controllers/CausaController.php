@@ -23,10 +23,21 @@ class CausaController extends Controller
             $causa->estatus = 1;
             $causa->save();
             DB::commit();
-            return "Documento registrado exitosamente.";
+            return "Causa registrada exitosamente.";
         } catch (\Throwable $th) {
             DB::rollBack();
-            return "Lo siento, ocurrió un error al registrar el documento.";
+            return "Lo siento, ocurrió un error al registrar la causa.";
         }
+    }
+
+    /**
+     * Función para obtener las causas de un reporte
+     *
+     * @param int $reporteId
+     * @return mixed
+     */
+    public function obtenerCausas(int $reporteId)
+    {
+        return Causa::where('reporte_id', $reporteId)->get();
     }
 }

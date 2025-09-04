@@ -2,7 +2,7 @@
     <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8" x-data="{ showType: false }">
         {{--  Header  --}}
         <div class="flex justify-between items-center py-4">
-            <h1 class="text-2xl font-semibold text-left text-gray-700 w-full">Re - Cálculo</h1>
+            <h1 class="text-2xl font-semibold text-left text-gray-700 w-full">Mis cierres de turno</h1>
         </div>
 
         <hr class="py-2">
@@ -60,15 +60,15 @@
                                 </span>
                             @elseif ($item->estatus == 2)
                                 <span class="px-2 inline-flex text-xxs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                    {{ $item->estatus_nombre }}
+                                    {{ $item->estaus_nombre }}
                                 </span>
                             @elseif ($item->estatus == 3)
                                 <span class="px-2 inline-flex text-xxs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                                    {{ $item->estatus_nombre }}
+                                    {{ $item->estaus_nombre }}
                                 </span>
                             @elseif ($item->estatus == 4)
                                 <span class="px-2 inline-flex text-xxs leading-5 font-semibold rounded-full bg-amber-100 text-amber-800">
-                                    {{ $item->estatus_nombre }}
+                                    {{ $item->estaus_nombre }}
                                 </span>
                             @endif
                         </x-home.table.td>
@@ -80,13 +80,6 @@
                                 class="text-xxs py-1 px-2 bg-blue-500 hover:bg-blue-600 text-white rounded">
                                 <i class="fa-solid fa-eye"></i>
                             </button>
-
-                            @if ($item->estatus != 1 && $item->estatus != 2)
-                            <button onclick="realizarReCalculo('{{ $item->id }}')"
-                                class="text-xxs py-1 px-2 bg-green-500 hover:bg-green-600 text-white rounded">
-                                <i class="fa-solid fa-calculator"></i>
-                            </button>
-                            @endif
                         </x-home.table.td>
                     </tr>
                 @empty
@@ -141,28 +134,6 @@
 
     @if ($reporte)
         {{--  Modal para el registro de una nueva capacitación  --}}
-        @include('livewire.cierre-turno.components.modal-detalle-recierre')
+        @include('livewire.cierre-turno.components.modal-detalle-cierre')
     @endif
-
-    <div wire:ignore>
-        <script>
-            function realizarReCalculo(id) {
-                Swal.fire({
-                    title: '¿Estás seguro?',
-                    text: "Esta acción recalculará el cierre seleccionado.",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Sí, recalcular',
-                    cancelButtonText: 'Cancelar',
-                    reverseButtons: true,
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        @this.call('realizarReCalculo', id);
-                    }
-                });
-            }
-        </script>
-    </div>
 </div>

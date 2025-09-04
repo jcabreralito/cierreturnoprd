@@ -24,10 +24,22 @@ class CompromisoController extends Controller
             $compromiso->estatus = 1;
             $compromiso->save();
             DB::commit();
-            return "Documento registrado exitosamente.";
+            return "Compromiso registrado exitosamente.";
         } catch (\Throwable $th) {
+            dd($th->getMessage());
             DB::rollBack();
-            return "Lo siento, ocurrió un error al registrar el documento.";
+            return "Lo siento, ocurrió un error al registrar el compromiso.";
         }
+    }
+
+    /**
+     * Función para obtener los compromisos de un reporte
+     *
+     * @param int $reporteId
+     * @return mixed
+     */
+    public function obtenerCompromisos(int $reporteId)
+    {
+        return Compromiso::where('reporte_id', $reporteId)->get();
     }
 }

@@ -186,7 +186,7 @@ class CierreTurnoController extends Controller
         $fecha_fin = Carbon::parse($data['fecha_cierre'])->format('d/m/Y');
 
         $nombre_operador = $data['operador'];
-        $supervisorFirma = User::where('Login', $data['firma_supervisor'])->first()->Nombre;
+        $supervisorFirma = User::where('Login', $data['firma_supervisor'])->first()?->Nombre;
         $operadorFirma = User::where('Login', $data['firma_operador'])->first()->Nombre;
 
         if ($data['operador'] == null) {
@@ -349,5 +349,95 @@ class CierreTurnoController extends Controller
     {
         $reporte = (new ReporteController())->obtenerReporte($data);
         return $reporte != null;
+    }
+
+    /**
+     * Función para realizar el re-cálculo de un cierre
+     *
+     * @param int $id
+     * @return void
+     */
+    public function reCalculo($id)
+    {
+        try {
+            $reporteCT = (new ReporteController())->obtenerReportePorId($id);
+
+            if ($reporteCT) {
+
+                $reporte = $this->getReporte([
+                    'fecha_cierre' => $reporteCT->fecha_cierre,
+                    'operador' => $reporteCT->operador . '-' . $reporteCT->nombre_operador,
+                    'maquina' => $reporteCT->maquina,
+                    'turno' => $reporteCT->turno,
+                ]);
+
+                $dataAdicional = [
+                    'ajustes_normales' => $reporte[0]['AjustesNormales'],
+                    'ajustes_literatura' => $reporte[0]['AjustesLiteratura'],
+                    'tiros' => $reporte[0]['CantTiros'],
+                    'en' => $reporte[0]['EnTiempoTiros'],
+                    'se_debio_hacer_en' => $reporte[0]['SeDebioHacer'],
+                    'tiempo_reportado' => $reporte[0]['TiempoReportado'],
+                    'tiempo_ajuste' => $reporte[0]['TiempoDeAjuste'],
+                    'tiempo_tiro' => $reporte[0]['TiempoDeTiro'],
+                    'tiempo_muerto' => $reporte[0]['TotalTiempoMuerto'],
+                    'std_ajuste_normal' => $reporte[0]['AjusteStd'],
+                    'std_ajuste_literatura' => $reporte[0]['AjusteVWStd'],
+                    'std_velocidad_tiro' => $reporte[0]['VelocidadStd'],
+                ];
+
+                $adicional = (new DetalleReporteController())->actualizarDetalles($dataAdicional, $reporteCT->id);
+
+                // Guardamos el archivo PDF
+                $pdf = (new CierreTurnoController())->imprimirReporte([
+                    'fecha_cierre' => $reporteCT->fecha_cierre,
+                    'operador' => $reporteCT->operador . '-' . $reporteCT->nombre_operador,
+                    'maquina' => $reporteCT->maquina,
+                    'turno' => $reporteCT->turno,
+                    'tipo_reporte' => $reporteCT->tipo_reporte,
+                    'firma_supervisor' => $reporteCT->firma_supervisor,
+                    'firma_operador' => $reporteCT->firma_operador,
+                ]);
+
+                $archivo = (new DocumentoReporteController())->actualizarDocumentos($pdf, $reporteCT->id);
+
+                // 3 Guardamos la bitacora
+                $bitacora = (new BitacoraController())->registrarBitacora([
+                    'cambio_anterior' => null,
+                    'cambio_nuevo' => 'Re-cálculo de cierre de turno',
+                    'usuario_id' => auth()->user()->Id_Usuario,
+                    'reporte_id' => $reporteCT->id,
+                ]);
+
+                // Actualizamos la fecha de re-cálculo y el estatus
+                (new ReporteController())->actualizarRecalculo($reporteCT->id);
+            }
+        } catch (\Exception $e) {
+            return "Lo siento, ocurrió un error al realizar el re-cálculo del cierre.";
+        }
+    }
+
+    /**
+     * Función para obtener el detalle de eficiencia por id de reporte
+     *
+     * @param int $id
+     * @return mixed
+     */
+    public function getDataEficiencia($id)
+    {
+        $reporteCT = (new ReporteController())->obtenerReportePorId($id);
+
+        if ($reporteCT) {
+            $reporte = $this->getReporte([
+                'fecha_cierre' => $reporteCT->fecha_cierre,
+                'operador' => $reporteCT->operador . '-' . $reporteCT->nombre_operador,
+                'maquina' => $reporteCT->maquina,
+                'turno' => $reporteCT->turno,
+            ]);
+        } else {
+            $reporte = [];
+        }
+
+        return $reporte;
     }
 }

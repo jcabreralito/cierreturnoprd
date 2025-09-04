@@ -10,7 +10,7 @@ use Illuminate\Contracts\View\View;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-class ReCierre extends Component
+class AprobarCierres extends Component
 {
     use WithPagination;
 
@@ -31,14 +31,14 @@ class ReCierre extends Component
     public $compromisos = [];
 
     /**
-     * Función para renderizar la vista de re-cierre
+     * Función para renderizar la vista de mis cierres
      *
      * @return View
      */
     public function render(): View
     {
-        return view('livewire.admin.re-cierre',[
-            'misCierres' => (new ReporteController())->reCierre([
+        return view('livewire.admin.aprobar-cierres',[
+            'reportesRealizados' => (new ReporteController())->getReportesRealizados([
                 'folio' => $this->filtroFolio,
                 'fecha_cierre_operador' => $this->filtroFechaCierreOperador,
                 'fecha_cierre_supervisor' => $this->filtroFechaCierreSupervisor,
@@ -98,7 +98,7 @@ class ReCierre extends Component
      *
      * @return void
      */
-    public function closeModalDetalleRecierre()
+    public function closeModalDetalle()
     {
         $this->modalDetalle = false;
         $this->reporte = null;
@@ -115,18 +115,6 @@ class ReCierre extends Component
         $this->filtroFechaCierreOperador = null;
         $this->filtroFechaCierreSupervisor = null;
         $this->resetPage();
-    }
-
-    /**
-     * Función para realizar el re-cálculo del cierre
-     *
-     * @param int $id
-     * @return void
-     */
-    public function realizarReCalculo($id)
-    {
-        (new CierreTurnoController())->reCalculo($id);
-        $this->dispatch('toast', type: 'success', message: 'Re-cálculo realizado con éxito.');
     }
 
     /**

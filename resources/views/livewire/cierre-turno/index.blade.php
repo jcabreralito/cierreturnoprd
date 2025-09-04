@@ -71,34 +71,28 @@
             <div>
                 <x-home.table.table :headers="[
                     [0 => 'N° ORDEN', 1 => false, 2 => 'text-center', 3 => ''],
-                    [0 => 'NOMBRE TRABAJO', 1 => false, 2 => 'text-center', 3 => ''],
-                    [0 => 'ID ACT', 1 => false, 2 => '', 3 => ''],
-                    [0 => 'DESCRIPCIÓN', 1 => false, 2 => 'text-center', 3 => ''],
-                    [0 => 'PROCESO', 1 => false, 2 => 'text-center', 3 => ''],
+                    [0 => 'NOMBRE TRABAJO', 1 => false, 2 => '', 3 => ''],
+                    [0 => 'DESCRIPCIÓN', 1 => false, 2 => '', 3 => ''],
+                    [0 => 'PROCESO', 1 => false, 2 => '', 3 => ''],
                     [0 => 'CANTIDAD', 1 => false, 2 => 'text-center', 3 => ''],
-                    [0 => 'TURNO', 1 => false, 2 => 'text-center', 3 => ''],
                     [0 => 'TIEMPO', 1 => false, 2 => 'text-center', 3 => ''],
                     [0 => 'HORA INICIO', 1 => false, 2 => 'text-center', 3 => ''],
                     [0 => 'HORA FIN', 1 => false, 2 => 'text-center', 3 => ''],
-                    [0 => 'FECHA PRODUCCIÓN', 1 => false, 2 => 'text-center', 3 => ''],
-                    [0 => 'OPERADOR', 1 => false, 2 => 'text-center', 3 => ''],
-                    [0 => 'MAQUINA', 1 => false, 2 => 'text-center', 3 => ''],
+                    [0 => 'MAQUINA', 1 => false, 2 => '', 3 => ''],
+                    [0 => 'NOTAS', 1 => false, 2 => '', 3 => ''],
                 ]" tblClass="tblNormal">
                     @forelse ($this->list as $item)
                         <tr class="hover:bg-gray-100 transition-all duration-300" wire:key="item-{{ $item->idAct }}">
                             <x-home.table.td class="text-center">{{ $item->numOrden }}</x-home.table.td>
-                            <x-home.table.td class="text-center">{{ $item->NombreTrabajo }}</x-home.table.td>
-                            <x-home.table.td class="text-center">{{ $item->idAct }}</x-home.table.td>
-                            <x-home.table.td class="text-center">{{ $item->observacion }}</x-home.table.td>
-                            <x-home.table.td class="text-center">{{ $item->proceso }}</x-home.table.td>
-                            <x-home.table.td class="text-center">{{ number_format($item->Cantidad, 2) }}</x-home.table.td>
-                            <x-home.table.td class="text-center">{{ $item->Turno }}</x-home.table.td>
+                            <x-home.table.td class="">{{ $item->NombreTrabajo }}</x-home.table.td>
+                            <x-home.table.td class="">{{ $item->observacion }}</x-home.table.td>
+                            <x-home.table.td class="">{{ $item->proceso }}</x-home.table.td>
+                            <x-home.table.td class="text-center">{{ number_format($item->Cantidad, 0) }}</x-home.table.td>
                             <x-home.table.td class="text-center">{{ number_format($item->Tiempo, 2) }}</x-home.table.td>
                             <x-home.table.td class="text-center">{{ Carbon\Carbon::parse($item->HoraInicio)->format('Y/m/d H:i') }}</x-home.table.td>
                             <x-home.table.td class="text-center">{{ Carbon\Carbon::parse($item->HoraFin)->format('Y/m/d H:i') }}</x-home.table.td>
-                            <x-home.table.td class="text-center">{{ Carbon\Carbon::parse($item->fechaproduccion)->format('Y/m/d') }}</x-home.table.td>
-                            <x-home.table.td class="text-center">{{ $item->Empleado }}</x-home.table.td>
-                            <x-home.table.td class="text-center">{{ $item->Maquina }}</x-home.table.td>
+                            <x-home.table.td class="">{{ $item->Maquina }}</x-home.table.td>
+                            <x-home.table.td class="">{{ $item->Notas }}</x-home.table.td>
                         </tr>
                     @empty
                         <tr>
@@ -170,18 +164,11 @@
 
             document.addEventListener('confirmarCierre', (event) => {
                 let operador = event.detail.operador;
-                let isRequiredPasswordOperador = event.detail.isRequiredPasswordOperador;
-
                 Swal.fire({
                     title: 'Confirmación',
                     text: '¿Está seguro de que desea realizar el cierre de turno?',
                     html: `
                         <form onsubmit="return false;">
-                            <div>
-                                <label for="passwordSupervisor" class="block font-medium text-gray-700">Contraseña Supervisor:</label>
-                                <input type="password" id="passwordSupervisor" class="form-control py-2 rounded-md shadow-md mt-1 w-full border-gray-200 focus:outline-none focus:ring-0 focus:border-gray-300" />
-                            </div>
-                            <br>
                             <div>
                                 <label for="passwordOperador" class="block font-medium text-gray-700">Contraseña Operador:</label>
                                 <input type="password" id="passwordOperador" class="form-control py-2 rounded-md shadow-md mt-1 w-full border-gray-200 focus:outline-none focus:ring-0 focus:border-gray-300" />
@@ -194,10 +181,9 @@
                     cancelButtonText: 'Cancelar',
                     reverseButtons: true,
                     preConfirm: () => {
-                        const passwordSupervisor = Swal.getPopup().querySelector('#passwordSupervisor').value;
                         const passwordOperador = Swal.getPopup().querySelector('#passwordOperador').value;
 
-                        if (!passwordSupervisor || (!passwordOperador && isRequiredPasswordOperador)) {
+                        if (!passwordOperador && isRequiredPasswordOperador) {
                             Swal.showValidationMessage(`Por favor ingrese las contraseñas`);
                             return;
                         }
@@ -209,10 +195,8 @@
                                 'X-CSRF-TOKEN': '{{ csrf_token() }}',
                             },
                             body: JSON.stringify({
-                                passwordSupervisor: passwordSupervisor,
                                 passwordOperador: passwordOperador,
                                 operador: operador,
-                                isRequiredPasswordOperador: isRequiredPasswordOperador
                             }),
                         })
                         .then(response => response.json())
@@ -223,7 +207,7 @@
                                 return Promise.reject();
                             }
                             // Si todo está bien, retorna los datos y el modal se cierra
-                            return { loginOperador: data.operador, loginSupervisor: data.supervisor, passwordSupervisor: passwordSupervisor, passwordOperador: passwordOperador };
+                            return { loginOperador: data.operador, passwordOperador: passwordOperador };
                         }).catch(() => {
                             // No hace falta nada aquí, el modal sigue abierto
                         });
@@ -231,9 +215,7 @@
                 }).then((result) => {
                     if (result.isConfirmed && result.value) {
                         @this.set('loginOperador', result.value.loginOperador);
-                        @this.set('loginSupervisor', result.value.loginSupervisor);
                         @this.set('passwordOperador', result.value.passwordOperador);
-                        @this.set('passwordSupervisor', result.value.passwordSupervisor);
                         @this.finalizarCierre();
                     } else {
                         @this.set('modalCreateCierreTurno', true);

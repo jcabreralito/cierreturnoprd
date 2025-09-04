@@ -15,23 +15,16 @@ class UserController extends Controller
      */
     public function validateUser(Request $request)
     {
-        $passwordSupervisor = $request->input('passwordSupervisor');
         $passwordOperador = $request->input('passwordOperador');
 
         if (auth()->user()->tipoUsuarioCierreTurno == 1) {
-            $userOperador = User::where('password', $passwordSupervisor)
-                        ->where('estatus', 'ACTIVO')
-                        ->first();
-
-            $userSupervisor = User::where('password', $passwordSupervisor)
-                        ->where('Puesto', 'like', '%SUPERVISOR%')
+            $userOperador = User::where('password', $passwordOperador)
                         ->where('estatus', 'ACTIVO')
                         ->first();
 
             return response()->json([
                 'operador' => $userOperador != null ? $userOperador->Login : null,
-                'supervisor' => $userSupervisor != null ? $userSupervisor->Login : null,
-                'response' => $userSupervisor != null || $userOperador != null
+                'response' => $userOperador != null
             ]);
         } else {
             $operadorNombre = explode('-', $request->input('operador'));
@@ -43,17 +36,10 @@ class UserController extends Controller
                         ->where('estatus', 'ACTIVO')
                         ->first();
 
-            $supervisor = User::where('password', $passwordOperador)
-                        ->where('Puesto', 'like', '%SUPERVISOR%')
-                        ->where('estatus', 'ACTIVO')
-                        ->first();
-
             return response()->json([
                 'operador' => $operador != null ? $operador->Login : null,
-                'supervisor' => $supervisor != null ? $supervisor->Login : null,
-                'response' => $operador != null || $supervisor != null
+                'response' => $operador != null
             ]);
         }
-
     }
 }

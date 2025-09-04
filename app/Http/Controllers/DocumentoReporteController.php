@@ -28,4 +28,30 @@ class DocumentoReporteController extends Controller
             return "Lo siento, ocurrió un error al registrar el documento.";
         }
     }
+
+    /**
+     * Función para actualizar los documentos de un reporte
+     *
+     * @param array $data
+     * @param int $reporteId
+     * @return mixed
+     */
+    public function actualizarDocumentos($data, $reporteId)
+    {
+        try {
+            DB::beginTransaction();
+            $documento = DocumentoReporte::where('reporte_id', $reporteId)->first();
+            if ($documento) {
+                $documento->archivo = $data['archivo'];
+                $documento->save();
+                DB::commit();
+                return "Documento actualizado exitosamente.";
+            } else {
+                return "No se encontró el documento para actualizar.";
+            }
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return "Lo siento, ocurrió un error al actualizar el documento.";
+        }
+    }
 }

@@ -7,9 +7,11 @@ use App\Http\Controllers\SolicitudController;
 use App\Http\Controllers\SolicitudesRelacionController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\UserController;
+use App\Livewire\Admin\AprobarCierres;
 use App\Livewire\Admin\Historico;
 use App\Livewire\Admin\Ranking;
 use App\Livewire\Admin\ReCierre;
+use App\Livewire\CierreTurno\MisCierres;
 use App\Livewire\Solicitud\Indicadores;
 use App\Livewire\Solicitud\RelacionHoras;
 use App\Livewire\Solicitud\RelacionJornadas;
@@ -40,7 +42,9 @@ Livewire::setUpdateRoute(function ($handle) {
 });
 
 Route::post('/validate-user', [UserController::class, 'validateUser']);
-Route::middleware(['authcustom'])->get('/re-cierres', ReCierre::class)->name('re-cierres');
+Route::middleware(['authcustom'])->get('/re-calculo', ReCierre::class)->name('re-calculo');
+Route::middleware(['authcustom'])->get('/mis-cierres', MisCierres::class)->name('mis-cierres');
+Route::middleware(['authcustom'])->get('/aprobar-cierres', AprobarCierres::class)->name('aprobar-cierres');
 Route::middleware(['authcustom'])->get('/historico', Historico::class)->name('historico');
 Route::middleware(['authcustom'])->get('/ranking', Ranking::class)->name('ranking');
 
