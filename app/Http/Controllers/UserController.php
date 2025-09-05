@@ -18,7 +18,7 @@ class UserController extends Controller
         $passwordOperador = $request->input('passwordOperador');
         $supervisor = $request->input('supervisor');
 
-        if (auth()->user()->tipoUsuarioCierreTurno == 1) {
+        if (auth()->user()->tipoUsuarioCierreTurno == 1 || auth()->user()->tipoUsuarioCierreTurno == 4) {
             $userOperador = User::where('password', $passwordOperador)
                         ->where('estatus', 'ACTIVO')
                         ->first();
@@ -56,7 +56,7 @@ class UserController extends Controller
     {
         $passwordSupervisor = $request->input('passwordSupervisor');
 
-        if (auth()->user()->tipoUsuarioCierreTurno == 1) {
+        if (auth()->user()->tipoUsuarioCierreTurno == 1 || auth()->user()->tipoUsuarioCierreTurno == 4) {
             $userSupervisor = User::where('password', $passwordSupervisor)
                         ->where('estatus', 'ACTIVO')
                         ->first();

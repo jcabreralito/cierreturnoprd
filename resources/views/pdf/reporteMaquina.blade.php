@@ -169,33 +169,33 @@
                                                 GLOBAL
                                                 {{ number_format($reporte_eficiencia[0]['GLOBAL'], 2) }}%
                                             </span>
-                                            <img style="text-align: left;" src="img/no-me-gusta.png" height="30px">
+                                            <img style="text-align: left;" src="assets/img/no-me-gusta.png" height="30px">
                                         @elseif ($reporte_eficiencia[0]['GLOBAL'] >= 60 && $reporte_eficiencia[0]['GLOBAL'] < 70)
                                             <span style="color: #FDD17F; text-align: right; vertical-align: middle">EFICIENCIA GLOBAL
                                                 {{ number_format($reporte_eficiencia[0]['GLOBAL'], 2) }}%
-                                                <img src="img/me-gusta-a.png" height="30px" style="text-align: left;">
+                                                <img src="assets/img/me-gusta-a.png" height="30px" style="text-align: left;">
                                             </span>
                                         @elseif ($reporte_eficiencia[0]['GLOBAL'] >= 70)
                                             <span style="color: #63BE7B; text-align: right; vertical-align: middle">EFICIENCIA GLOBAL
                                                 {{ number_format($reporte_eficiencia[0]['GLOBAL'], 2) }}%
-                                                <img src="img/me-gusta-v.png" height="30px" style="text-align: left;">
+                                                <img src="assets/img/me-gusta-v.png" height="30px" style="text-align: left;">
                                             </span>
                                         @endif
                                     @else
                                         @if ($reporte_eficiencia[0]['CONVENCIONAL'] < 75)
                                             <span style="color: #F8696B; text-align: right; vertical-align: middle">EFICIENCIA CONVENCIONAL
                                                 {{ number_format($reporte_eficiencia[0]['CONVENCIONAL'], 2) }}%
-                                                <img src="img/no-me-gusta.png" height="30px" style="text-align: left;">
+                                                <img src="assets/img/no-me-gusta.png" height="30px" style="text-align: left;">
                                             </span>
                                         @elseif ($reporte_eficiencia[0]['CONVENCIONAL'] >= 75 && $reporte_eficiencia[0]['CONVENCIONAL'] < 90)
                                             <span style="color: #FDD17F; text-align: right; vertical-align: middle">EFICIENCIA CONVENCIONAL
                                                 {{ number_format($reporte_eficiencia[0]['CONVENCIONAL'], 2) }}%
-                                                <img src="img/me-gusta-a.png" height="30px" style="text-align: left;">
+                                                <img src="assets/img/me-gusta-a.png" height="30px" style="text-align: left;">
                                             </span>
                                         @elseif ($reporte_eficiencia[0]['CONVENCIONAL'] >= 90)
                                             <span style="color: #63BE7B; text-align: right; vertical-align: middle">EFICIENCIA CONVENCIONAL
                                                 {{ number_format($reporte_eficiencia[0]['CONVENCIONAL'], 2) }}%
-                                                <img src="img/me-gusta-v.png" height="30px" style="text-align: left;">
+                                                <img src="assets/img/me-gusta-v.png" height="30px" style="text-align: left;">
                                             </span>
                                         @endif
                                     @endif

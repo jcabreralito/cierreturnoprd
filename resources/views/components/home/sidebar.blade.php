@@ -5,19 +5,22 @@
 
     <div class="flex-col justify-between items-center flex min-h-[94%]">
         <div class="space-y-4 w-full">
-            @if(auth()->user()->tipoUsuarioCierreTurno != 4)
+            @if(auth()->user()->tipoUsuarioCierreTurno != 5)
             <div class="w-full">
                 <a href="{{ $routeMain }}/dashboard" class="{{ request()->is('dashboard') ? 'btn-sidebar-active' : 'btn-sidebar' }} block">Cierre turno</a>
             </div>
             @endif
 
-            @if (auth()->user()->tipoUsuarioCierreTurno == 1)
+            @if (auth()->user()->tipoUsuarioCierreTurno == 1 || auth()->user()->tipoUsuarioCierreTurno == 2 || auth()->user()->tipoUsuarioCierreTurno == 3)
             <div class="w-full">
                 <a href="{{ $routeMain }}/lista-cierres" class="{{ request()->is('lista-cierres') ? 'btn-sidebar-active' : 'btn-sidebar' }} block">Lista de Cierres</a>
             </div>
             <div class="w-full">
                 <a href="{{ $routeMain }}/historico" class="{{ request()->is('historico') ? 'btn-sidebar-active' : 'btn-sidebar' }} block">Historico</a>
             </div>
+            @endif
+
+            @if (auth()->user()->tipoUsuarioCierreTurno == 1 || auth()->user()->tipoUsuarioCierreTurno == 4)
             <div class="w-full">
                 <a href="{{ $routeMain }}/ranking" class="{{ request()->is('ranking') ? 'btn-sidebar-active' : 'btn-sidebar' }} block">Ranking</a>
             </div>

@@ -54,4 +54,15 @@ class DocumentoReporteController extends Controller
             return "Lo siento, ocurrió un error al actualizar el documento.";
         }
     }
+
+    /**
+     * Función para obtener los documentos de un reporte
+     *
+     * @param int $reporteId
+     * @return mixed
+     */
+    public function obtenerPdf($reporteId)
+    {
+        return DocumentoReporte::where('reporte_id', $reporteId)->first();
+    }
 }

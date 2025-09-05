@@ -502,6 +502,21 @@ class CierreTurnoController extends Controller
                 'estatus' => 2,
             ];
 
+            $reporteCT = (new ReporteController())->obtenerReportePorId($id);
+
+            // Guardamos el archivo PDF
+            $pdf = (new CierreTurnoController())->imprimirReporte([
+                'fecha_cierre' => $reporteCT->fecha_cierre,
+                'operador' => $reporteCT->operador . '-' . $reporteCT->nombre_operador,
+                'maquina' => $reporteCT->maquina,
+                'turno' => $reporteCT->turno,
+                'tipo_reporte' => $reporteCT->tipo_reporte,
+                'firma_supervisor' => $supervisor,
+                'firma_operador' => $reporteCT->firma_operador,
+            ]);
+
+            $archivo = (new DocumentoReporteController())->actualizarDocumentos($pdf, $reporteCT->id);
+
             return (new ReporteController())->actualizarFirmaSupervisor($data, $id);
         } catch (\Exception $e) {
             return "Lo siento, ocurrió un error al finalizar la firma del supervisor.";
@@ -532,6 +547,54 @@ class CierreTurnoController extends Controller
             ]);
         } catch (\Exception $e) {
             return "Lo siento, ocurrió un error al rechazar el cierre de turno.";
+        }
+    }
+
+    /**
+     * Función para corregir el cierre
+     *
+     * @param int $id
+     * @param array $observaciones
+     * @param array $acciones_correctivas
+     * @return void
+     */
+    public function corregirCierre($id, $observaciones, $acciones_correctivas)
+    {
+        try {
+            // Actualizamos el estatus del reporte a Abierto (1)
+            (new ReporteController())->actualizarEstatus(1, $id);
+
+            // Eliminamos las causas y compromisos anteriores
+            DB::table('Causas')->where('reporte_id', $id)->delete();
+            DB::table('Compromisos')->where('reporte_id', $id)->delete();
+
+            // Registramos las nuevas causas
+            foreach ($observaciones as $causa) {
+                (new CausaController())->registrarCausa([
+                    'causa' => $causa,
+                    'reporte_id' => $id,
+                    'estatus' => 1
+                ]);
+            }
+
+            // Registramos los nuevos compromisos
+            foreach ($acciones_correctivas as $compromiso) {
+                (new CompromisoController())->registrarCompromiso([
+                    'compromiso' => $compromiso,
+                    'reporte_id' => $id,
+                    'estatus' => 1
+                ]);
+            }
+
+            // Guardamos la bitacora
+            (new BitacoraController())->registrarBitacora([
+                'cambio_anterior' => null,
+                'cambio_nuevo' => 'Corrección de cierre de turno',
+                'usuario_id' => auth()->user()->Id_Usuario,
+                'reporte_id' => $id,
+            ]);
+        } catch (\Exception $e) {
+            return "Lo siento, ocurrió un error al corregir el cierre de turno.";
         }
     }
 }

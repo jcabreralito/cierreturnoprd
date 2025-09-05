@@ -91,13 +91,21 @@
                         <x-home.table.td class="">{{ ($item->fecha_cierre != null) ? Carbon\Carbon::parse($item->fecha_cierre)->format('Y/m/d') : 'Sin fecha' }}</x-home.table.td>
                         <x-home.table.td class="">{{ ($item->fecha_firma_operador != null) ? Carbon\Carbon::parse($item->fecha_firma_operador)->format('Y/m/d') : 'Sin fecha' }}</x-home.table.td>
                         <x-home.table.td class="">{{ ($item->fecha_firma_supervisor != null) ? Carbon\Carbon::parse($item->fecha_firma_supervisor)->format('Y/m/d') : 'Sin fecha' }}</x-home.table.td>
-                        <x-home.table.td class="text-center">
+                        <x-home.table.td class="text-center space-x-2">
                             <div class="tooltip">
                                 <button wire:click="verDetalle('{{ $item->id }}')"
                                     class="text-xxs py-1 px-2 bg-blue-500 hover:bg-blue-600 text-white rounded">
                                     <i class="fa-solid fa-eye"></i>
                                 </button>
                                 <span class="tooltiptext">Ver detalle</span>
+                            </div>
+
+                            <div class="tooltip">
+                                <button wire:click="verPdf('{{ $item->id }}')"
+                                    class="text-xxs py-1 px-2 bg-purple-500 hover:bg-purple-600 text-white rounded">
+                                    <i class="fa-solid fa-file-pdf"></i>
+                                </button>
+                                <span class="tooltiptext">Ver PDF</span>
                             </div>
                         </x-home.table.td>
                     </tr>
@@ -153,7 +161,9 @@
 
     @if ($reporte)
         {{--  Modal para el registro de una nueva capacitación  --}}
-        @include('livewire.cierre-turno.components.modal-detalle-recierre')
+        @include('livewire.cierre-turno.components.modal-detalle-cierre')
+
+        @include('livewire.cierre-turno.components.modal-pdf')
     @endif
 
     <div wire:ignore>

@@ -116,9 +116,19 @@ class ReporteController extends Controller
                         ->when($data['supervisor'], function ($query) use ($data) {
                             return $query->where('supervisor_id', $data['supervisor']);
                         })
-                        ->when(auth()->user()->tipoUsuarioCierreTurno != 1 && auth()->user()->tipoUsuarioCierreTurno != 4, function ($query) {
-                            return $query->where('usuario_id', auth()->user()->Id_Usuario);
+                        ->when($data['estatus'], function ($query) use ($data) {
+                            return $query->where('estatus', $data['estatus']);
                         })
+                        ->when(auth()->user()->tipoUsuarioCierreTurno != 1 && auth()->user()->tipoUsuarioCierreTurno != 4, function ($query) {
+                            if (auth()->user()->tipoUsuarioCierreTurno == 2) {
+                                return $query->where('supervisor_id', auth()->user()->Id_Usuario);
+                            }
+
+                            if (auth()->user()->tipoUsuarioCierreTurno == 3) {
+                                return $query->where('operador', auth()->user()->Personal);
+                            }
+                        })
+                        ->whereIn('estatus', [1, 3]) // Solo los que no han sido recalculados
                         ->orderBy($data['sort'], $data['sort_type'])
                         ->when($data['pagination'] != 'todos', function ($query) use ($data) {
                             return $query->paginate($data['pagination']);
@@ -148,9 +158,15 @@ class ReporteController extends Controller
                             return $query->where('operador', $data['operador']);
                         })
                         ->when(auth()->user()->tipoUsuarioCierreTurno != 1 && auth()->user()->tipoUsuarioCierreTurno != 4, function ($query) {
-                            return $query->where('usuario_id', auth()->user()->Id_Usuario);
+                            if (auth()->user()->tipoUsuarioCierreTurno == 2) {
+                                return $query->where('supervisor_id', auth()->user()->Id_Usuario);
+                            }
+
+                            if (auth()->user()->tipoUsuarioCierreTurno == 3) {
+                                return $query->where('operador', auth()->user()->Personal);
+                            }
                         })
-                        ->whereIn('estatus', [2,3]) // Solo los que ya fueron recalculados
+                        ->whereIn('estatus', [2]) // Solo los que ya fueron recalculados
                         ->orderBy($data['sort'], $data['sort_type'])
                         ->when($data['pagination'] != 'todos', function ($query) use ($data) {
                             return $query->paginate($data['pagination']);

@@ -9,8 +9,8 @@
 
         <div class="mb-4">
             <div class="flex items-start bg-[#E9E9E9] py-1 px-4 shadow-md rounded-md mb-5">
-                <div class="grid grid-cols-1 lg:grid-cols-6 md:gap-x-4 md:gap-y-0 gap-y-4 w-full">
-                    <div wire:ignore>
+                <div class="grid grid-cols-1 md:gap-x-4 md:gap-y-0 gap-y-4 w-full {{ auth()->user()->tipoUsuarioCierreTurno == 1 ? 'lg:grid-cols-7' : 'lg:grid-cols-6' }}">
+                    <div wire:ignore class="{{ auth()->user()->tipoUsuarioCierreTurno == 1 || auth()->user()->tipoUsuarioCierreTurno == 2 ? '' : 'hidden' }}">
                         <x-filters.select name="operador" labelText="Operador" id="operador">
                             <option value="">Seleccione un operador</option>
                             @foreach ($operadores as $operador)
@@ -19,7 +19,7 @@
                         </x-filters.select>
                     </div>
 
-                    <div wire:ignore>
+                    <div wire:ignore class="{{ auth()->user()->tipoUsuarioCierreTurno == 1 || auth()->user()->tipoUsuarioCierreTurno == 3 ? '' : 'hidden' }}">
                         <x-filters.select name="supervisor" labelText="Supervisor" id="supervisor">
                             <option value="">Seleccione un supervisor</option>
                             @foreach ($supervisores as $supervisor)
@@ -30,6 +30,14 @@
 
                     <div>
                         <x-filters.input name="filtroFolio" labelText="Folio" type="text" :isLive="false" wire:keydown.enter="obtenerData"/>
+                    </div>
+
+                    <div>
+                        <x-filters.select name="filtroEstatus" labelText="Estatus" id="filtroEstatus" wire:change="obtenerData">
+                            <option value="">Seleccione un estatus</option>
+                            <option value="1">Pendiente</option>
+                            <option value="3">Rechazado</option>
+                        </x-filters.select>
                     </div>
 
                     <div>
@@ -49,7 +57,7 @@
                             <span class="tooltiptext">Buscar</span>
                         </div>
 
-                        @if ($filtroFolio != null || $filtroFechaCierreOperador != null || $filtroFechaCierreSupervisor != null || $operador != null || $supervisor != null)
+                        @if ($filtroFolio != null || $filtroFechaCierreOperador != null || $filtroFechaCierreSupervisor != null || $operador != null || $supervisor != null || $filtroEstatus != null)
                             <button wire:click="limpiarFiltros()"
                                 class="ml-2 text-xs py-2 px-4 bg-red-500 hover:bg-red-600 text-white rounded">
                                 <i class="fa-solid fa-filter-circle-xmark"></i>
@@ -65,13 +73,13 @@
         <div>
             <x-home.table.table :headers="[
                 [0 => 'FOLIO', 1 => true, 2 => 'text-center', 3 => 'folio'],
-                [0 => 'OPERADOR', 1 => true, 2 => 'text-center', 3 => 'operador'],
-                [0 => 'SUPERVISOR', 1 => true, 2 => 'text-center', 3 => 'supervisor'],
-                [0 => 'ESTADO', 1 => true, 2 => 'text-center', 3 => 'estado'],
+                [0 => 'OPERADOR', 1 => true, 2 => 'text-center', 3 => 'nombre_operador'],
+                [0 => 'SUPERVISOR', 1 => true, 2 => 'text-center', 3 => 'nombre_supervisor'],
+                [0 => 'ESTADO', 1 => true, 2 => 'text-center', 3 => 'estatus'],
                 [0 => 'FEC. CIERRE', 1 => true, 2 => '', 3 => 'fecha_cierre'],
                 [0 => 'FEC. FIR. OP.', 1 => true, 2 => '', 3 => 'fecha_firma_operador'],
                 [0 => 'FEC. FIR. SUP.', 1 => true, 2 => '', 3 => 'fecha_firma_supervisor'],
-                [0 => 'ESTATUS', 1 => false, 2 => 'text-center', 3 => ''],
+                (auth()->user()->tipoUsuarioCierreTurno == 1 || auth()->user()->tipoUsuarioCierreTurno == 2) ? [0 => 'MARCAR', 1 => false, 2 => 'text-center', 3 => ''] : null,
                 [0 => 'ACCIONES', 1 => false, 2 => 'text-center', 3 => ''],
             ]" tblClass="tblNormal">
                 @forelse ($cierres as $item)
@@ -101,6 +109,7 @@
                         <x-home.table.td class="">{{ ($item->fecha_cierre != null) ? Carbon\Carbon::parse($item->fecha_cierre)->format('Y/m/d') : 'Sin fecha' }}</x-home.table.td>
                         <x-home.table.td class="">{{ ($item->fecha_firma_operador != null) ? Carbon\Carbon::parse($item->fecha_firma_operador)->format('Y/m/d') : 'Sin fecha' }}</x-home.table.td>
                         <x-home.table.td class="">{{ ($item->fecha_firma_supervisor != null) ? Carbon\Carbon::parse($item->fecha_firma_supervisor)->format('Y/m/d') : 'Sin fecha' }}</x-home.table.td>
+                        @if (auth()->user()->tipoUsuarioCierreTurno == 1 || auth()->user()->tipoUsuarioCierreTurno == 2)
                         <x-home.table.td class="text-center">
                             <div>
                                 <x-forms.select name="grt{{ $item->id }}" wire:change="firmarSupervisor({{ $item->id }}, {{ $item->estatus }})" id="grt{{ $item->id }}" :hasEtiqueta="false" :isDisabled="($item->estatus == 2 || $item->estatus == 3) && auth()->user()->tipoUsuarioCierreTurno != 1 ? true : false">
@@ -113,7 +122,8 @@
                                 </x-forms.select>
                             </div>
                         </x-home.table.td>
-                        <x-home.table.td class="text-center">
+                        @endif
+                        <x-home.table.td class="text-center space-x-2">
                             <div class="tooltip">
                                 <button wire:click="verDetalle('{{ $item->id }}')"
                                     class="text-xxs py-1 px-2 bg-blue-500 hover:bg-blue-600 text-white rounded">
@@ -122,7 +132,15 @@
                                 <span class="tooltiptext">Ver detalle</span>
                             </div>
 
-                            @if (auth()->user()->tipoUsuarioCierreTurno == 1)
+                            <div class="tooltip">
+                                <button wire:click="verPdf('{{ $item->id }}')"
+                                    class="text-xxs py-1 px-2 bg-purple-500 hover:bg-purple-600 text-white rounded">
+                                    <i class="fa-solid fa-file-pdf"></i>
+                                </button>
+                                <span class="tooltiptext">Ver PDF</span>
+                            </div>
+
+                            @if (auth()->user()->tipoUsuarioCierreTurno == 1 || auth()->user()->tipoUsuarioCierreTurno == 4)
                             <div class="tooltip">
                                 <button onclick="realizarReCalculo('{{ $item->id }}')"
                                     class="text-xxs py-1 px-2 bg-green-500 hover:bg-green-600 text-white rounded">
@@ -186,6 +204,8 @@
     @if ($reporte)
         {{--  Modal para el registro de una nueva capacitación  --}}
         @include('livewire.cierre-turno.components.modal-detalle-recierre')
+
+        @include('livewire.cierre-turno.components.modal-pdf')
     @endif
 
     <div wire:ignore>

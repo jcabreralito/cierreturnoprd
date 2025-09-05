@@ -6,6 +6,7 @@ use App\Http\Controllers\CausaController;
 use App\Http\Controllers\CierreTurnoController;
 use App\Http\Controllers\CompromisoController;
 use App\Http\Controllers\DetalleReporteController;
+use App\Http\Controllers\DocumentoReporteController;
 use App\Http\Controllers\MotivoRechazoController;
 use App\Http\Controllers\ReporteController;
 use Illuminate\Contracts\View\View;
@@ -19,6 +20,7 @@ class ListaCierres extends Component
     public $filtroFolio;
     public $filtroFechaCierreOperador;
     public $filtroFechaCierreSupervisor;
+    public $filtroEstatus;
     public $operador;
     public $supervisor;
     public $paginationF = 10;
@@ -36,6 +38,12 @@ class ListaCierres extends Component
     public $compromisos = [];
     public $listadoMotivosRechazo = [];
 
+    public $observaciones = [""];
+    public $acciones_correctivas = [""];
+
+    public $modalPdf = false;
+    public $reportePdf = '';
+
     /**
      * Función para renderizar la vista de mis cierres
      *
@@ -48,6 +56,7 @@ class ListaCierres extends Component
                 'folio' => $this->filtroFolio,
                 'fecha_cierre_operador' => $this->filtroFechaCierreOperador,
                 'fecha_cierre_supervisor' => $this->filtroFechaCierreSupervisor,
+                'estatus' => $this->filtroEstatus,
                 'operador' => $this->operador,
                 'supervisor' => $this->supervisor,
                 'pagination' => $this->paginationF,
@@ -102,6 +111,12 @@ class ListaCierres extends Component
         $this->causas = (new CausaController())->obtenerCausas($id);
         $this->compromisos = (new CompromisoController())->obtenerCompromisos($id);
         $this->listadoMotivosRechazo = (new MotivoRechazoController())->getMotivosRechazo($id);
+
+        // Si es operador o admin y el estatus es 3 (rechazado)
+        if ((auth()->user()->tipoUsuarioCierreTurno == 1 || auth()->user()->tipoUsuarioCierreTurno == 3) && $this->reporte->estatus == 3) {
+            $this->observaciones = array_values($this->causas->pluck('causa')->toArray());
+            $this->acciones_correctivas = array_values($this->compromisos->pluck('compromiso')->toArray());
+        }
     }
 
     /**
@@ -126,6 +141,8 @@ class ListaCierres extends Component
         $this->filtroFechaCierreOperador = null;
         $this->filtroFechaCierreSupervisor = null;
         $this->operador = null;
+        $this->supervisor = null;
+        $this->filtroEstatus = null;
         $this->resetPage();
         $this->dispatch('limpiarOperador');
     }
@@ -208,5 +225,76 @@ class ListaCierres extends Component
     {
         (new CierreTurnoController())->rechazarCierreTurno($id, $motivoRechazo);
         $this->dispatch('toast', type: 'success', message: 'Cierre rechazado con éxito.');
+    }
+
+    /**
+     * Función para corregir el cierre
+     *
+     * @return void
+     */
+    public function corregir()
+    {
+        (new CierreTurnoController())->corregirCierre($this->reporte->id, $this->observaciones, $this->acciones_correctivas);
+        $this->dispatch('toast', type: 'success', message: 'Cierre corregido con éxito.');
+        $this->observaciones = [""];
+        $this->acciones_correctivas = [""];
+        $this->modalDetalle = false;
+    }
+
+    /**
+     * Agrega una nueva observación.
+     *
+     * @return void
+     */
+    public function addObservacion()
+    {
+        $this->observaciones[] = '';
+    }
+
+    /**
+     * Elimina una observación existente.
+     *
+     * @param int $index
+     * @return void
+     */
+    public function removeObservacion($index)
+    {
+        unset($this->observaciones[$index]);
+        $this->observaciones = array_values($this->observaciones);
+    }
+
+    /**
+     * Agrega una nueva acción correctiva.
+     *
+     * @return void
+     */
+    public function addAccionCorrectiva()
+    {
+        $this->acciones_correctivas[] = '';
+    }
+
+    /**
+     * Elimina una acción correctiva existente.
+     *
+     * @param int $index
+     * @return void
+     */
+    public function removeAccionCorrectiva($index)
+    {
+        unset($this->acciones_correctivas[$index]);
+        $this->acciones_correctivas = array_values($this->acciones_correctivas);
+    }
+
+    /**
+     * Función para ver el PDF del cierre
+     *
+     * @param int $id
+     * @return void
+     */
+    public function verPdf($id)
+    {
+        $this->modalPdf = true;
+        $this->reporte = (new ReporteController())->obtenerReportePorId($id);
+        $this->reportePdf = (new DocumentoReporteController())->obtenerPdf($id);
     }
 }

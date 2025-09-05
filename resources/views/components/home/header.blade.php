@@ -46,13 +46,16 @@
                 <nav class="mt-5 px-2 space-y-1 flex flex-col justify-between min-h-[95%]">
                     <div class="space-y-2">
                         {{--  Inicio  --}}
-                        @if(auth()->user()->tipoUsuarioCierreTurno != 4)
+                        @if(auth()->user()->tipoUsuarioCierreTurno != 5)
                             <a href="{{ $routeMain }}/dashboard" class="item-sub-menu block text-white px-2 py-2 rounded-md text-base font-medium {{ request()->is('dashboard') ? 'bg-white text-blue-1' : '' }}">Cierre turno</a>
                         @endif
 
-                        @if (auth()->user()->tipoUsuarioCierreTurno == 1)
+                        @if (auth()->user()->tipoUsuarioCierreTurno == 1 || auth()->user()->tipoUsuarioCierreTurno == 2 || auth()->user()->tipoUsuarioCierreTurno == 3)
                         <a href="{{ $routeMain }}/lista-cierres" class="item-sub-menu block text-white px-2 py-2 rounded-md text-base font-medium {{ request()->is('lista-cierres') ? 'bg-white text-blue-1' : '' }}">Lista de Cierres</a>
                         <a href="{{ $routeMain }}/historico" class="item-sub-menu block text-white px-2 py-2 rounded-md text-base font-medium {{ request()->is('historico') ? 'bg-white text-blue-1' : '' }}">Historico</a>
+                        @endif
+
+                        @if (auth()->user()->tipoUsuarioCierreTurno == 1 || auth()->user()->tipoUsuarioCierreTurno == 4)
                         <a href="{{ $routeMain }}/ranking" class="item-sub-menu block text-white px-2 py-2 rounded-md text-base font-medium {{ request()->is('ranking') ? 'bg-white text-blue-1' : '' }}">Ranking</a>
                         @endif
                     </div>

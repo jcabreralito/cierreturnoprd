@@ -239,28 +239,15 @@ class Index extends Component
 
             $color = '';
 
-            if ($global == null) {
-                if ($convencional < 60) {
-                    $color = "#F8696B"; // Rojo
-                    $this->esBueno = false;
-                } else if ($convencional >= 60 && $convencional <= 70) {
-                    $color = "#FDD17F";
-                    $this->esBueno = true;
-                } else if ($convencional > 70) {
-                    $color = "#63BE7B";
-                    $this->esBueno = true;
-                }
-            } else {
-                if ($global < 60) {
-                    $color = "#F8696B";
-                    $this->esBueno = false;
-                } else if ($global >= 60 && $global <= 70) {
-                    $color = "#FDD17F";
-                    $this->esBueno = false;
-                } else if ($global > 70) {
-                    $color = "#63BE7B";
-                    $this->esBueno = true;
-                }
+            if ($global < 60) {
+                $color = "#F8696B";
+                $this->esBueno = false;
+            } else if ($global >= 60 && $global <= 70) {
+                $color = "#FDD17F";
+                $this->esBueno = false;
+            } else if ($global > 70) {
+                $color = "#63BE7B";
+                $this->esBueno = true;
             }
 
             return $color;

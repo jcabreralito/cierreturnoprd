@@ -6,6 +6,7 @@ use App\Http\Controllers\CausaController;
 use App\Http\Controllers\CierreTurnoController;
 use App\Http\Controllers\CompromisoController;
 use App\Http\Controllers\DetalleReporteController;
+use App\Http\Controllers\DocumentoReporteController;
 use App\Http\Controllers\MotivoRechazoController;
 use App\Http\Controllers\ReporteController;
 use Illuminate\Contracts\View\View;
@@ -33,6 +34,9 @@ class Historico extends Component
     public $causas = [];
     public $compromisos = [];
     public $listadoMotivosRechazo = [];
+
+    public $modalPdf = false;
+    public $reportePdf = '';
 
     /**
      * Función para renderizar la vista de mis cierres
@@ -164,5 +168,18 @@ class Historico extends Component
         }
 
         return '#000000'; // Default color
+    }
+
+    /**
+     * Función para ver el PDF del cierre
+     *
+     * @param int $id
+     * @return void
+     */
+    public function verPdf($id)
+    {
+        $this->modalPdf = true;
+        $this->reporte = (new ReporteController())->obtenerReportePorId($id);
+        $this->reportePdf = (new DocumentoReporteController())->obtenerPdf($id);
     }
 }
