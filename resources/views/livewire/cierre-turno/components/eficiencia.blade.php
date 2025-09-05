@@ -1,4 +1,4 @@
-<div class="mt-4 grid grid-cols-12 gap-4 border rounded-md p-4 bg-white shadow-md text-slate-600">
+<div class="mt-4 grid grid-cols-12 gap-4 border rounded-md p-4 bg-white shadow-md text-slate-600 text-sm">
     <div class="col-span-6 md:col-span-3 space-y-3">
         <h3 class="font-bold text-lg">Tiempo de ajuste promedio</h3>
 
@@ -31,6 +31,12 @@
         <p>SE HICIERON <span class="font-semibold">{{ number_format($reporteActual[0]['AjustesNormales'], 0) }}</span> AJUSTES NORMALES, <span class="font-semibold">{{ number_format($reporteActual[0]['AjustesLiteratura'], 0) }}</span> DE LITERATURA Y <span class="font-semibold">{{ number_format($reporteActual[0]['CantTiros'], 0) }}</span> TIROS EN <span class="font-semibold">{{ number_format($reporteActual[0]['EnTiempoTiros'], 2) }}</span> HRS, SE DEBIO DE HABER HECHO EN <span class="font-semibold">{{ number_format($reporteActual[0]['SeDebioHacer'], 2) }}</span> HRS.</p>
 
         <p>TIEMPO REPORTADO: <span class="font-semibold">{{ number_format($reporteActual[0]['TiempoReportado'], 2) }}</span></p>
+
+        <div class="mt-2">
+            <p>STD AJUSTE NORMAL: <span class="font-semibold">{{ number_format($reporteActual[0]['AjusteStd'], 2) }}</span></p>
+            <p>STD AJUSTE LITERATURA: <span class="font-semibold">{{ number_format($reporteActual[0]['AjusteVWStd'], 2) }}</span></p>
+            <p>STD VELOCIDAD DE TIRO: <span class="font-semibold">{{ number_format($reporteActual[0]['VelocidadStd'], 2) }}</span></p>
+        </div>
     </div>
 
     <div class="col-span-6 md:col-span-3 space-y-3">

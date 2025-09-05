@@ -75,7 +75,7 @@
 
     <x-slot name="footer">
         <div class="space-x-2">
-            <x-secondary-button wire:click="closeModalDetalleRecierre" wire:loading.attr="disabled">
+            <x-secondary-button wire:click="$toggle('modalDetalle')" wire:loading.attr="disabled">
                 Cancelar
             </x-secondary-button>
 
