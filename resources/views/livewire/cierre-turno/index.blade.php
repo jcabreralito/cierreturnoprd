@@ -36,10 +36,13 @@
                             ($fecha_cierre != null && $fecha_cierre != '')
                         )
                         <div class="h-full flex justify-center w-full items-center space-x-4">
-                            <button wire:click="obtenerData()"
-                                class="text-xs py-2 px-4 bg-cyan-500 hover:bg-cyan-600 text-white rounded">
-                                Consultar reporte
-                            </button>
+                            <div class="tooltip">
+                                <button wire:click="obtenerData()"
+                                    class="text-xs py-2 px-4 bg-cyan-500 hover:bg-cyan-600 text-white rounded">
+                                    Consultar reporte
+                                </button>
+                                <span class="tooltiptext">Consultar reporte</span>
+                            </div>
 
                             @if ($yaRealizoCierre)
                                 <div>
@@ -48,10 +51,12 @@
                             @endif
 
                             @if ($realizarCierre && !$yaRealizoCierre)
-                                <button wire:click="realizarCierreAccion"
-                                    class="text-xs py-2 px-4 bg-green-500 hover:bg-green-600 text-white rounded">
-                                    Realizar cierre
-                                </button>
+                                <div class="tooltip">
+                                    <button wire:click="realizarCierreAccion" class="text-xs py-2 px-4 bg-green-500 hover:bg-green-600 text-white rounded">
+                                        Realizar cierre
+                                    </button>
+                                    <span class="tooltiptext">Realizar cierre</span>
+                                </div>
                             @endif
                         </div>
                     @endif

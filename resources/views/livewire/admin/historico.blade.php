@@ -41,10 +41,13 @@
                         </div>
 
                         @if ($filtroFolio != null || $filtroFechaCierreOperador != null || $filtroFechaCierreSupervisor != null || $operador != null)
+                        <div class="tooltip">
                             <button wire:click="limpiarFiltros()"
                                 class="ml-2 text-xs py-2 px-4 bg-red-500 hover:bg-red-600 text-white rounded">
                                 <i class="fa-solid fa-filter-circle-xmark"></i>
                             </button>
+                            <span class="tooltiptext">Limpiar filtros</span>
+                        </div>
                         @endif
                     </div>
                 </div>

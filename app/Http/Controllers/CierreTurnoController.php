@@ -169,7 +169,7 @@ class CierreTurnoController extends Controller
                     'AjusteStd' => $item->StdAjusteL,
                     'AjusteVWStd' => $item->StdAjusteVW,
                     'VelocidadStd' => $item->VelPromedio,
-                    'GLOBAL' => $item->EfiGlobal,
+                    'GLOBAL' => ($item->EfiGlobal > 100 ? 100 : ($item->EfiGlobal < 0 ? 0 : $item->EfiGlobal)),
                     'CONVENCIONAL' => $item->EfiGlobal,
 
                     'TieSinTrab' => $item->TieSinTrab,
