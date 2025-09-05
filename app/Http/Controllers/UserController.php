@@ -16,6 +16,7 @@ class UserController extends Controller
     public function validateUser(Request $request)
     {
         $passwordOperador = $request->input('passwordOperador');
+        $supervisor = $request->input('supervisor');
 
         if (auth()->user()->tipoUsuarioCierreTurno == 1) {
             $userOperador = User::where('password', $passwordOperador)
@@ -24,6 +25,7 @@ class UserController extends Controller
 
             return response()->json([
                 'operador' => $userOperador != null ? $userOperador->Login : null,
+                'supervisor' => $supervisor,
                 'response' => $userOperador != null
             ]);
         } else {
@@ -38,7 +40,37 @@ class UserController extends Controller
 
             return response()->json([
                 'operador' => $operador != null ? $operador->Login : null,
+                'supervisor' => $supervisor,
                 'response' => $operador != null
+            ]);
+        }
+    }
+
+    /**
+     * Función para obtener el usuario al que le pertenece una contraseña (supervisor)
+     *
+     * @param Request $request
+     * @return \App\Models\User|null
+     */
+    public function validateSupervisor(Request $request)
+    {
+        $passwordSupervisor = $request->input('passwordSupervisor');
+
+        if (auth()->user()->tipoUsuarioCierreTurno == 1) {
+            $userSupervisor = User::where('password', $passwordSupervisor)
+                        ->where('estatus', 'ACTIVO')
+                        ->first();
+
+            return response()->json([
+                'supervisor' => $userSupervisor != null ? $userSupervisor->Login : null,
+                'response' => $userSupervisor != null
+            ]);
+        } else {
+            $supervisor = auth()->user()->Password == $passwordSupervisor ? auth()->user()->Login : null;
+
+            return response()->json([
+                'supervisor' => $supervisor,
+                'response' => $supervisor != null
             ]);
         }
     }

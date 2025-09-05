@@ -2,19 +2,28 @@
     <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8" x-data="{ showType: false }">
         {{--  Header  --}}
         <div class="flex justify-between items-center py-4">
-            <h1 class="text-2xl font-semibold text-left text-gray-700 w-full">Historico</h1>
+            <h1 class="text-2xl font-semibold text-left text-gray-700 w-full">Listado de cierres</h1>
         </div>
 
         <hr class="py-2">
 
         <div class="mb-4">
             <div class="flex items-start bg-[#E9E9E9] py-1 px-4 shadow-md rounded-md mb-5">
-                <div class="grid grid-cols-1 lg:grid-cols-5 md:gap-x-4 md:gap-y-0 gap-y-4 w-full">
+                <div class="grid grid-cols-1 lg:grid-cols-6 md:gap-x-4 md:gap-y-0 gap-y-4 w-full">
                     <div wire:ignore>
                         <x-filters.select name="operador" labelText="Operador" id="operador">
                             <option value="">Seleccione un operador</option>
                             @foreach ($operadores as $operador)
-                                <option value="{{ $operador['operador'] }}">{{ $operador['label'] }}</option>
+                                <option value="{{ $operador['value'] }}">{{ $operador['label'] }}</option>
+                            @endforeach
+                        </x-filters.select>
+                    </div>
+
+                    <div wire:ignore>
+                        <x-filters.select name="supervisor" labelText="Supervisor" id="supervisor">
+                            <option value="">Seleccione un supervisor</option>
+                            @foreach ($supervisores as $supervisor)
+                                <option value="{{ $supervisor->Id_Usuario }}">{{ $supervisor->nombre_completo }}</option>
                             @endforeach
                         </x-filters.select>
                     </div>
@@ -40,7 +49,7 @@
                             <span class="tooltiptext">Buscar</span>
                         </div>
 
-                        @if ($filtroFolio != null || $filtroFechaCierreOperador != null || $filtroFechaCierreSupervisor != null || $operador != null)
+                        @if ($filtroFolio != null || $filtroFechaCierreOperador != null || $filtroFechaCierreSupervisor != null || $operador != null || $supervisor != null)
                             <button wire:click="limpiarFiltros()"
                                 class="ml-2 text-xs py-2 px-4 bg-red-500 hover:bg-red-600 text-white rounded">
                                 <i class="fa-solid fa-filter-circle-xmark"></i>
@@ -62,6 +71,7 @@
                 [0 => 'FEC. CIERRE', 1 => true, 2 => '', 3 => 'fecha_cierre'],
                 [0 => 'FEC. FIR. OP.', 1 => true, 2 => '', 3 => 'fecha_firma_operador'],
                 [0 => 'FEC. FIR. SUP.', 1 => true, 2 => '', 3 => 'fecha_firma_supervisor'],
+                [0 => 'ESTATUS', 1 => false, 2 => 'text-center', 3 => ''],
                 [0 => 'ACCIONES', 1 => false, 2 => 'text-center', 3 => ''],
             ]" tblClass="tblNormal">
                 @forelse ($cierres as $item)
@@ -72,25 +82,37 @@
                         <x-home.table.td class="text-center">
                             @if ($item->estatus == 1)
                                 <span class="px-2 inline-flex text-xxs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
-                                    {{ $item->estatus_nombre }}
+                                    {{ $item->nombre_accionado }}
                                 </span>
                             @elseif ($item->estatus == 2)
                                 <span class="px-2 inline-flex text-xxs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                    {{ $item->estatus_nombre }}
+                                    {{ $item->nombre_accionado }}
                                 </span>
                             @elseif ($item->estatus == 3)
                                 <span class="px-2 inline-flex text-xxs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                                    {{ $item->estatus_nombre }}
+                                    {{ $item->nombre_accionado }}
                                 </span>
                             @elseif ($item->estatus == 4)
                                 <span class="px-2 inline-flex text-xxs leading-5 font-semibold rounded-full bg-amber-100 text-amber-800">
-                                    {{ $item->estatus_nombre }}
+                                    {{ $item->nombre_accionado }}
                                 </span>
                             @endif
                         </x-home.table.td>
                         <x-home.table.td class="">{{ ($item->fecha_cierre != null) ? Carbon\Carbon::parse($item->fecha_cierre)->format('Y/m/d') : 'Sin fecha' }}</x-home.table.td>
                         <x-home.table.td class="">{{ ($item->fecha_firma_operador != null) ? Carbon\Carbon::parse($item->fecha_firma_operador)->format('Y/m/d') : 'Sin fecha' }}</x-home.table.td>
                         <x-home.table.td class="">{{ ($item->fecha_firma_supervisor != null) ? Carbon\Carbon::parse($item->fecha_firma_supervisor)->format('Y/m/d') : 'Sin fecha' }}</x-home.table.td>
+                        <x-home.table.td class="text-center">
+                            <div>
+                                <x-forms.select name="grt{{ $item->id }}" wire:change="firmarSupervisor({{ $item->id }}, {{ $item->estatus }})" id="grt{{ $item->id }}" :hasEtiqueta="false" :isDisabled="($item->estatus == 2 || $item->estatus == 3) && auth()->user()->tipoUsuarioCierreTurno != 1 ? true : false">
+                                    <option value="" disabled>Seleccionar estatus</option>
+                                    @foreach ($catEstatus as $est)
+                                        <option value="{{ $est->id }}" {{ $item->estatus == $est->id ? 'selected' : '' }}>
+                                            {{ $item->estatus == $est->id ? $est->nombre_accionado : $est->nombre }}
+                                        </option>
+                                    @endforeach
+                                </x-forms.select>
+                            </div>
+                        </x-home.table.td>
                         <x-home.table.td class="text-center">
                             <div class="tooltip">
                                 <button wire:click="verDetalle('{{ $item->id }}')"
@@ -99,6 +121,16 @@
                                 </button>
                                 <span class="tooltiptext">Ver detalle</span>
                             </div>
+
+                            @if (auth()->user()->tipoUsuarioCierreTurno == 1)
+                            <div class="tooltip">
+                                <button onclick="realizarReCalculo('{{ $item->id }}')"
+                                    class="text-xxs py-1 px-2 bg-green-500 hover:bg-green-600 text-white rounded">
+                                    <i class="fa-solid fa-calculator"></i>
+                                </button>
+                                <span class="tooltiptext">Re-calcular cierre</span>
+                            </div>
+                            @endif
                         </x-home.table.td>
                     </tr>
                 @empty
@@ -187,6 +219,12 @@
                         allowClear: true,
                         width: '100%'
                     });
+
+                    $('#supervisor').select2({
+                        placeholder: 'Seleccione un supervisor',
+                        allowClear: true,
+                        width: '100%'
+                    });
                 }, 1000);
             }
 
@@ -196,9 +234,110 @@
                 @this.call('obtenerData');
             });
 
+            $('#supervisor').on('change', function(e) {
+                var data = $(this).val();
+                @this.set('supervisor', data);
+                @this.call('obtenerData');
+            });
+
             document.addEventListener('limpiarOperador', () => {
                 $('#operador').val(null).trigger('change');
+                $('#supervisor').val(null).trigger('change');
                 initSelect2()
+            });
+
+            document.addEventListener('firmarSupervisor', (event) => {
+                const { id, previoEstatus } = event.detail;
+                const selectElement = document.getElementById('grt' + id);
+
+                if (selectElement.value == 2) {
+                    Swal.fire({
+                        title: '¿Estás seguro?',
+                        text: "Esta acción firmará el cierre seleccionado.",
+                        icon: 'warning',
+                        html: `
+                            <form onsubmit="return false;">
+                                <div class="mt-4">
+                                    <label for="passwordSupervisor" class="block font-medium text-gray-700">Contraseña Supervisor:</label>
+                                    <input type="password" id="passwordSupervisor" class="form-control py-2 rounded-md shadow-md mt-1 w-full border-gray-200 focus:outline-none focus:ring-0 focus:border-gray-300" />
+                                </div>
+                            </form>
+                        `,
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Sí, firmar',
+                        cancelButtonText: 'Cancelar',
+                        reverseButtons: true,
+                        preConfirm: () => {
+                            const passwordSupervisor = Swal.getPopup().querySelector('#passwordSupervisor').value;
+                            if (!passwordSupervisor) {
+                                Swal.showValidationMessage(`Por favor ingrese la contraseña del supervisor`);
+                            }
+
+                            // Retorna una promesa para controlar el cierre
+                            return fetch(serve + '/validate-supervisor', {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                        },
+                                        body: JSON.stringify({
+                                            passwordSupervisor: passwordSupervisor,
+                                        }),
+                                    })
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        if (!data.response) {
+                                            Swal.showValidationMessage('Contraseña incorrecta');
+                                            // Rechaza la promesa para mantener el modal abierto
+                                            return Promise.reject();
+                                        }
+                                        // Si todo está bien, retorna los datos y el modal se cierra
+                                        return { supervisor: data.supervisor, motivoRechazo: null };
+                                    }).catch(() => {
+                                        // No hace falta nada aquí, el modal sigue abierto
+                                    });
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            @this.call('finalizarFirmaSupervisor', id,  result.value.supervisor);
+                        } else {
+                            // Si se cancela, desmarcamos el switch
+                            document.getElementById('grt' + id).value = previoEstatus;
+                        }
+                    });
+                } else if(selectElement.value == 3) {
+                    Swal.fire({
+                        title: '¿Estás seguro?',
+                        text: "Esta acción rechazará el cierre seleccionado.",
+                        icon: 'warning',
+                        input: 'textarea',
+                        inputPlaceholder: 'Ingrese el motivo de rechazo',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Sí, rechazar',
+                        cancelButtonText: 'Cancelar',
+                        reverseButtons: true,
+                        preConfirm: (motivoRechazo) => {
+                            if (!motivoRechazo) {
+                                Swal.showValidationMessage(`Por favor ingrese el motivo de rechazo`);
+                            }
+                            return { passwordSupervisor: null, motivoRechazo: motivoRechazo };
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            @this.call('rechazarCierreTurno', id, result.value.motivoRechazo);
+                        } else {
+                            // Si se cancela, desmarcamos el switch
+                            document.getElementById('grt' + id).value = previoEstatus;
+                        }
+                    });
+                } else {
+                    // Si se desmarca el switch, simplemente actualizamos sin confirmación
+                    document.getElementById('grt' + id).value = previoEstatus;
+                }
             });
         </script>
     </div>

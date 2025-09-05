@@ -23,6 +23,7 @@ class DetalleReporteController extends Controller
             $detalles->ajustes_literatura = $data['ajustes_literatura'];
             $detalles->tiros = $data['tiros'];
             $detalles->en = $data['en'];
+            $detalles->velocidad_promedio = $data['velocidad_promedio'];
             $detalles->se_debio_hacer_en = $data['se_debio_hacer_en'];
             $detalles->tiempo_reportado = $data['tiempo_reportado'];
             $detalles->tiempo_ajuste = $data['tiempo_ajuste'];
@@ -31,6 +32,7 @@ class DetalleReporteController extends Controller
             $detalles->std_ajuste_normal = $data['std_ajuste_normal'];
             $detalles->std_ajuste_literatura = $data['std_ajuste_literatura'];
             $detalles->std_velocidad_tiro = $data['std_velocidad_tiro'];
+            $detalles->eficiencia_global = $data['eficiencia_global'];
             $detalles->reporte_id = $data['reporte_id'];
             $detalles->save();
             DB::commit();
@@ -58,6 +60,7 @@ class DetalleReporteController extends Controller
                 $detalles->ajustes_literatura = $data['ajustes_literatura'];
                 $detalles->tiros = $data['tiros'];
                 $detalles->en = $data['en'];
+                $detalles->velocidad_promedio = $data['velocidad_promedio'];
                 $detalles->se_debio_hacer_en = $data['se_debio_hacer_en'];
                 $detalles->tiempo_reportado = $data['tiempo_reportado'];
                 $detalles->tiempo_ajuste = $data['tiempo_ajuste'];
@@ -66,6 +69,7 @@ class DetalleReporteController extends Controller
                 $detalles->std_ajuste_normal = $data['std_ajuste_normal'];
                 $detalles->std_ajuste_literatura = $data['std_ajuste_literatura'];
                 $detalles->std_velocidad_tiro = $data['std_velocidad_tiro'];
+                $detalles->eficiencia_global = $data['eficiencia_global'];
                 $detalles->save();
                 DB::commit();
                 return "Detalles del reporte actualizados exitosamente.";
@@ -76,5 +80,16 @@ class DetalleReporteController extends Controller
             DB::rollBack();
             return "Lo siento, ocurrió un error al actualizar los detalles del reporte.";
         }
+    }
+
+    /**
+     * Función para obtener el detalle de un reporte específico
+     *
+     * @param int $reporteId
+     * @return mixed
+     */
+    public function getDetalleReporte($reporteId)
+    {
+        return DetalleReporte::where('reporte_id', $reporteId)->first();
     }
 }

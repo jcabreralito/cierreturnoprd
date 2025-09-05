@@ -2,35 +2,35 @@
     <div class="col-span-6 md:col-span-3 space-y-3">
         <h3 class="font-bold text-lg">Tiempo de ajuste promedio</h3>
 
-        <h4><span class="font-semibold">{{ number_format($reporteActual[0]['TieAjusPro'], 2) }} h</span></h4>
+        <h4><span class="font-semibold">{{ number_format($reporteActual->tiempo_ajuste, 2) }} h</span></h4>
 
         <div class="flex space-x-3">
-            <p>No. Ajustes <span class="font-semibold ml-2">{{ number_format($reporteActual[0]['AjustesNormales'], 2) }}</span></p>
+            <p>No. Ajustes <span class="font-semibold ml-2">{{ number_format($reporteActual->ajustes_normales, 2) }}</span></p>
 
-            <p>Tiempo <span class="font-semibold ml-2">{{ number_format($reporteActual[0]['TiempoDeAjuste'], 2) }}</span> h</p>
+            <p>Tiempo <span class="font-semibold ml-2">{{ number_format($reporteActual->tiempo_ajuste, 2) }}</span> h</p>
         </div>
 
-        <p>Se debió haber realizado en <span class="font-semibold">{{ number_format($reporteActual[0]['SeDebioHacerEnTiem'], 2) }}</span> h</p>
+        <p>Se debió haber realizado en <span class="font-semibold">{{ number_format($reporteActual->en, 2) }}</span> h</p>
     </div>
 
     <div class="col-span-6 md:col-span-3 space-y-3">
         <h3 class="font-bold text-lg">Velocidad Promedio</h3>
 
-        <h4><span class="font-semibold">{{ number_format($reporteActual[0]['VelPromedio'], 2) }} t/h</span></h4>
+        <h4><span class="font-semibold">{{ number_format($reporteActual->velocidad_promedio, 2) }} t/h</span></h4>
 
         <div class="flex space-x-3">
-            <p>Tiros <span class="font-semibold ml-2">{{ number_format($reporteActual[0]['CantTiros'], 2) }}</span></p>
+            <p>Tiros <span class="font-semibold ml-2">{{ number_format($reporteActual->tiros, 2) }}</span></p>
 
-            <p>Tiempo <span class="font-semibold ml-2">{{ number_format($reporteActual[0]['TiempoDeTiro'], 2) }}</span> h</p>
+            <p>Tiempo <span class="font-semibold ml-2">{{ number_format($reporteActual->tiempo_tiro, 2) }}</span> h</p>
         </div>
 
-        <p>Se debió haber realizado en <span class="font-semibold">{{ number_format($reporteActual[0]['SeDebioHacerEnVel'], 2) }}</span> h</p>
+        <p>Se debió haber realizado en <span class="font-semibold">{{ number_format($reporteActual->se_debio_hacer_en, 2) }}</span> h</p>
     </div>
 
     <div class="col-span-6 md:col-span-3 space-y-3">
-        <p>SE HICIERON <span class="font-semibold">{{ number_format($reporteActual[0]['AjustesNormales'], 0) }}</span> AJUSTES NORMALES, <span class="font-semibold">{{ number_format($reporteActual[0]['AjustesLiteratura'], 0) }}</span> DE LITERATURA Y <span class="font-semibold">{{ number_format($reporteActual[0]['CantTiros'], 0) }}</span> TIROS EN <span class="font-semibold">{{ number_format($reporteActual[0]['EnTiempoTiros'], 2) }}</span> HRS, SE DEBIO DE HABER HECHO EN <span class="font-semibold">{{ number_format($reporteActual[0]['SeDebioHacer'], 2) }}</span> HRS.</p>
+        <p>SE HICIERON <span class="font-semibold">{{ number_format($reporteActual->ajustes_normales, 0) }}</span> AJUSTES NORMALES, <span class="font-semibold">{{ number_format($reporteActual->ajustes_literatura, 0) }}</span> DE LITERATURA Y <span class="font-semibold">{{ number_format($reporteActual->tiros, 0) }}</span> TIROS EN <span class="font-semibold">{{ number_format($reporteActual->en, 2) }}</span> HRS, SE DEBIO DE HABER HECHO EN <span class="font-semibold">{{ number_format($reporteActual->se_debio_hacer, 2) }}</span> HRS.</p>
 
-        <p>TIEMPO REPORTADO: <span class="font-semibold">{{ number_format($reporteActual[0]['TiempoReportado'], 2) }}</span></p>
+        <p>TIEMPO REPORTADO: <span class="font-semibold">{{ number_format($reporteActual->tiempo_reportado, 2) }}</span></p>
     </div>
 
     <div class="col-span-6 md:col-span-3 space-y-3">
@@ -38,7 +38,7 @@
 
         <div>
             @php
-                $porcentaje = $reporteActual[0]['GLOBAL'] ?? 0;
+                $porcentaje = $reporteActual->eficiencia_global ?? 0;
                 $radio = 50;
                 $circunferencia = 2 * pi() * $radio;
                 $offset = $circunferencia - ($porcentaje / 100 * $circunferencia);

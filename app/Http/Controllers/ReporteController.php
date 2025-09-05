@@ -31,6 +31,7 @@ class ReporteController extends Controller
             $reporte->turno = $data['turno'];
             $reporte->firma_supervisor = $data['firma_supervisor']; // Asigna el usuario que cerró el reporte
             $reporte->firma_operador = $data['firma_operador']; // Asigna el usuario que cerró el reporte
+            $reporte->supervisor_id = $data['supervisor_id']; // Asigna el ID del supervisor
             $reporte->usuario_id = auth()->user()->Id_Usuario; // Asigna el ID del usuario autenticado
             $reporte->save();
             DB::commit();
@@ -98,7 +99,7 @@ class ReporteController extends Controller
      * @param array $data
      * @return mixed
      */
-    public function misCierres(array $data)
+    public function cierres(array $data)
     {
         return v_Reportes::when($data['folio'], function ($query) use ($data) {
                             return $query->where('folio', 'like', '%' . $data['folio'] . '%');
@@ -109,9 +110,47 @@ class ReporteController extends Controller
                         ->when($data['fecha_cierre_supervisor'], function ($query) use ($data) {
                             return $query->whereDate('fecha_firma_supervisor', $data['fecha_cierre_supervisor']);
                         })
+                        ->when($data['operador'], function ($query) use ($data) {
+                            return $query->where('operador', $data['operador']);
+                        })
+                        ->when($data['supervisor'], function ($query) use ($data) {
+                            return $query->where('supervisor_id', $data['supervisor']);
+                        })
                         ->when(auth()->user()->tipoUsuarioCierreTurno != 1 && auth()->user()->tipoUsuarioCierreTurno != 4, function ($query) {
                             return $query->where('usuario_id', auth()->user()->Id_Usuario);
                         })
+                        ->orderBy($data['sort'], $data['sort_type'])
+                        ->when($data['pagination'] != 'todos', function ($query) use ($data) {
+                            return $query->paginate($data['pagination']);
+                        }, function ($query) {
+                            return $query->get();
+                        });
+    }
+
+    /**
+     * Función para obtener los cierres del historico
+     *
+     * @param array $data
+     * @return mixed
+     */
+    public function cierresHistorico(array $data)
+    {
+        return v_Reportes::when($data['folio'], function ($query) use ($data) {
+                            return $query->where('folio', 'like', '%' . $data['folio'] . '%');
+                        })
+                        ->when($data['fecha_cierre_operador'], function ($query) use ($data) {
+                            return $query->whereDate('fecha_firma_operador', $data['fecha_cierre_operador']);
+                        })
+                        ->when($data['fecha_cierre_supervisor'], function ($query) use ($data) {
+                            return $query->whereDate('fecha_firma_supervisor', $data['fecha_cierre_supervisor']);
+                        })
+                        ->when($data['operador'], function ($query) use ($data) {
+                            return $query->where('operador', $data['operador']);
+                        })
+                        ->when(auth()->user()->tipoUsuarioCierreTurno != 1 && auth()->user()->tipoUsuarioCierreTurno != 4, function ($query) {
+                            return $query->where('usuario_id', auth()->user()->Id_Usuario);
+                        })
+                        ->whereIn('estatus', [2,3]) // Solo los que ya fueron recalculados
                         ->orderBy($data['sort'], $data['sort_type'])
                         ->when($data['pagination'] != 'todos', function ($query) use ($data) {
                             return $query->paginate($data['pagination']);
@@ -166,10 +205,49 @@ class ReporteController extends Controller
      */
     public function actualizarRecalculo(int $id)
     {
-        Reporte::where('id', $id)
+        try {
+            Reporte::where('id', $id)
                 ->update([
                     'fecha_recalculo' => Carbon::now()->format('Y-d-m H:i:s'),
-                    'estatus' => 4,
+                    'hizoRecalculo' => 1,
                 ]);
+        } catch (\Exception $e) {
+            return "Lo siento, ocurrió un error al actualizar el re-cálculo.";
+        }
+    }
+
+    /**
+     * Función para actualizar la firma del supervisor y el estatus
+     *
+     * @param array $data
+     * @param int $id
+     * @return void
+     */
+    public function actualizarFirmaSupervisor(array $data, int $id)
+    {
+        try {
+            Reporte::where('id', $id)
+                ->update($data);
+        } catch (\Exception $e) {
+            return "Lo siento, ocurrió un error al actualizar la firma del supervisor.";
+        }
+    }
+
+    /**
+     * Función para actualizar el estatus del reporte
+     *
+     * @param int $estatus
+     * @param int $id
+     * @return void
+     */
+    public function actualizarEstatus(int $estatus, int $id)
+    {
+        try {
+            $reporte = Reporte::find($id);
+            $reporte->estatus = $estatus;
+            $reporte->save();
+        } catch (\Exception $e) {
+            return "Lo siento, ocurrió un error al actualizar el estatus del reporte.";
+        }
     }
 }

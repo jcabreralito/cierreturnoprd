@@ -45,9 +45,12 @@
                                     placeholder="Ingrese acción correctiva aquí..."
                                 />
                                 @if ($index > 0)
-                                <button type="button" class="ml-2 text-red-500" wire:click="removeAccionCorrectiva({{ $index }})">
-                                    <i class="fas fa-trash-alt"></i>
-                                </button>
+                                <div class="tooltip">
+                                    <button type="button" class="ml-2 text-red-500" wire:click="removeAccionCorrectiva({{ $index }})">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                    <span class="tooltiptext">Eliminar acción correctiva</span>
+                                </div>
                                 @endif
                             </div>
                         @endforeach

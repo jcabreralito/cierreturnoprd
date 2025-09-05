@@ -13,13 +13,7 @@
 
             @if (auth()->user()->tipoUsuarioCierreTurno == 1)
             <div class="w-full">
-                <a href="{{ $routeMain }}/re-calculo" class="{{ request()->is('re-cierres') ? 'btn-sidebar-active' : 'btn-sidebar' }} block">Re-cálculo</a>
-            </div>
-            <div class="w-full">
-                <a href="{{ $routeMain }}/mis-cierres" class="{{ request()->is('mis-cierres') ? 'btn-sidebar-active' : 'btn-sidebar' }} block">Mis Cierres</a>
-            </div>
-            <div class="w-full">
-                <a href="{{ $routeMain }}/aprobar-cierres" class="{{ request()->is('aprobar-cierres') ? 'btn-sidebar-active' : 'btn-sidebar' }} block">Aprobar Cierres</a>
+                <a href="{{ $routeMain }}/lista-cierres" class="{{ request()->is('lista-cierres') ? 'btn-sidebar-active' : 'btn-sidebar' }} block">Lista de Cierres</a>
             </div>
             <div class="w-full">
                 <a href="{{ $routeMain }}/historico" class="{{ request()->is('historico') ? 'btn-sidebar-active' : 'btn-sidebar' }} block">Historico</a>

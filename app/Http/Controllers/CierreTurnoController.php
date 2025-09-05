@@ -11,6 +11,16 @@ use Illuminate\Support\Facades\Storage;
 class CierreTurnoController extends Controller
 {
     /**
+     * Función para obtener los estatus de los cierres
+     *
+     * @return array
+     */
+    public function getEstatus()
+    {
+        return DB::table('v_Estatus')->where('estatus', 1)->get();
+    }
+
+    /**
      * Función para obtener los operadores
      *
      * @return mixed
@@ -287,6 +297,7 @@ class CierreTurnoController extends Controller
                         'ajustes_literatura' => $data['reporteActual'][0]['AjustesLiteratura'],
                         'tiros' => $data['reporteActual'][0]['CantTiros'],
                         'en' => $data['reporteActual'][0]['EnTiempoTiros'],
+                        'velocidad_promedio' => $data['reporteActual'][0]['VelPromedio'],
                         'se_debio_hacer_en' => $data['reporteActual'][0]['SeDebioHacer'],
                         'tiempo_reportado' => $data['reporteActual'][0]['TiempoReportado'],
                         'tiempo_ajuste' => $data['reporteActual'][0]['TiempoDeAjuste'],
@@ -295,6 +306,7 @@ class CierreTurnoController extends Controller
                         'std_ajuste_normal' => $data['reporteActual'][0]['AjusteStd'],
                         'std_ajuste_literatura' => $data['reporteActual'][0]['AjusteVWStd'],
                         'std_velocidad_tiro' => $data['reporteActual'][0]['VelocidadStd'],
+                        'eficiencia_global' => $data['reporteActual'][0]['GLOBAL'],
                         'reporte_id' => $reporte->id,
                     ];
 
@@ -376,6 +388,7 @@ class CierreTurnoController extends Controller
                     'ajustes_literatura' => $reporte[0]['AjustesLiteratura'],
                     'tiros' => $reporte[0]['CantTiros'],
                     'en' => $reporte[0]['EnTiempoTiros'],
+                    'velocidad_promedio' => $reporte[0]['VelPromedio'],
                     'se_debio_hacer_en' => $reporte[0]['SeDebioHacer'],
                     'tiempo_reportado' => $reporte[0]['TiempoReportado'],
                     'tiempo_ajuste' => $reporte[0]['TiempoDeAjuste'],
@@ -384,6 +397,7 @@ class CierreTurnoController extends Controller
                     'std_ajuste_normal' => $reporte[0]['AjusteStd'],
                     'std_ajuste_literatura' => $reporte[0]['AjusteVWStd'],
                     'std_velocidad_tiro' => $reporte[0]['VelocidadStd'],
+                    'eficiencia_global' => $reporte[0]['GLOBAL'],
                 ];
 
                 $adicional = (new DetalleReporteController())->actualizarDetalles($dataAdicional, $reporteCT->id);
@@ -439,5 +453,85 @@ class CierreTurnoController extends Controller
         }
 
         return $reporte;
+    }
+
+    /**
+     * Función para obtener los supervisores
+     *
+     * @param $operador
+     * @return mixed
+     */
+    public function getSupervisores($operador)
+    {
+        $operador = explode('-', $operador)[0];
+
+        $area = DB::table('Lito.dbo.Personal')
+                ->where('personal', $operador)
+                ->value('Departamento');
+
+        return DB::table('v_Supervisores')
+                ->where('Departamento', $area)
+                ->orderBy('Nombre', 'asc')
+                ->get();
+    }
+
+    /**
+     * Función para obtener los supervisores (general)
+     *
+     * @return mixed
+     */
+    public function getSupervisoresGeneral()
+    {
+        return DB::table('v_Supervisores')
+                ->get();
+    }
+
+    /**
+     * Función para finalizar el cierre de turno por parte del supervisor
+     *
+     * @param $id
+     * @param $supervisor
+     * @return mixed
+     */
+    public function finalizarFirmaSupervisor($id, $supervisor)
+    {
+        try {
+            $data = [
+                'firma_supervisor' => $supervisor,
+                'fecha_firma_supervisor' => Carbon::now()->format('Y-d-m H:i:s'),
+                'estatus' => 2,
+            ];
+
+            return (new ReporteController())->actualizarFirmaSupervisor($data, $id);
+        } catch (\Exception $e) {
+            return "Lo siento, ocurrió un error al finalizar la firma del supervisor.";
+        }
+    }
+
+    /**
+     * Función para rechazar el cierre de turno por parte del supervisor
+     *
+     * @param int $id
+     * @param string $motivoRechazo
+     * @return mixed
+     */
+    public function rechazarCierreTurno($id, $motivoRechazo)
+    {
+        try {
+            (new ReporteController())->actualizarEstatus(3, $id);
+
+            // Guardamos el motivo de rechazo
+            (new MotivoRechazoController())->registrarMotivoRechazo($motivoRechazo, $id);
+
+            // Guardamos la bitacora
+            (new BitacoraController())->registrarBitacora([
+                'cambio_anterior' => null,
+                'cambio_nuevo' => 'Rechazo de cierre de turno. Motivo: ' . $motivoRechazo,
+                'usuario_id' => auth()->user()->Id_Usuario,
+                'reporte_id' => $id,
+            ]);
+        } catch (\Exception $e) {
+            return "Lo siento, ocurrió un error al rechazar el cierre de turno.";
+        }
     }
 }

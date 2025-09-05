@@ -39,6 +39,9 @@ class Index extends Component
     public $observaciones = [''];
     public $acciones_correctivas = [''];
 
+    public $supervisores = [];
+    public $supervisor = '';
+
     /**
      * Montamos algunas variables para que tengan valor
      *
@@ -93,6 +96,8 @@ class Index extends Component
         $this->yaRealizoCierre = (new CierreTurnoController())->yaRealizoCierre($data);
         $this->color = $this->getEficienciaColor();
         $this->limpiarBuscadores = true;
+        $this->supervisores = (new CierreTurnoController())->getSupervisores($this->operador);
+        $this->dispatch('cargarSupervisores', supervisores: $this->supervisores);
 
         if (count($this->list) > 0) {
             if (count($this->reporteActual) == 0) {
@@ -171,6 +176,7 @@ class Index extends Component
                 'estatus' => 1,
                 'firma_supervisor' => $this->loginSupervisor,
                 'firma_operador' => $this->loginOperador,
+                'supervisor_id' => $this->supervisor,
             ],
             'reporteActual' => $this->reporteActual,
             'razones' => [

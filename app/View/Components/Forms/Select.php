@@ -23,7 +23,7 @@ class Select extends Component
     /**
      * Create a new component instance.
      */
-    public function __construct($name = '', $placeholder = 'Ingresa un valor', $labelText  = 'Ingresa un valor', $isRequired = true, $showErrors = true, $value = null, $disabled = false, $typeL = 2, $isReadonly = false, $hasWireModel = true, $hasEtiqueta = true)
+    public function __construct($name = '', $placeholder = 'Ingresa un valor', $labelText  = 'Ingresa un valor', $isRequired = true, $showErrors = true, $value = null, $isDisabled = false, $typeL = 2, $isReadonly = false, $hasWireModel = true, $hasEtiqueta = true)
     {
         $this->name = $name;
         $this->placeholder = $placeholder;
@@ -31,7 +31,7 @@ class Select extends Component
         $this->isRequired = $isRequired;
         $this->showErrors = $showErrors;
         $this->value = $value;
-        $this->isDisabled = $disabled;
+        $this->isDisabled = $isDisabled;
         $this->typeL = $typeL;
         $this->isReadOnly = $isReadonly;
         $this->hasWireModel = $hasWireModel;

@@ -1,22 +1,26 @@
 <?php
 
-namespace App\Livewire\Admin;
+namespace App\Livewire\CierreTurno;
 
 use App\Http\Controllers\CausaController;
 use App\Http\Controllers\CierreTurnoController;
 use App\Http\Controllers\CompromisoController;
+use App\Http\Controllers\DetalleReporteController;
+use App\Http\Controllers\MotivoRechazoController;
 use App\Http\Controllers\ReporteController;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-class AprobarCierres extends Component
+class ListaCierres extends Component
 {
     use WithPagination;
 
     public $filtroFolio;
     public $filtroFechaCierreOperador;
     public $filtroFechaCierreSupervisor;
+    public $operador;
+    public $supervisor;
     public $paginationF = 10;
     public $filtroSort = 'id';
     public $filtroSortType = 'desc';
@@ -26,9 +30,11 @@ class AprobarCierres extends Component
     public $reporteActual = [];
     public $color = '';
     public $esBueno = false;
+    public $estatus;
 
     public $causas = [];
     public $compromisos = [];
+    public $listadoMotivosRechazo = [];
 
     /**
      * Función para renderizar la vista de mis cierres
@@ -37,19 +43,23 @@ class AprobarCierres extends Component
      */
     public function render(): View
     {
-        return view('livewire.admin.aprobar-cierres',[
-            'reportesRealizados' => (new ReporteController())->getReportesRealizados([
+        return view('livewire.cierre-turno.lista-cierres',[
+            'cierres' => (new ReporteController())->cierres([
                 'folio' => $this->filtroFolio,
                 'fecha_cierre_operador' => $this->filtroFechaCierreOperador,
                 'fecha_cierre_supervisor' => $this->filtroFechaCierreSupervisor,
+                'operador' => $this->operador,
+                'supervisor' => $this->supervisor,
                 'pagination' => $this->paginationF,
                 'sort' => $this->filtroSort,
                 'sort_type' => $this->filtroSortType,
             ]),
+            'catEstatus' => (new CierreTurnoController())->getEstatus(),
+            'operadores' => (new CierreTurnoController())->getOperadores(),
+            'supervisores' => (new CierreTurnoController())->getSupervisoresGeneral(),
         ])
         ->layout('layouts.main');
     }
-
     /**
      * Función para asignar los filtros de ordenamiento.
      *
@@ -86,11 +96,12 @@ class AprobarCierres extends Component
     public function verDetalle($id)
     {
         $this->modalDetalle = true;
-        $this->reporteActual = (new CierreTurnoController())->getDataEficiencia($id);
+        $this->reporteActual = (new DetalleReporteController())->getDetalleReporte($id);
         $this->color = $this->getEficienciaColor();
         $this->reporte = (new ReporteController())->obtenerReportePorId($id);
         $this->causas = (new CausaController())->obtenerCausas($id);
         $this->compromisos = (new CompromisoController())->obtenerCompromisos($id);
+        $this->listadoMotivosRechazo = (new MotivoRechazoController())->getMotivosRechazo($id);
     }
 
     /**
@@ -98,7 +109,7 @@ class AprobarCierres extends Component
      *
      * @return void
      */
-    public function closeModalDetalle()
+    public function closeModalDetalleRecierre()
     {
         $this->modalDetalle = false;
         $this->reporte = null;
@@ -114,7 +125,21 @@ class AprobarCierres extends Component
         $this->filtroFolio = null;
         $this->filtroFechaCierreOperador = null;
         $this->filtroFechaCierreSupervisor = null;
+        $this->operador = null;
         $this->resetPage();
+        $this->dispatch('limpiarOperador');
+    }
+
+    /**
+     * Función para realizar el re-cálculo del cierre
+     *
+     * @param int $id
+     * @return void
+     */
+    public function realizarReCalculo($id)
+    {
+        (new CierreTurnoController())->reCalculo($id);
+        $this->dispatch('toast', type: 'success', message: 'Re-cálculo realizado con éxito.');
     }
 
     /**
@@ -124,39 +149,64 @@ class AprobarCierres extends Component
      */
     public function getEficienciaColor(): string
     {
-        if (count($this->reporteActual) > 0) {
-            $global = $this->reporteActual[0]['GLOBAL'];
-            $convencional = $this->reporteActual[0]['CONVENCIONAL'];
+        if ($this->reporteActual) {
+            $global = $this->reporteActual?->eficiencia_global;
 
             $color = '';
 
-            if ($global == null) {
-                if ($convencional < 60) {
-                    $color = "#F8696B"; // Rojo
-                    $this->esBueno = false;
-                } else if ($convencional >= 60 && $convencional <= 70) {
-                    $color = "#FDD17F";
-                    $this->esBueno = true;
-                } else if ($convencional > 70) {
-                    $color = "#63BE7B";
-                    $this->esBueno = true;
-                }
-            } else {
-                if ($global < 60) {
-                    $color = "#F8696B";
-                    $this->esBueno = false;
-                } else if ($global >= 60 && $global <= 70) {
-                    $color = "#FDD17F";
-                    $this->esBueno = false;
-                } else if ($global > 70) {
-                    $color = "#63BE7B";
-                    $this->esBueno = true;
-                }
+            if ($global < 60) {
+                $color = "#F8696B";
+                $this->esBueno = false;
+            } else if ($global >= 60 && $global <= 70) {
+                $color = "#FDD17F";
+                $this->esBueno = false;
+            } else if ($global > 70) {
+                $color = "#63BE7B";
+                $this->esBueno = true;
             }
 
             return $color;
         }
 
         return '#000000'; // Default color
+    }
+
+
+    /**
+     * Función para firmar el cierre por parte del supervisor
+     *
+     * @param int $id
+     * @param int $previoEstatus
+     * @return void
+     */
+    public function firmarSupervisor($id, $previoEstatus)
+    {
+        $this->dispatch('firmarSupervisor', id: $id, previoEstatus: $previoEstatus);
+    }
+
+    /**
+     * Función para finalizar la firma del cierre por parte del supervisor
+     *
+     * @param int $id
+     * @param string $supervisor
+     * @return void
+     */
+    public function finalizarFirmaSupervisor($id, $supervisor)
+    {
+        (new CierreTurnoController())->finalizarFirmaSupervisor($id, $supervisor);
+        $this->dispatch('toast', type: 'success', message: 'Cierre firmado con éxito.');
+    }
+
+    /**
+     * Función para rechazar el cierre por parte del supervisor
+     *
+     * @param int $id
+     * @param string $motivoRechazo
+     * @return void
+     */
+    public function rechazarCierreTurno($id, $motivoRechazo)
+    {
+        (new CierreTurnoController())->rechazarCierreTurno($id, $motivoRechazo);
+        $this->dispatch('toast', type: 'success', message: 'Cierre rechazado con éxito.');
     }
 }

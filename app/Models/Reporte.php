@@ -21,6 +21,7 @@ class Reporte extends Model
         'fecha_firma_supervisor',
         'firma_supervisor',
         'firma_operador',
+        'hizoRecalculo',
         'usuario_id',
         'supervisor_id',
     ];

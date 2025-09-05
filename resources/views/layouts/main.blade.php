@@ -16,6 +16,10 @@
 
     {{--  <link href="{{ asset('assets/css/fonts.css') }}" rel="stylesheet" />  --}}
 
+    <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
+    <link href="{{ asset('assets/css/select2.min.css') }}" rel="stylesheet" />
+    <script src="{{ asset('assets/js/select2.min.js') }}"></script>
+
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 

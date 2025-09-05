@@ -13,6 +13,7 @@ class DetalleReporte extends Model
         'ajustes_literatura',
         'tiros',
         'en',
+        'velocidad_promedio',
         'se_debio_hacer_en',
         'tiempo_reportado',
         'tiempo_ajuste',
@@ -21,6 +22,7 @@ class DetalleReporte extends Model
         'std_ajuste_normal',
         'std_ajuste_literatura',
         'std_velocidad_tiro',
+        'eficiencia_global',
         'reporte_id',
     ];
 }

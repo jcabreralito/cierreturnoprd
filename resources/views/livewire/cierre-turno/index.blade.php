@@ -153,7 +153,6 @@
                         @this.set('maquina', data);
                     });
 
-                    console.log('Select2 initialized');
                 }, 1000);
             }
 
@@ -164,12 +163,23 @@
 
             document.addEventListener('confirmarCierre', (event) => {
                 let operador = event.detail.operador;
+                let supervisorOptions = '<option value="">Seleccione un supervisor</option>';
+                window.supervisores.forEach(sup => {
+                    supervisorOptions += `<option value="${sup.Id_Usuario}">${sup.nombre_completo}</option>`;
+                });
                 Swal.fire({
                     title: 'Confirmación',
                     text: '¿Está seguro de que desea realizar el cierre de turno?',
                     html: `
                         <form onsubmit="return false;">
                             <div>
+                                <label for="supervisor" class="block font-medium text-gray-700">Supervisor:</label>
+                                <select id="supervisor" class="form-control py-2 rounded-md shadow-md mt-1 w-full border-gray-200 focus:outline-none focus:ring-0 focus:border-gray-300">
+                                    ${supervisorOptions}
+                                </select>
+                            </div>
+
+                            <div class="mt-4">
                                 <label for="passwordOperador" class="block font-medium text-gray-700">Contraseña Operador:</label>
                                 <input type="password" id="passwordOperador" class="form-control py-2 rounded-md shadow-md mt-1 w-full border-gray-200 focus:outline-none focus:ring-0 focus:border-gray-300" />
                             </div>
@@ -181,41 +191,50 @@
                     cancelButtonText: 'Cancelar',
                     reverseButtons: true,
                     preConfirm: () => {
+                        const supervisor = Swal.getPopup().querySelector('#supervisor').value;
                         const passwordOperador = Swal.getPopup().querySelector('#passwordOperador').value;
 
-                        if (!passwordOperador && isRequiredPasswordOperador) {
+                        if (!supervisor) {
+                            Swal.showValidationMessage(`Por favor seleccione un supervisor`);
+                            return;
+                        }
+
+                        if (!passwordOperador) {
                             Swal.showValidationMessage(`Por favor ingrese las contraseñas`);
                             return;
                         }
+
                         // Retorna una promesa para controlar el cierre
                         return fetch(serve + '/validate-user', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                            },
-                            body: JSON.stringify({
-                                passwordOperador: passwordOperador,
-                                operador: operador,
-                            }),
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (!data.response) {
-                                Swal.showValidationMessage('Contraseña incorrecta');
-                                // Rechaza la promesa para mantener el modal abierto
-                                return Promise.reject();
-                            }
-                            // Si todo está bien, retorna los datos y el modal se cierra
-                            return { loginOperador: data.operador, passwordOperador: passwordOperador };
-                        }).catch(() => {
-                            // No hace falta nada aquí, el modal sigue abierto
-                        });
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                    },
+                                    body: JSON.stringify({
+                                        passwordOperador: passwordOperador,
+                                        supervisor: supervisor,
+                                        operador: operador,
+                                    }),
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (!data.response) {
+                                        Swal.showValidationMessage('Contraseña incorrecta');
+                                        // Rechaza la promesa para mantener el modal abierto
+                                        return Promise.reject();
+                                    }
+                                    // Si todo está bien, retorna los datos y el modal se cierra
+                                    return { loginOperador: data.operador, passwordOperador: passwordOperador, supervisor: supervisor };
+                                }).catch(() => {
+                                    // No hace falta nada aquí, el modal sigue abierto
+                                });
                     }
                 }).then((result) => {
                     if (result.isConfirmed && result.value) {
                         @this.set('loginOperador', result.value.loginOperador);
                         @this.set('passwordOperador', result.value.passwordOperador);
+                        @this.set('supervisor', result.value.supervisor);
                         @this.finalizarCierre();
                     } else {
                         @this.set('modalCreateCierreTurno', true);
@@ -226,6 +245,10 @@
             document.addEventListener('limpiarOperador', () => {
                 $('#operador').val(null).trigger('change');
                 initSelect2()
+            });
+
+            document.addEventListener('cargarSupervisores', (event) => {
+                window.supervisores = event.detail.supervisores;
             });
         </script>
     </div>
