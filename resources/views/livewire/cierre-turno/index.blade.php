@@ -75,24 +75,27 @@
         @if (count($list) > 0)
             <div>
                 <x-home.table.table :headers="[
-                    [0 => 'N° ORDEN', 1 => false, 2 => 'text-center', 3 => ''],
-                    [0 => 'NOMBRE TRABAJO', 1 => false, 2 => '', 3 => ''],
-                    [0 => 'DESCRIPCIÓN', 1 => false, 2 => '', 3 => ''],
-                    [0 => 'PROCESO', 1 => false, 2 => '', 3 => ''],
-                    [0 => 'CANTIDAD', 1 => false, 2 => 'text-center', 3 => ''],
-                    [0 => 'TIEMPO', 1 => false, 2 => 'text-center', 3 => ''],
-                    [0 => 'HORA INICIO', 1 => false, 2 => 'text-center', 3 => ''],
-                    [0 => 'HORA FIN', 1 => false, 2 => 'text-center', 3 => ''],
-                    [0 => 'MAQUINA', 1 => false, 2 => '', 3 => ''],
-                    [0 => 'NOTAS', 1 => false, 2 => '', 3 => ''],
+                    [0 => 'N° ORDEN', 1 => true, 2 => 'text-center', 3 => 'numOrden'],
+                    [0 => 'NOMBRE TRABAJO', 1 => true, 2 => '', 3 => 'NombreTrabajo'],
+                    [0 => 'DESCRIPCIÓN', 1 => true, 2 => '', 3 => 'observacion'],
+                    [0 => 'PROCESO', 1 => true, 2 => '', 3 => 'proceso'],
+                    [0 => 'CANTIDAD', 1 => true, 2 => 'text-center', 3 => 'Cantidad'],
+                    [0 => 'TIEMPO', 1 => true, 2 => 'text-center', 3 => 'Tiempo'],
+                    [0 => 'HORA INICIO', 1 => true, 2 => 'text-center', 3 => 'HoraInicio'],
+                    [0 => 'HORA FIN', 1 => true, 2 => 'text-center', 3 => 'HoraFin'],
+                    [0 => 'MAQUINA', 1 => true, 2 => '', 3 => 'Maquina'],
+                    [0 => 'NOTAS', 1 => true, 2 => '', 3 => 'Notas'],
                 ]" tblClass="tblNormal">
                     @forelse ($this->list as $item)
-                        <tr class="hover:bg-gray-100 transition-all duration-300" wire:key="item-{{ $item->idAct }}">
+                        <tr class="hover:bg-gray-100 transition-all duration-300" wire:key="item-{{ $item->ID }}">
                             <x-home.table.td class="text-center">{{ $item->numOrden }}</x-home.table.td>
                             <x-home.table.td class="">{{ $item->NombreTrabajo }}</x-home.table.td>
                             <x-home.table.td class="">{{ $item->observacion }}</x-home.table.td>
                             <x-home.table.td class="">{{ $item->proceso }}</x-home.table.td>
-                            <x-home.table.td class="text-center">{{ number_format($item->Cantidad, 0) }}</x-home.table.td>
+                            <x-home.table.td class="text-center">
+                                {{--  Validamos si el valor tiene decimales  --}}
+                                {{ intval($item->Cantidad) == $item->Cantidad ? number_format($item->Cantidad, 0) : number_format($item->Cantidad, 2) }}
+                            </x-home.table.td>
                             <x-home.table.td class="text-center">{{ number_format($item->Tiempo, 2) }}</x-home.table.td>
                             <x-home.table.td class="text-center">{{ Carbon\Carbon::parse($item->HoraInicio)->format('Y/m/d H:i') }}</x-home.table.td>
                             <x-home.table.td class="text-center">{{ Carbon\Carbon::parse($item->HoraFin)->format('Y/m/d H:i') }}</x-home.table.td>
@@ -136,6 +139,10 @@
     <div wire:ignore>
         <script>
             document.addEventListener("DOMContentLoaded", function() {
+                initSelect2();
+            });
+
+            document.addEventListener("livewire:navigated", function() {
                 initSelect2();
             });
 

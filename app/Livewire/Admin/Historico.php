@@ -21,6 +21,7 @@ class Historico extends Component
     public $filtroFechaCierreOperador;
     public $filtroFechaCierreSupervisor;
     public $operador;
+    public $supervisor;
     public $paginationF = 10;
     public $filtroSort = 'id';
     public $filtroSortType = 'desc';
@@ -51,11 +52,13 @@ class Historico extends Component
                 'fecha_cierre_operador' => $this->filtroFechaCierreOperador,
                 'fecha_cierre_supervisor' => $this->filtroFechaCierreSupervisor,
                 'operador' => $this->operador,
+                'supervisor' => $this->supervisor,
                 'pagination' => $this->paginationF,
                 'sort' => $this->filtroSort,
                 'sort_type' => $this->filtroSortType,
             ]),
             'operadores' => (new CierreTurnoController())->getOperadores(),
+            'supervisores' => (new CierreTurnoController())->getSupervisoresGeneral(),
         ])
         ->layout('layouts.main');
     }
@@ -125,6 +128,7 @@ class Historico extends Component
         $this->filtroFechaCierreOperador = null;
         $this->filtroFechaCierreSupervisor = null;
         $this->operador = null;
+        $this->supervisor = null;
         $this->resetPage();
         $this->dispatch('limpiarOperador');
     }

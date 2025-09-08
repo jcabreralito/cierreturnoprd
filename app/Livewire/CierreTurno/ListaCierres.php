@@ -224,7 +224,7 @@ class ListaCierres extends Component
     public function rechazarCierreTurno($id, $motivoRechazo)
     {
         (new CierreTurnoController())->rechazarCierreTurno($id, $motivoRechazo);
-        $this->dispatch('toast', type: 'success', message: 'Cierre rechazado con éxito.');
+        $this->dispatch('toast', type: 'success', message: 'Cierre marcado como rechazado.');
     }
 
     /**

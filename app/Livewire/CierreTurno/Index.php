@@ -42,6 +42,9 @@ class Index extends Component
     public $supervisores = [];
     public $supervisor = '';
 
+    public $filtroSort = 'ID';
+    public $filtroSortType = 'asc';
+
     /**
      * Montamos algunas variables para que tengan valor
      *
@@ -89,9 +92,12 @@ class Index extends Component
             'turno' => $this->turno,
             'fecha_cierre' => $this->fecha_cierre,
             'tipo_reporte' => $this->tipo_reporte,
+
+            'filtroSort' => $this->filtroSort,
+            'filtroSortType' => $this->filtroSortType,
         ];
 
-        $this->list = (new CierreTurnoController())->getActividades($data);
+        $this->obtenerListado();
         $this->reporteActual = (new CierreTurnoController())->getReporte($data);
         $this->yaRealizoCierre = (new CierreTurnoController())->yaRealizoCierre($data);
         $this->color = $this->getEficienciaColor();
@@ -323,5 +329,44 @@ class Index extends Component
     {
         unset($this->acciones_correctivas[$index]);
         $this->acciones_correctivas = array_values($this->acciones_correctivas);
+    }
+
+    /**
+     * Función para ordenar por columnas
+     *
+     * @param string $campo
+     * @return void
+     */
+    public function sort($campo): void
+    {
+        if ($this->filtroSort == $campo) {
+            $this->filtroSortType = $this->filtroSortType === 'asc' ? 'desc' : 'asc';
+        } else {
+            $this->filtroSort = $campo;
+            $this->filtroSortType = 'asc';
+        }
+
+        $this->obtenerListado();
+    }
+
+    /**
+     * Función para realizar la búsqueda de los cierres realizados
+     *
+     * @return void
+     */
+    public function obtenerListado()
+    {
+        $data = [
+            'operador' => $this->operador,
+            'maquina' => $this->maquina,
+            'turno' => $this->turno,
+            'fecha_cierre' => $this->fecha_cierre,
+            'tipo_reporte' => $this->tipo_reporte,
+
+            'filtroSort' => $this->filtroSort,
+            'filtroSortType' => $this->filtroSortType,
+        ];
+
+        $this->list = (new CierreTurnoController())->getListadoActividades($data);
     }
 }

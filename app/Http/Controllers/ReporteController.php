@@ -155,7 +155,10 @@ class ReporteController extends Controller
                             return $query->whereDate('fecha_firma_supervisor', $data['fecha_cierre_supervisor']);
                         })
                         ->when($data['operador'], function ($query) use ($data) {
-                            return $query->where('operador', $data['operador']);
+                            return $query->where('operador', trim($data['operador']));
+                        })
+                        ->when($data['supervisor'], function ($query) use ($data) {
+                            return $query->where('supervisor_id', $data['supervisor']);
                         })
                         ->when(auth()->user()->tipoUsuarioCierreTurno != 1 && auth()->user()->tipoUsuarioCierreTurno != 4, function ($query) {
                             if (auth()->user()->tipoUsuarioCierreTurno == 2) {

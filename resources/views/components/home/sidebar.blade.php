@@ -7,29 +7,29 @@
         <div class="space-y-4 w-full">
             @if(auth()->user()->tipoUsuarioCierreTurno != 5)
             <div class="w-full">
-                <a href="{{ $routeMain }}/dashboard" class="{{ request()->is('dashboard') ? 'btn-sidebar-active' : 'btn-sidebar' }} block">Cierre turno</a>
+                <a href="{{ $routeMain }}/dashboard" wire:navigate class="{{ request()->is('dashboard') ? 'btn-sidebar-active' : 'btn-sidebar' }} block">Cierre turno</a>
             </div>
             @endif
 
             @if (auth()->user()->tipoUsuarioCierreTurno == 1 || auth()->user()->tipoUsuarioCierreTurno == 2 || auth()->user()->tipoUsuarioCierreTurno == 3)
             <div class="w-full">
-                <a href="{{ $routeMain }}/lista-cierres" class="{{ request()->is('lista-cierres') ? 'btn-sidebar-active' : 'btn-sidebar' }} block">Lista de Cierres</a>
+                <a href="{{ $routeMain }}/lista-cierres" wire:navigate class="{{ request()->is('lista-cierres') ? 'btn-sidebar-active' : 'btn-sidebar' }} block">Lista de Cierres</a>
             </div>
             <div class="w-full">
-                <a href="{{ $routeMain }}/historico" class="{{ request()->is('historico') ? 'btn-sidebar-active' : 'btn-sidebar' }} block">Historico</a>
+                <a href="{{ $routeMain }}/historico" wire:navigate class="{{ request()->is('historico') ? 'btn-sidebar-active' : 'btn-sidebar' }} block">Historico</a>
             </div>
             @endif
 
             @if (auth()->user()->tipoUsuarioCierreTurno == 1 || auth()->user()->tipoUsuarioCierreTurno == 4)
             <div class="w-full">
-                <a href="{{ $routeMain }}/ranking" class="{{ request()->is('ranking') ? 'btn-sidebar-active' : 'btn-sidebar' }} block">Ranking</a>
+                <a href="{{ $routeMain }}/ranking" wire:navigate class="{{ request()->is('ranking') ? 'btn-sidebar-active' : 'btn-sidebar' }} block">Ranking</a>
             </div>
             @endif
         </div>
 
         <div class="w-full end-0 mb-5">
             <div>
-                <a href="{{ $routeMain }}/logout" class="btn-logout"><i class="fa-solid fa-right-from-bracket mr-2"></i>
+                <a href="{{ $routeMain }}/logout" wire:navigate class="btn-logout"><i class="fa-solid fa-right-from-bracket mr-2"></i>
                     Salir a Lito Apps
                 </a>
             </div>

@@ -9,12 +9,21 @@
 
         <div class="mb-4">
             <div class="flex items-start bg-[#E9E9E9] py-1 px-4 shadow-md rounded-md mb-5">
-                <div class="grid grid-cols-1 lg:grid-cols-5 md:gap-x-4 md:gap-y-0 gap-y-4 w-full">
-                    <div wire:ignore>
+                <div class="grid grid-cols-1 md:gap-x-4 md:gap-y-0 gap-y-4 w-full {{ auth()->user()->tipoUsuarioCierreTurno == 1 ? 'lg:grid-cols-7' : 'lg:grid-cols-6' }}">
+                    <div wire:ignore class="{{ auth()->user()->tipoUsuarioCierreTurno == 1 || auth()->user()->tipoUsuarioCierreTurno == 2 ? '' : 'hidden' }}">
                         <x-filters.select name="operador" labelText="Operador" id="operador">
                             <option value="">Seleccione un operador</option>
-                            @foreach ($operadores as $operador)
-                                <option value="{{ $operador['operador'] }}">{{ $operador['label'] }}</option>
+                            @foreach ($operadores as $operadorItem)
+                                <option value="{{ $operadorItem['value'] }}">{{ $operadorItem['label'] }}</option>
+                            @endforeach
+                        </x-filters.select>
+                    </div>
+
+                    <div wire:ignore class="{{ auth()->user()->tipoUsuarioCierreTurno == 1 || auth()->user()->tipoUsuarioCierreTurno == 3 ? '' : 'hidden' }}">
+                        <x-filters.select name="supervisor" labelText="Supervisor" id="supervisor">
+                            <option value="">Seleccione un supervisor</option>
+                            @foreach ($supervisores as $supervisorItem)
+                                <option value="{{ $supervisorItem->Id_Usuario }}">{{ $supervisorItem->nombre_completo }}</option>
                             @endforeach
                         </x-filters.select>
                     </div>
@@ -40,7 +49,7 @@
                             <span class="tooltiptext">Buscar</span>
                         </div>
 
-                        @if ($filtroFolio != null || $filtroFechaCierreOperador != null || $filtroFechaCierreSupervisor != null || $operador != null)
+                        @if ($filtroFolio != null || $filtroFechaCierreOperador != null || $filtroFechaCierreSupervisor != null || $operador != null || $supervisor != null)
                         <div class="tooltip">
                             <button wire:click="limpiarFiltros()"
                                 class="ml-2 text-xs py-2 px-4 bg-red-500 hover:bg-red-600 text-white rounded">
@@ -59,8 +68,8 @@
         <div>
             <x-home.table.table :headers="[
                 [0 => 'FOLIO', 1 => true, 2 => 'text-center', 3 => 'folio'],
-                [0 => 'OPERADOR', 1 => true, 2 => 'text-center', 3 => 'operador'],
-                [0 => 'SUPERVISOR', 1 => true, 2 => 'text-center', 3 => 'supervisor'],
+                [0 => 'OPERADOR', 1 => true, 2 => 'text-center', 3 => 'nombre_operador'],
+                [0 => 'SUPERVISOR', 1 => true, 2 => 'text-center', 3 => 'nombre_supervisor'],
                 [0 => 'ESTADO', 1 => true, 2 => 'text-center', 3 => 'estado'],
                 [0 => 'FEC. CIERRE', 1 => true, 2 => '', 3 => 'fecha_cierre'],
                 [0 => 'FEC. FIR. OP.', 1 => true, 2 => '', 3 => 'fecha_firma_operador'],
@@ -75,19 +84,19 @@
                         <x-home.table.td class="text-center">
                             @if ($item->estatus == 1)
                                 <span class="px-2 inline-flex text-xxs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
-                                    {{ $item->estatus_nombre }}
+                                    {{ $item->nombre_accionado }}
                                 </span>
                             @elseif ($item->estatus == 2)
                                 <span class="px-2 inline-flex text-xxs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                    {{ $item->estatus_nombre }}
+                                    {{ $item->nombre_accionado }}
                                 </span>
                             @elseif ($item->estatus == 3)
                                 <span class="px-2 inline-flex text-xxs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                                    {{ $item->estatus_nombre }}
+                                    {{ $item->nombre_accionado }}
                                 </span>
                             @elseif ($item->estatus == 4)
                                 <span class="px-2 inline-flex text-xxs leading-5 font-semibold rounded-full bg-amber-100 text-amber-800">
-                                    {{ $item->estatus_nombre }}
+                                    {{ $item->nombre_accionado }}
                                 </span>
                             @endif
                         </x-home.table.td>
@@ -193,10 +202,20 @@
                 initSelect2();
             });
 
+            document.addEventListener("livewire:navigated", function() {
+                initSelect2();
+            });
+
             function initSelect2() {
                 setTimeout(() => {
                     $('#operador').select2({
                         placeholder: 'Seleccione un operador',
+                        allowClear: true,
+                        width: '100%'
+                    });
+
+                    $('#supervisor').select2({
+                        placeholder: 'Seleccione un supervisor',
                         allowClear: true,
                         width: '100%'
                     });
@@ -206,6 +225,12 @@
             $('#operador').on('change', function(e) {
                 var data = $(this).val();
                 @this.set('operador', data);
+                @this.call('obtenerData');
+            });
+
+            $('#supervisor').on('change', function(e) {
+                var data = $(this).val();
+                @this.set('supervisor', data);
                 @this.call('obtenerData');
             });
 

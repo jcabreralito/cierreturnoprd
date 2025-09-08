@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\v_ListadoActividades;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
@@ -63,56 +64,42 @@ class CierreTurnoController extends Controller
     }
 
     /**
-     * Función para el listado de actividades
+     * Función para obtener el listado de actividades
      *
      * @param array $data
      * @return mixed
      */
-    public function getActividades($data)
+    public function getListadoActividades($data)
     {
-        $fecha_inicio = Carbon::parse($data['fecha_cierre'])->format('d/m/Y');
-        $fecha_fin = Carbon::parse($data['fecha_cierre'])->format('d/m/Y');
+        $fecha_cierre = Carbon::parse($data['fecha_cierre'])->format('d/m/Y');
 
-        if ($data['operador'] == null) {
-            $operador = '';
-        } else {
-            $operador = explode('-', $data['operador'])[0];
+        if (!isset($data['filtroSort'])) {
+            $data['filtroSort'] = 'ID';
         }
 
-        if ($data['maquina'] == null) {
-            $maquina = '';
-        } else {
-            $maquina = $data['maquina'];
+        if (!isset($data['filtroSortType'])) {
+            $data['filtroSortType'] = 'asc';
         }
 
-        if ($data['turno'] == 3) {
-            $turno = '';
-        } else {
-            $turno = $data['turno'];
+        if (!isset($data['maquina'])) {
+            $data['maquina'] = null;
         }
 
-        $tipo_reporte = $data['tipo_reporte'];
-        if ($tipo_reporte == "Maquina") {
-            $reporte = 'M';
-        } else if ($tipo_reporte == "Operador") {
-            $reporte = 'O';
-        }
-
-        try {
-            $reporte = DB::select('SET NOCOUNT ON; execute MetricsWeb.dbo.ListaProcesos ?, ?, ?, ?, ?, ?, ?', [
-                $fecha_inicio,
-                $fecha_fin,
-                $maquina,
-                $operador,
-                $turno,
-                '',
-                $reporte,
-            ]);
-        } catch (\Throwable $th) {
-            $reporte = [];
-        }
-
-        return $reporte;
+        return DB::table('v_ListadoActividades')->when($data['fecha_cierre'] != null, function ($query) use ($fecha_cierre) {
+                                    return $query->where('FechaProduccion', $fecha_cierre);
+                                })
+                                ->when($data['operador'] != null, function ($query) use ($data) {
+                                    $operador = explode('-', $data['operador'])[0];
+                                    return $query->where('NumEmpleado', $operador);
+                                })
+                                ->when($data['maquina'] != null, function ($query) use ($data) {
+                                    return $query->where('Maquina', $data['maquina']);
+                                })
+                                ->when($data['turno'] != null && $data['turno'] != 3, function ($query) use ($data) {
+                                    return $query->where('Turno', $data['turno']);
+                                })
+                                ->orderBy($data['filtroSort'], $data['filtroSortType'])
+                                ->get();
     }
 
     /**
@@ -123,31 +110,12 @@ class CierreTurnoController extends Controller
      */
     public function getReporte($data)
     {
-        $fecha_inicio = Carbon::parse($data['fecha_cierre'])->format('d/m/Y');
-        $fecha_fin = Carbon::parse($data['fecha_cierre'])->format('d/m/Y');
-
-        if ($data['operador'] == null) {
-            $operador = '';
-        } else {
-            $operador = explode('-', $data['operador'])[0];
-        }
-
-        if ($data['maquina'] == null) {
-            $maquina = '';
-        } else {
-            $maquina = $data['maquina'];
-        }
-
-        if ($data['turno'] == 3) {
-            $turno = '';
-        } else {
-            $turno = $data['turno'];
-        }
+        $fecha_cierre = Carbon::parse($data['fecha_cierre'])->format('d/m/Y');
 
         $reporte = DB::select('SET NOCOUNT ON; exec sp_GetEficienciaOperador ?, ?, ?', [
-            $operador,
-            $turno,
-            $fecha_inicio
+            explode('-', $data['operador'])[0],
+            $data['turno'],
+            $fecha_cierre,
         ]);
 
         if ($reporte == null) {
@@ -192,30 +160,13 @@ class CierreTurnoController extends Controller
      */
     public function imprimirReporte($data)
     {
-        $fecha_inicio = Carbon::parse($data['fecha_cierre'])->format('d/m/Y');
-        $fecha_fin = Carbon::parse($data['fecha_cierre'])->format('d/m/Y');
-
         $nombre_operador = $data['operador'];
         $supervisorFirma = User::where('Login', $data['firma_supervisor'])->first()?->Nombre;
         $operadorFirma = User::where('Login', $data['firma_operador'])->first()->Nombre;
 
-        if ($data['operador'] == null) {
-            $operador = '';
-        } else {
-            $operador = explode('-', $data['operador'])[0];
-        }
-
-        if ($data['maquina'] == null) {
-            $maquina = '';
-        } else {
-            $maquina = $data['maquina'];
-        }
-
-        if ($data['turno'] == 3) {
-            $turno = '';
-        } else {
-            $turno = $data['turno'];
-        }
+        $fecha_inicio = Carbon::parse($data['fecha_cierre'])->format('d/m/Y');
+        $fecha_fin = Carbon::parse($data['fecha_cierre'])->format('d/m/Y');
+        $maquina = $data['maquina'];
 
         $tipo_reporte = $data['tipo_reporte'];
 
@@ -225,28 +176,13 @@ class CierreTurnoController extends Controller
             $reporte = 'O';
         }
 
-        if ($reporte == 'M' || $reporte == 'O') {
-            try {
-                $reporte_eficiencia = $this->getReporte([
-                    'fecha_cierre' => $data['fecha_cierre'],
-                    'operador' => $data['operador'],
-                    'maquina' => $data['maquina'],
-                    'turno' => $data['turno'],
-                ]);
-            } catch (\Throwable $th) {
-                $reporte_eficiencia = [];
-            }
-        }
-
-        $reporte_detalle = DB::select('SET NOCOUNT ON; execute MetricsWeb.dbo.ListaProcesos ?, ?, ?, ?, ?, ?, ?', [
-            $fecha_inicio,
-            $fecha_fin,
-            $maquina,
-            $operador,
-            $turno,
-            '',
-            $reporte,
-        ]);
+        $reporte_eficiencia = $this->getReporte([
+                                'fecha_cierre' => $data['fecha_cierre'],
+                                'operador' => $data['operador'],
+                                'maquina' => $data['maquina'],
+                                'turno' => $data['turno'],
+                            ]);
+        $reporte_detalle = $this->getListadoActividades($data);
 
         $maquinas = DB::select("SELECT *  FROM MetricsWeb.dbo.MaquinasMetrics WHERE maquina NOT LIKE '%SUAJE-01%' AND maquina NOT LIKE '%CORTE_TRI-01%'
         AND Maquina NOT LIKE '%SUAJE-01%' AND Maquina NOT LIKE '%KOMORI 428%' ORDER BY Maquina ASC");
