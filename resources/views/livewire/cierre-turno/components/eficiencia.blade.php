@@ -28,7 +28,7 @@
     </div>
 
     <div class="col-span-6 md:col-span-3 space-y-3">
-        <p>SE HICIERON <span class="font-semibold">{{ number_format($reporteActual[0]['AjustesNormales'], 0) }}</span> AJUSTES NORMALES, <span class="font-semibold">{{ number_format($reporteActual[0]['AjustesLiteratura'], 0) }}</span> DE LITERATURA Y <span class="font-semibold">{{ number_format($reporteActual[0]['CantTiros'], 0) }}</span> TIROS EN <span class="font-semibold">{{ number_format($reporteActual[0]['EnTiempoTiros'], 2) }}</span> HRS, SE DEBIO DE HABER HECHO EN <span class="font-semibold">{{ number_format($reporteActual[0]['SeDebioHacer'], 2) }}</span> HRS.</p>
+        <p>SE HICIERON <span class="font-semibold">{{ number_format($reporteActual[0]['AjustesNormales'], 0) }}</span> AJUSTES NORMALES, <span class="font-semibold">{{ number_format($reporteActual[0]['AjustesLiteratura'], 0) }}</span> DE LITERATURA Y <span class="font-semibold">{{ number_format($reporteActual[0]['CantTiros'], 0) }}</span> TIROS EN <span class="font-semibold">{{ number_format(($reporteActual[0]['TiempoDeAjuste'] + $reporteActual[0]['TiempoDeTiro']), 2) }}</span> HRS, SE DEBIO DE HABER HECHO EN <span class="font-semibold">{{ number_format($reporteActual[0]['SeDebioHacer'], 2) }}</span> HRS.</p>
 
         <p>TIEMPO TOTAL REPORTADO: <span class="font-semibold">{{ number_format($reporteActual[0]['TiempoReportado'], 2) }}</span></p>
 
