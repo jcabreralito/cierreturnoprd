@@ -106,47 +106,83 @@ class CierreTurnoController extends Controller
      * Función para obtener el detalle de eficiencia
      *
      * @param $data
+     * @param int $tipo 1 = Normal, 2 = Pegadora
      * @return mixed
      */
-    public function getReporte($data)
+    public function getReporte($data, $tipo = 1)
     {
         $fecha_cierre = Carbon::parse($data['fecha_cierre'])->format('d/m/Y');
 
-        $reporte = DB::select('SET NOCOUNT ON; exec sp_GetEficienciaOperador ?, ?, ?', [
-            explode('-', $data['operador'])[0],
-            $data['turno'],
-            $fecha_cierre,
-        ]);
+        if ($tipo == 1) {
+            $reporte = DB::select('SET NOCOUNT ON; exec sp_GetEficienciaOperador ?, ?, ?', [
+                explode('-', $data['operador'])[0],
+                $data['turno'],
+                $fecha_cierre,
+            ]);
+        } else {
+            $reporte = DB::select('SET NOCOUNT ON; exec sp_GetEficienciaOperadorPegadora ?, ?, ?', [
+                explode('-', $data['operador'])[0],
+                $data['turno'],
+                $fecha_cierre,
+            ]);
+        }
 
         if ($reporte == null) {
             $reporte = [];
         }
 
         if ($reporte) {
-            $reporte = collect($reporte)->map(function ($item) {
-                return [
-                    'AjustesNormales' => $item->NumAjustesL,
-                    'AjustesLiteratura' => $item->NumAjustesVW,
-                    'CantTiros' => $item->CantTiro,
-                    'EnTiempoTiros' => $item->SeDebioHacerEnTiem,
-                    'SeDebioHacer' => $item->SeDebioHacerEnVel,
-                    'TiempoReportado' => $item->TieDisponible,
-                    'TiempoDeAjuste' => $item->TieAjuste,
-                    'TiempoDeTiro' => $item->TieTiro,
-                    'TotalTiempoMuerto' => $item->TMPropio + $item->TMAjeno,
-                    'AjusteStd' => $item->StdAjusteL,
-                    'AjusteVWStd' => $item->StdAjusteVW,
-                    'VelocidadStd' => $item->VelPromedio,
-                    'GLOBAL' => ($item->EfiGlobal > 100 ? 100 : ($item->EfiGlobal < 0 ? 0 : $item->EfiGlobal)),
-                    'CONVENCIONAL' => $item->EfiGlobal,
+            if ($tipo == 1) {
+                $reporte = collect($reporte)->map(function ($item) {
+                    return [
+                        'AjustesNormales' => $item->NumAjustesL,
+                        'AjustesLiteratura' => $item->NumAjustesVW,
+                        'CantTiros' => $item->CantTiro,
+                        'EnTiempoTiros' => $item->SeDebioHacerEnTiem,
+                        'SeDebioHacer' => $item->SeDebioHacerEnVel,
+                        'TiempoReportado' => $item->TieDisponible,
+                        'TiempoDeAjuste' => $item->TieAjuste,
+                        'TiempoDeTiro' => $item->TieTiro,
+                        'TotalTiempoMuerto' => $item->TMPropio + $item->TMAjeno,
+                        'AjusteStd' => $item->StdAjusteL,
+                        'AjusteVWStd' => $item->StdAjusteVW,
+                        'VelocidadStd' => $item->StdTiro,
+                        'GLOBAL' => ($item->EfiGlobal > 100 ? 100 : ($item->EfiGlobal < 0 ? 0 : $item->EfiGlobal)),
+                        'CONVENCIONAL' => $item->EfiGlobal,
 
-                    'TieSinTrab' => $item->TieSinTrab,
-                    'VelPromedio' => $item->VelPromedio,
-                    'TieAjusPro' => $item->TieAjusPro,
-                    'SeDebioHacerEnVel' => $item->SeDebioHacerEnVel,
-                    'SeDebioHacerEnTiem' => $item->SeDebioHacerEnTiem,
-                ];
-            });
+                        'TieSinTrab' => $item->TieSinTrab,
+                        'VelPromedio' => $item->VelPromedio,
+                        'TieAjusPro' => $item->TieAjusPro,
+                        'SeDebioHacerEnVel' => $item->SeDebioHacerEnVel,
+                        'SeDebioHacerEnTiem' => $item->SeDebioHacerEnTiem,
+                    ];
+                });
+            } else {
+                $reporte = collect($reporte)->map(function ($item) {
+                    return [
+                        'AjustesNormales' => $item->NumAjustes,
+                        'AjustesLiteratura' => 0,
+                        'CantTiros' => $item->CantTiro,
+                        'EnTiempoTiros' => $item->SeDebioHacerEnTiem,
+                        'SeDebioHacer' => $item->SeDebioHacerEnVel,
+                        'TiempoReportado' => $item->TieDisponible,
+                        'TiempoDeAjuste' => $item->TieAjuste,
+                        'TiempoDeTiro' => $item->TieTiro,
+                        'TotalTiempoMuerto' => $item->TMPropio + $item->TMAjeno,
+                        'AjusteStd' => 0,
+                        'AjusteVWStd' => 0,
+                        'VelocidadStd' => 0,
+                        'GLOBAL' => ($item->EfiPegadoraLineal > 100 ? 100 : ($item->EfiPegadoraLineal < 0 ? 0 : $item->EfiPegadoraLineal)),
+                        'CONVENCIONAL' => 0,
+
+                        'TieSinTrab' => $item->TieSinTrab,
+                        'VelPromedio' => 0,
+                        'TieAjusPro' => $item->TieAjusPro,
+                        'SeDebioHacerEnVel' => $item->SeDebioHacerEnVel,
+                        'SeDebioHacerEnTiem' => $item->SeDebioHacerEnTiem,
+                    ];
+                });
+            }
         }
 
         return $reporte;

@@ -33,7 +33,8 @@
 
                     @if (
                             ($turno != null && $turno != '') &&
-                            ($fecha_cierre != null && $fecha_cierre != '')
+                            ($fecha_cierre != null && $fecha_cierre != '') &&
+                            ($operador != null && $operador != '')
                         )
                         <div class="h-full flex justify-center w-full items-center space-x-4">
                             <div class="tooltip">

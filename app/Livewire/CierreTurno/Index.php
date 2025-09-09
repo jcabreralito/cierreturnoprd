@@ -86,6 +86,11 @@ class Index extends Component
             'realizarCierre',
         ]);
 
+        if ($this->operador == null || $this->operador == '') {
+            $this->dispatch('toast', type: 'error', title: 'El campo operador es obligatorio');
+            return;
+        }
+
         $data = [
             'operador' => $this->operador,
             'maquina' => $this->maquina,
@@ -98,7 +103,15 @@ class Index extends Component
         ];
 
         $this->obtenerListado();
-        $this->reporteActual = (new CierreTurnoController())->getReporte($data);
+
+        // Espacio para validar si es maquina normal o pegadora dentro del listado
+        $keysPegadoras = [4001, 4031, 4002, 4032, 4003, 4033, 4004, 4034, 4005, 4035, 4006, 4036];
+
+        $existePegadora = $this->list->filter(function ($item) use ($keysPegadoras) {
+            return in_array($item->KeyProceso, $keysPegadoras);
+        })->isNotEmpty();
+
+        $this->reporteActual = (new CierreTurnoController())->getReporte($data, ($existePegadora ? 2 : 1));
         $this->yaRealizoCierre = (new CierreTurnoController())->yaRealizoCierre($data);
         $this->color = $this->getEficienciaColor();
         $this->limpiarBuscadores = true;
