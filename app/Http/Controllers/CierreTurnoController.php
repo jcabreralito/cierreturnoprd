@@ -140,10 +140,9 @@ class CierreTurnoController extends Controller
                         'CantTiros' => $item->CantTiro,
                         'EnTiempoTiros' => $item->SeDebioHacerEnTiem,
                         'SeDebioHacer' => $item->SeDebioHacerEnVel,
-                        'TiempoReportado' => $item->TieDisponible,
+                        'TiempoReportado' => $item->TiempoTotal,
                         'TiempoDeAjuste' => $item->TieAjuste,
                         'TiempoDeTiro' => $item->TieTiro,
-                        'TotalTiempoMuerto' => $item->TMPropio + $item->TMAjeno,
                         'AjusteStd' => $item->StdAjusteL,
                         'AjusteVWStd' => $item->StdAjusteVW,
                         'VelocidadStd' => $item->StdTiro,
@@ -155,6 +154,7 @@ class CierreTurnoController extends Controller
                         'TieAjusPro' => $item->TieAjusPro,
                         'SeDebioHacerEnVel' => $item->SeDebioHacerEnVel,
                         'SeDebioHacerEnTiem' => $item->SeDebioHacerEnTiem,
+                        'TotalTiempoMuerto' => $item->TiempoMuerto,
                     ];
                 });
             } else {
@@ -165,10 +165,10 @@ class CierreTurnoController extends Controller
                         'CantTiros' => $item->CantTiro,
                         'EnTiempoTiros' => $item->SeDebioHacerEnTiem,
                         'SeDebioHacer' => $item->SeDebioHacerEnVel,
-                        'TiempoReportado' => $item->TieDisponible,
+                        'TiempoReportado' => $item->TiempoTotal,
                         'TiempoDeAjuste' => $item->TieAjuste,
                         'TiempoDeTiro' => $item->TieTiro,
-                        'TotalTiempoMuerto' => $item->TMPropio + $item->TMAjeno,
+                        'TotalTiempoMuerto' => $item->TiempoMuerto,
                         'AjusteStd' => 0,
                         'AjusteVWStd' => 0,
                         'VelocidadStd' => 0,
