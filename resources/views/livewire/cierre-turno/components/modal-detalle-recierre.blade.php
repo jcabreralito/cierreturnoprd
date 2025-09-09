@@ -15,8 +15,14 @@
                 <h3 class="text-xl font-semibold mt-4 mb-2">Fechas y horas del cierre</h3>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <p class="text-gray-700">Fecha firma supervisor: {{ Carbon\Carbon::parse($reporte->fecha_firma_supervisor)->format('d/m/Y H:i:s') }}</p>
-                    <p class="text-gray-700">Fecha firma operador: {{ Carbon\Carbon::parse($reporte->fecha_firma_operador)->format('d/m/Y H:i:s') }}</p>
+                    <div>
+                        <p class="text-gray-700">Nombre del supervisor: {{ $reporte->nombre_firma_supervisor }}</p>
+                        <p class="text-gray-700">Fecha firma supervisor: {{ Carbon\Carbon::parse($reporte->fecha_firma_supervisor)->format('d/m/Y H:i:s') }}</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-700">Nombre del operador: {{ $reporte->nombre_firma_operador }}</p>
+                        <p class="text-gray-700">Fecha firma operador: {{ Carbon\Carbon::parse($reporte->fecha_firma_operador)->format('d/m/Y H:i:s') }}</p>
+                    </div>
                 </div>
             </div>
         @endif

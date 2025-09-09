@@ -438,7 +438,7 @@ class CierreTurnoController extends Controller
         $operador = explode('-', $operador)[0];
 
         $area = DB::table('Lito.dbo.Personal')
-                ->where('personal', $operador)
+                ->where('Personal', intval($operador))
                 ->value('Departamento');
 
         return DB::table('v_Supervisores')
