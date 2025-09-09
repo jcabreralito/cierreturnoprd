@@ -35,7 +35,7 @@
         <div class="mt-2">
             <p>STD AJUSTE NORMAL: <span class="font-semibold">{{ number_format($reporteActual->std_ajuste_normal, 2) }}</span></p>
             <p>STD AJUSTE LITERATURA: <span class="font-semibold">{{ number_format($reporteActual->std_ajuste_literatura, 2) }}</span></p>
-            <p>STD VELOCIDAD DE TIRO: <span class="font-semibold">{{ number_format($reporteActual->std_velocidad_tiro, 2) }}</span></p>
+            <p>STD VELOCIDAD DE TIRO: <span class="font-semibold">{{ number_format($reporteActual->std_velocidad_tiro, 0) }}</span></p>
         </div>
     </div>
 
