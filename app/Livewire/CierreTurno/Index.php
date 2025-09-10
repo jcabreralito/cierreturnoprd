@@ -45,6 +45,8 @@ class Index extends Component
     public $filtroSort = 'ID';
     public $filtroSortType = 'asc';
 
+    public $maquinas = [];
+
     /**
      * Montamos algunas variables para que tengan valor
      *
@@ -66,7 +68,6 @@ class Index extends Component
     {
         return view('livewire.cierre-turno.index', [
             'operadores' => (new CierreTurnoController())->getOperadores(),
-            'maquinas' => (new CierreTurnoController())->getMaquinas(),
         ]);
     }
 
@@ -117,6 +118,9 @@ class Index extends Component
         $this->limpiarBuscadores = true;
         $this->supervisores = (new CierreTurnoController())->getSupervisores($this->operador);
         $this->dispatch('cargarSupervisores', supervisores: $this->supervisores);
+
+        // Obtener las máquinas asociadas al operador seleccionado del listado
+        $this->maquinas = (count($this->list) > 0) ? $this->list->pluck('Maquina')->unique() : [];
 
         if (count($this->list) > 0) {
             if (count($this->reporteActual) == 0) {
@@ -258,13 +262,16 @@ class Index extends Component
 
             $color = '';
 
-            if ($global < 60) {
+            if ($global == 0) {
+                $color = "#000000";
+                $this->esBueno = true;
+            } else if ($global <= 50) {
                 $color = "#F8696B";
                 $this->esBueno = false;
-            } else if ($global >= 60 && $global <= 70) {
+            } else if ($global > 50 && $global < 70) {
                 $color = "#FDD17F";
-                $this->esBueno = false;
-            } else if ($global > 70) {
+                $this->esBueno = true;
+            } else if ($global >= 70) {
                 $color = "#63BE7B";
                 $this->esBueno = true;
             }

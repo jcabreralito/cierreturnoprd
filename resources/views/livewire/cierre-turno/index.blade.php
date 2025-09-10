@@ -13,11 +13,22 @@
                     <div wire:ignore>
                         <x-filters.select name="operador" labelText="Operador" id="operador">
                             <option value="">Seleccione un operador</option>
-                            @foreach ($operadores as $operador)
-                                <option value="{{ $operador['label'] }}">{{ $operador['label'] }}</option>
+                            @foreach ($operadores as $operadorItem)
+                                <option value="{{ $operadorItem['label'] }}">{{ $operadorItem['label'] }}</option>
                             @endforeach
                         </x-filters.select>
                     </div>
+
+                    @if ($maquinas && count($maquinas) >= 2)
+                    <div wire:ignore>
+                        <x-filters.select name="maquina" labelText="Máquina" id="maquina">
+                            <option value="">Seleccione una máquina</option>
+                            @foreach ($maquinas as $maquinaItem)
+                                <option value="{{ $maquinaItem }}">{{ $maquinaItem }}</option>
+                            @endforeach
+                        </x-filters.select>
+                    </div>
+                    @endif
 
                     <div>
                         <x-filters.select name="turno" labelText="Turno" :isLive="true">
@@ -160,18 +171,17 @@
                         allowClear: true,
                         width: '100%'
                     });
-
-                    $('#maquina').on('change', function(e) {
-                        var data = $(this).val();
-                        @this.set('maquina', data);
-                    });
-
                 }, 1000);
             }
 
             $('#operador').on('change', function(e) {
                 var data = $(this).val();
                 @this.set('operador', data);
+            });
+
+            $('#maquina').on('change', function(e) {
+                var data = $(this).val();
+                @this.set('maquina', data);
             });
 
             document.addEventListener('confirmarCierre', (event) => {

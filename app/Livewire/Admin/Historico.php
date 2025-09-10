@@ -157,13 +157,16 @@ class Historico extends Component
 
             $color = '';
 
-            if ($global < 60) {
+            if ($global == 0) {
+                $color = "#000000";
+                $this->esBueno = true;
+            } else if ($global <= 50) {
                 $color = "#F8696B";
                 $this->esBueno = false;
-            } else if ($global >= 60 && $global <= 70) {
+            } else if ($global > 50 && $global < 70) {
                 $color = "#FDD17F";
-                $this->esBueno = false;
-            } else if ($global > 70) {
+                $this->esBueno = true;
+            } else if ($global >= 70) {
                 $color = "#63BE7B";
                 $this->esBueno = true;
             }
