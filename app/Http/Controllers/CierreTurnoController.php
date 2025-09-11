@@ -114,16 +114,18 @@ class CierreTurnoController extends Controller
         $fecha_cierre = Carbon::parse($data['fecha_cierre'])->format('d/m/Y');
 
         if ($tipo == 1) {
-            $reporte = DB::select('SET NOCOUNT ON; exec sp_GetEficienciaOperador ?, ?, ?', [
+            $reporte = DB::select('SET NOCOUNT ON; exec sp_GetEficienciaOperador ?, ?, ?, ?', [
                 explode('-', $data['operador'])[0],
                 $data['turno'],
                 $fecha_cierre,
+                $data['maquina']
             ]);
         } else {
-            $reporte = DB::select('SET NOCOUNT ON; exec sp_GetEficienciaOperadorPegadora ?, ?, ?', [
+            $reporte = DB::select('SET NOCOUNT ON; exec sp_GetEficienciaOperadorPegadora ?, ?, ?, ?', [
                 explode('-', $data['operador'])[0],
                 $data['turno'],
                 $fecha_cierre,
+                $data['maquina']
             ]);
         }
 
@@ -283,6 +285,26 @@ class CierreTurnoController extends Controller
                     ];
 
                     $adicional = (new DetalleReporteController())->registrarDetalles($dataAdicional);
+
+                    $dataDetalles = (new DetallesReporteEficienciaController())->storeDetallesReporteEficiencia([
+                        'tiempo_ajuste_promedio' => $data['reporteActual'][0]['TieAjusPro'],
+                        'num_ajustes' => $data['reporteActual'][0]['AjustesNormales'],
+                        'num_ajustes_literatura' => $data['reporteActual'][0]['AjustesLiteratura'],
+                        'tiempo_ajustes' => $data['reporteActual'][0]['TiempoDeAjuste'],
+                        'se_debio_realizar_en_ajustes' => $data['reporteActual'][0]['SeDebioHacerEnTiem'],
+                        'velocidad_promedio' => $data['reporteActual'][0]['VelPromedio'],
+                        'num_tiros' => $data['reporteActual'][0]['CantTiros'],
+                        'tiempo_tiros' => $data['reporteActual'][0]['TiempoDeTiro'],
+                        'se_debio_realizar_en_tiros' => $data['reporteActual'][0]['SeDebioHacerEnVel'],
+                        'en' => $data['reporteActual'][0]['TiempoReportado'],
+                        'debio_hacerce_en' => $data['reporteActual'][0]['SeDebioHacerEnTiem'] + $data['reporteActual'][0]['SeDebioHacerEnVel'],
+                        'tiempo_muerto' => $data['reporteActual'][0]['TotalTiempoMuerto'],
+                        'eficiencia_global' => $data['reporteActual'][0]['GLOBAL'],
+                        'std_ajuste_normal' => $data['reporteActual'][0]['AjusteStd'],
+                        'std_ajuste_literatura' => $data['reporteActual'][0]['AjusteVWStd'],
+                        'std_velocidad_tiro' => $data['reporteActual'][0]['VelocidadStd'],
+                        'reporte_id' => $reporte->id,
+                    ]);
                 }
 
                 if (!$data['contieneRazones']) {
@@ -373,6 +395,26 @@ class CierreTurnoController extends Controller
                 ];
 
                 $adicional = (new DetalleReporteController())->actualizarDetalles($dataAdicional, $reporteCT->id);
+
+                $dataDetalles = (new DetallesReporteEficienciaController())->updateDetallesReporteEficiencia([
+                    'tiempo_ajuste_promedio' => $reporte[0]['TieAjusPro'],
+                    'num_ajustes' => $reporte[0]['AjustesNormales'],
+                    'num_ajustes_literatura' => $reporte[0]['AjustesLiteratura'],
+                    'tiempo_ajustes' => $reporte[0]['TiempoDeAjuste'],
+                    'se_debio_realizar_en_ajustes' => $reporte[0]['SeDebioHacerEnTiem'],
+                    'velocidad_promedio' => $reporte[0]['VelPromedio'],
+                    'num_tiros' => $reporte[0]['CantTiros'],
+                    'tiempo_tiros' => $reporte[0]['TiempoDeTiro'],
+                    'se_debio_realizar_en_tiros' => $reporte[0]['SeDebioHacerEnVel'],
+                    'en' => $reporte[0]['TiempoReportado'],
+                    'debio_hacerce_en' => $reporte[0]['SeDebioHacerEnTiem'] + $reporte[0]['SeDebioHacerEnVel'],
+                    'tiempo_muerto' => $reporte[0]['TotalTiempoMuerto'],
+                    'eficiencia_global' => $reporte[0]['GLOBAL'],
+                    'std_ajuste_normal' => $reporte[0]['AjusteStd'],
+                    'std_ajuste_literatura' => $reporte[0]['AjusteVWStd'],
+                    'std_velocidad_tiro' => $reporte[0]['VelocidadStd'],
+                    'reporte_id' => $reporteCT->id,
+                ]);
 
                 // Guardamos el archivo PDF
                 $pdf = (new CierreTurnoController())->imprimirReporte([
@@ -488,6 +530,13 @@ class CierreTurnoController extends Controller
             ]);
 
             $archivo = (new DocumentoReporteController())->actualizarDocumentos($pdf, $reporteCT->id);
+
+            (new BitacoraController())->registrarBitacora([
+                'cambio_anterior' => null,
+                'cambio_nuevo' => 'Firma de cierre de turno por parte del supervisor',
+                'usuario_id' => auth()->user()->Id_Usuario,
+                'reporte_id' => $reporteCT->id,
+            ]);
 
             return (new ReporteController())->actualizarFirmaSupervisor($data, $id);
         } catch (\Exception $e) {

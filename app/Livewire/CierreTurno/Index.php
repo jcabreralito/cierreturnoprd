@@ -92,9 +92,16 @@ class Index extends Component
             return;
         }
 
+        if (count($this->maquinas) >= 2) {
+            if ($this->maquina == null || $this->maquina == '') {
+                $this->dispatch('toast', type: 'error', title: 'El campo máquina es obligatorio');
+                return;
+            }
+        }
+
         $data = [
             'operador' => $this->operador,
-            'maquina' => $this->maquina,
+            'maquina' => $this->maquina == null || $this->maquina == '' ? (count($this->maquinas) > 0 ? $this->maquinas[0] : null) : $this->maquina,
             'turno' => $this->turno,
             'fecha_cierre' => $this->fecha_cierre,
             'tipo_reporte' => $this->tipo_reporte,
@@ -118,9 +125,6 @@ class Index extends Component
         $this->limpiarBuscadores = true;
         $this->supervisores = (new CierreTurnoController())->getSupervisores($this->operador);
         $this->dispatch('cargarSupervisores', supervisores: $this->supervisores);
-
-        // Obtener las máquinas asociadas al operador seleccionado del listado
-        $this->maquinas = (count($this->list) > 0) ? $this->list->pluck('Maquina')->unique() : [];
 
         if (count($this->list) > 0) {
             if (count($this->reporteActual) == 0) {
@@ -388,5 +392,40 @@ class Index extends Component
         ];
 
         $this->list = (new CierreTurnoController())->getListadoActividades($data);
+    }
+
+    /**
+     * Función para saber si el operador trabajó en más de una máquina el mismo día
+     *
+     * @return void
+     */
+    public function operadorTrabajoEnVariasMaquinas()
+    {
+        $this->maquina = '';
+
+        // Validamos si la fecha tiene el formato correcto
+        if ($this->fecha_cierre != null && $this->fecha_cierre != '') {
+            $date = \DateTime::createFromFormat('Y-m-d', $this->fecha_cierre);
+            if (!$date || $date->format('Y-m-d') !== $this->fecha_cierre) {
+                return;
+            }
+        }
+
+        if ($this->operador != null && $this->operador != '' && $this->fecha_cierre != null && $this->fecha_cierre != '' && $this->turno != null && $this->turno != '') {
+            $listado = (new CierreTurnoController())->getListadoActividades([
+                'operador' => $this->operador,
+                'maquina' => $this->maquina,
+                'turno' => $this->turno,
+                'fecha_cierre' => $this->fecha_cierre,
+                'tipo_reporte' => $this->tipo_reporte,
+            ]);
+
+            if (count($listado) > 0) {
+                // Obtener las máquinas asociadas al operador seleccionado del listado
+                $this->maquinas = (count($listado) > 0) ? $listado->pluck('Maquina')->unique() : [];
+            } else {
+                $this->maquinas = [];
+            }
+        }
     }
 }

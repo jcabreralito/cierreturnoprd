@@ -9,7 +9,7 @@
 
         <div class="mb-4">
             <div class="flex items-start bg-[#E9E9E9] py-1 px-4 shadow-md rounded-md mb-5">
-                <div class="grid grid-cols-1 lg:grid-cols-4 md:gap-x-4 md:gap-y-0 gap-y-4 w-full">
+                <div class="grid grid-cols-1 md:gap-x-4 md:gap-y-0 gap-y-4 w-full {{ ($maquinas && count($maquinas) >= 2) ? 'md:grid-cols-5' : 'md:grid-cols-4' }}">
                     <div wire:ignore>
                         <x-filters.select name="operador" labelText="Operador" id="operador">
                             <option value="">Seleccione un operador</option>
@@ -20,7 +20,7 @@
                     </div>
 
                     @if ($maquinas && count($maquinas) >= 2)
-                    <div wire:ignore>
+                    <div>
                         <x-filters.select name="maquina" labelText="Máquina" id="maquina">
                             <option value="">Seleccione una máquina</option>
                             @foreach ($maquinas as $maquinaItem)
@@ -39,9 +39,8 @@
                     </div>
 
                     <div>
-                        <x-filters.input name="fecha_cierre" labelText="Fecha de Cierre" type="date" :isLive="true" />
+                        <x-filters.input name="fecha_cierre" labelText="Fecha de Cierre" type="date" :isLive="true" wire:change="operadorTrabajoEnVariasMaquinas" />
                     </div>
-
                     @if (
                             ($turno != null && $turno != '') &&
                             ($fecha_cierre != null && $fecha_cierre != '') &&
@@ -165,23 +164,13 @@
                         allowClear: true,
                         width: '100%'
                     });
-
-                    $('#maquina').select2({
-                        placeholder: 'Seleccione una máquina',
-                        allowClear: true,
-                        width: '100%'
-                    });
                 }, 1000);
             }
 
             $('#operador').on('change', function(e) {
                 var data = $(this).val();
                 @this.set('operador', data);
-            });
-
-            $('#maquina').on('change', function(e) {
-                var data = $(this).val();
-                @this.set('maquina', data);
+                @this.call('operadorTrabajoEnVariasMaquinas')
             });
 
             document.addEventListener('confirmarCierre', (event) => {
