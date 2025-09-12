@@ -114,30 +114,36 @@
                 <x-home.table.table :headers="[
                     [0 => 'N° ORDEN', 1 => false, 2 => 'text-center', 3 => ''],
                     [0 => 'NOMBRE TRABAJO', 1 => false, 2 => '', 3 => ''],
+                    [0 => 'ID ACT', 1 => false, 2 => '', 3 => ''],
                     [0 => 'DESCRIPCIÓN', 1 => false, 2 => '', 3 => ''],
                     [0 => 'PROCESO', 1 => false, 2 => '', 3 => ''],
                     [0 => 'CANTIDAD', 1 => false, 2 => 'text-center', 3 => ''],
-                    [0 => 'TIEMPO', 1 => false, 2 => 'text-center', 3 => ''],
-                    [0 => 'HORA INICIO', 1 => false, 2 => 'text-center', 3 => ''],
-                    [0 => 'HORA FIN', 1 => false, 2 => 'text-center', 3 => ''],
+                    [0 => 'TURNO', 1 => false, 2 => 'text-center', 3 => ''],
+                    [0 => 'TIEMPO (HRS)', 1 => false, 2 => 'text-center', 3 => ''],
+                    [0 => 'FECHA INICIO', 1 => false, 2 => 'text-center', 3 => ''],
+                    [0 => 'FECHA FIN', 1 => false, 2 => 'text-center', 3 => ''],
+                    [0 => 'FECHA PRODUCCIÓN', 1 => false, 2 => 'text-center', 3 => ''],
+                    [0 => 'OPERADOR', 1 => false, 2 => '', 3 => ''],
                     [0 => 'MAQUINA', 1 => false, 2 => '', 3 => ''],
-                    [0 => 'NOTAS', 1 => false, 2 => '', 3 => ''],
                 ]" tblClass="tblNormal">
                     @forelse ($this->list as $item)
                         <tr class="hover:bg-gray-100 transition-all duration-300" wire:key="item-{{ $item->idAct }}">
                             <x-home.table.td class="text-center">{{ $item->numOrden }}</x-home.table.td>
                             <x-home.table.td class="">{{ $item->NombreTrabajo }}</x-home.table.td>
+                            <x-home.table.td class="text-center">{{ $item->idAct }}</x-home.table.td>
                             <x-home.table.td class="">{{ $item->observacion }}</x-home.table.td>
                             <x-home.table.td class="">{{ $item->proceso }}</x-home.table.td>
                             <x-home.table.td class="text-center">
                                 {{--  Validamos si el valor tiene decimales  --}}
                                 {{ intval($item->Cantidad) == $item->Cantidad ? number_format($item->Cantidad, 0) : number_format($item->Cantidad, 2) }}
                             </x-home.table.td>
+                            <x-home.table.td class="text-center">{{ $item->Turno }}</x-home.table.td>
                             <x-home.table.td class="text-center">{{ number_format($item->Tiempo, 2) }}</x-home.table.td>
                             <x-home.table.td class="text-center">{{ Carbon\Carbon::parse($item->HoraInicio)->format('Y/m/d H:i') }}</x-home.table.td>
                             <x-home.table.td class="text-center">{{ Carbon\Carbon::parse($item->HoraFin)->format('Y/m/d H:i') }}</x-home.table.td>
+                            <x-home.table.td class="text-center">{{ Carbon\Carbon::parse($item->fechaproduccion)->format('Y/m/d H:i') }}</x-home.table.td>
+                            <x-home.table.td class="">{{ $item->Empleado }}</x-home.table.td>
                             <x-home.table.td class="">{{ $item->Maquina }}</x-home.table.td>
-                            <x-home.table.td class="">{{ $item->Notas }}</x-home.table.td>
                         </tr>
                     @empty
                         <tr>

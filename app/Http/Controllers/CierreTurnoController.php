@@ -134,57 +134,30 @@ class CierreTurnoController extends Controller
         }
 
         if ($reporte) {
-            if ($tipo == 1) {
-                $reporte = collect($reporte)->map(function ($item) {
-                    return [
-                        'AjustesNormales' => $item->NumAjustesL,
-                        'AjustesLiteratura' => $item->NumAjustesVW,
-                        'CantTiros' => $item->CantTiro,
-                        'EnTiempoTiros' => $item->SeDebioHacerEnTiem,
-                        'SeDebioHacer' => $item->SeDebioHacerEnVel,
-                        'TiempoReportado' => $item->TiempoTotal,
-                        'TiempoDeAjuste' => $item->TieAjuste,
-                        'TiempoDeTiro' => $item->TieTiro,
-                        'AjusteStd' => $item->StdAjusteL,
-                        'AjusteVWStd' => $item->StdAjusteVW,
-                        'VelocidadStd' => $item->StdTiro,
-                        'GLOBAL' => ($item->EfiGlobal > 100 ? 100 : ($item->EfiGlobal < 0 ? 0 : $item->EfiGlobal)),
-                        'CONVENCIONAL' => $item->EfiGlobal,
+            $reporte = collect($reporte)->map(function ($item) {
+                return [
+                    'AjustesNormales' => $item->NumAjustesL,
+                    'AjustesLiteratura' => $item->NumAjustesVW,
+                    'CantTiros' => $item->CantTiro,
+                    'EnTiempoTiros' => $item->SeDebioHacerEnTiem,
+                    'SeDebioHacer' => $item->SeDebioHacerEnVel,
+                    'TiempoReportado' => $item->TiempoTotal,
+                    'TiempoDeAjuste' => $item->TieAjuste,
+                    'TiempoDeTiro' => $item->TieTiro,
+                    'AjusteStd' => $item->StdAjusteL,
+                    'AjusteVWStd' => $item->StdAjusteVW,
+                    'VelocidadStd' => $item->StdTiro,
+                    'GLOBAL' => ($item->EfiGlobal > 100 ? 100 : ($item->EfiGlobal < 0 ? 0 : $item->EfiGlobal)),
+                    'CONVENCIONAL' => $item->EfiGlobal,
 
-                        'TieSinTrab' => $item->TieSinTrab,
-                        'VelPromedio' => $item->VelPromedio,
-                        'TieAjusPro' => $item->TieAjusPro,
-                        'SeDebioHacerEnVel' => $item->SeDebioHacerEnVel,
-                        'SeDebioHacerEnTiem' => $item->SeDebioHacerEnTiem,
-                        'TotalTiempoMuerto' => $item->TiempoMuerto,
-                    ];
-                });
-            } else {
-                $reporte = collect($reporte)->map(function ($item) {
-                    return [
-                        'AjustesNormales' => $item->NumAjustes,
-                        'AjustesLiteratura' => 0,
-                        'CantTiros' => $item->CantTiro,
-                        'EnTiempoTiros' => $item->SeDebioHacerEnTiem,
-                        'SeDebioHacer' => $item->SeDebioHacerEnVel,
-                        'TiempoReportado' => $item->TiempoTotal,
-                        'TiempoDeAjuste' => $item->TieAjuste,
-                        'TiempoDeTiro' => $item->TieTiro,
-                        'TotalTiempoMuerto' => $item->TiempoMuerto,
-                        'AjusteStd' => 0,
-                        'AjusteVWStd' => 0,
-                        'VelocidadStd' => 0,
-                        'GLOBAL' => ($item->EfiPegadoraLineal > 100 ? 100 : ($item->EfiPegadoraLineal < 0 ? 0 : $item->EfiPegadoraLineal)),
-                        'CONVENCIONAL' => 0,
-
-                        'TieSinTrab' => $item->TieSinTrab,
-                        'VelPromedio' => 0,
-                        'TieAjusPro' => $item->TieAjusPro,
-                        'SeDebioHacerEnVel' => $item->SeDebioHacerEnVel,
-                        'SeDebioHacerEnTiem' => $item->SeDebioHacerEnTiem,
-                    ];
-                });
-            }
+                    'TieSinTrab' => $item->TieSinTrab,
+                    'VelPromedio' => $item->VelPromedio,
+                    'TieAjusPro' => $item->TieAjusPro,
+                    'SeDebioHacerEnVel' => $item->SeDebioHacerEnVel,
+                    'SeDebioHacerEnTiem' => $item->SeDebioHacerEnTiem,
+                    'TotalTiempoMuerto' => $item->TiempoMuerto,
+                ];
+            });
         }
 
         return $reporte;
