@@ -55,6 +55,10 @@
                         <a href="{{ $routeMain }}/historico" wire:navigate class="item-sub-menu block text-white px-2 py-2 rounded-md text-base font-medium {{ request()->is('historico') ? 'bg-white text-blue-1' : '' }}">Historico</a>
                         @endif
 
+                        @if (auth()->user()->tipoUsuarioCierreTurno != 5)
+                        <a href="{{ $routeMain }}/reporte-produccion" wire:navigate class="item-sub-menu block text-white px-2 py-2 rounded-md text-base font-medium {{ request()->is('reporte-produccion') ? 'bg-white text-blue-1' : '' }}">Reporte de Producción</a>
+                        @endif
+
                         @if (auth()->user()->tipoUsuarioCierreTurno == 1 || auth()->user()->tipoUsuarioCierreTurno == 4)
                         <a href="{{ $routeMain }}/ranking" wire:navigate class="item-sub-menu block text-white px-2 py-2 rounded-md text-base font-medium {{ request()->is('ranking') ? 'bg-white text-blue-1' : '' }}">Ranking</a>
                         @endif

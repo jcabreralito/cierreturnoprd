@@ -20,6 +20,12 @@
             </div>
             @endif
 
+            @if (auth()->user()->tipoUsuarioCierreTurno != 5)
+            <div class="w-full">
+                <a href="{{ $routeMain }}/reporte-produccion" wire:navigate class="{{ request()->is('reporte-produccion') ? 'btn-sidebar-active' : 'btn-sidebar' }} block">Reporte de Producción</a>
+            </div>
+            @endif
+
             @if (auth()->user()->tipoUsuarioCierreTurno == 1 || auth()->user()->tipoUsuarioCierreTurno == 4)
             <div class="w-full">
                 <a href="{{ $routeMain }}/ranking" wire:navigate class="{{ request()->is('ranking') ? 'btn-sidebar-active' : 'btn-sidebar' }} block">Ranking</a>

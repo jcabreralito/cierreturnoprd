@@ -3,6 +3,7 @@
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\JornadasController;
 use App\Http\Controllers\PrdController;
+use App\Http\Controllers\ReporteProduccionController;
 use App\Http\Controllers\SolicitudController;
 use App\Http\Controllers\SolicitudesRelacionController;
 use App\Http\Controllers\TestController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\UserController;
 use App\Livewire\Admin\Historico;
 use App\Livewire\Admin\Ranking;
 use App\Livewire\CierreTurno\ListaCierres;
+use App\Livewire\ReporteProduccion;
 use Illuminate\Support\Facades\Route;
 use Livewire\Livewire;
 
@@ -41,5 +43,7 @@ Route::post('/validate-supervisor', [UserController::class, 'validateSupervisor'
 Route::middleware(['authcustom'])->get('/lista-cierres', ListaCierres::class)->name('lista-cierres');
 Route::middleware(['authcustom'])->get('/historico', Historico::class)->name('historico');
 Route::middleware(['authcustom'])->get('/ranking', Ranking::class)->name('ranking');
+Route::middleware(['authcustom'])->get('/reporte-produccion', ReporteProduccion::class)->name('reporte-produccion');
+Route::middleware(['authcustom'])->post('/reporte-produccion/pdf', [ReporteProduccionController::class, 'imprimirReporte'])->name('reporte-produccion.pdf');
 
 Route::get('/test', [TestController::class, 'pruebaStore'])->name('pruebaStore');
