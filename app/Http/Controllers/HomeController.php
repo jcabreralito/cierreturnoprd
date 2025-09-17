@@ -20,7 +20,7 @@ class HomeController extends Controller
         $user = base64_decode($request->usuario);
 
         // La almacenamos en el usuario
-        $user = User::where('login', $user)->first();
+        $user = User::where('login', $user)->where('estatus', 'ACTIVO')->first();
 
         // Validamos si el usuario no existe para redireccionar a litoapps
         if ($user == null && auth()->user() == null) {
