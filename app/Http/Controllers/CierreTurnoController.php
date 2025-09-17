@@ -134,7 +134,7 @@ class CierreTurnoController extends Controller
         }
 
         if ($reporte) {
-            $reporte = collect($reporte)->map(function ($item) {
+            $reporte = collect($reporte)->map(function ($item) use ($tipo) {
                 return [
                     'AjustesNormales' => $item->NumAjustesL,
                     'AjustesLiteratura' => $item->NumAjustesVW,
@@ -147,7 +147,7 @@ class CierreTurnoController extends Controller
                     'AjusteStd' => $item->StdAjusteL,
                     'AjusteVWStd' => $item->StdAjusteVW,
                     'VelocidadStd' => $item->StdTiro,
-                    'GLOBAL' => ($item->EfiGlobal > 100 ? 100 : ($item->EfiGlobal < 0 ? 0 : $item->EfiGlobal)),
+                    'GLOBAL' => $item->EfiGlobal,
                     'CONVENCIONAL' => $item->EfiGlobal,
 
                     'TieSinTrab' => $item->TieSinTrab,
@@ -156,6 +156,7 @@ class CierreTurnoController extends Controller
                     'SeDebioHacerEnVel' => $item->SeDebioHacerEnVel,
                     'SeDebioHacerEnTiem' => $item->SeDebioHacerEnTiem,
                     'TotalTiempoMuerto' => $item->TiempoMuerto,
+                    'Tipo' => $tipo,
                 ];
             });
         }

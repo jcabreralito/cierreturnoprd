@@ -58,7 +58,7 @@
             </div>
             @endif
 
-            {{--  @include('asistente.template',["assistantId"=>"asst_V9BBeZN8YrYETUS6jwFr1Szn"])  --}}
+            @include('asistente.template',["assistantId"=>"asst_4AuAIGO8sOMKJJoy8mnBFHBx"])
         </div>
     </main>
 

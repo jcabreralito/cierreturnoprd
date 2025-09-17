@@ -16,7 +16,7 @@
     <div class="col-span-6 md:col-span-3 space-y-3 text-center">
         <h3 class="font-bold text-lg">Velocidad Promedio</h3>
 
-        <h4><span class="font-semibold text-2xl">{{ number_format($reporteActual[0]['VelPromedio'], 2) }} t/h</span></h4>
+        <h4><span class="font-semibold text-2xl">{{ number_format(($reporteActual[0]['VelPromedio']), 2) }} t/h</span></h4>
 
         <div class="flex space-x-3 w-full justify-center">
             <p>Tiros <span class="font-semibold ml-2">{{ number_format($reporteActual[0]['CantTiros'], 0) }}</span></p>
@@ -28,15 +28,21 @@
     </div>
 
     <div class="col-span-6 md:col-span-3 space-y-3 w-full text-center">
-        <p>SE HICIERON <span class="font-semibold">{{ number_format($reporteActual[0]['AjustesNormales'], 2) }}</span> AJUSTES NORMALES, <span class="font-semibold">{{ number_format($reporteActual[0]['AjustesLiteratura'], 0) }}</span> DE LITERATURA Y <span class="font-semibold">{{ number_format($reporteActual[0]['CantTiros'], 0) }}</span> TIROS EN <span class="font-semibold">{{ number_format($reporteActual[0]['TiempoReportado'], 2) }}</span> HRS, SE DEBIO DE HABER HECHO EN <span class="font-semibold">{{ number_format((round($reporteActual[0]['SeDebioHacerEnTiem'], 2) + round($reporteActual[0]['SeDebioHacerEnVel'], 2)), 2) }}</span> HRS.</p>
+        <p>SE HICIERON <span class="font-semibold">{{ number_format($reporteActual[0]['AjustesNormales'], 2) }}</span> AJUSTES NORMALES
+            @if ($reporteActual[0]['Tipo'] == 1)
+                , <span class="font-semibold">{{ number_format($reporteActual[0]['AjustesLiteratura'], 0) }}</span> DE LITERATURA Y
+            @endif
+            <span class="font-semibold">{{ number_format($reporteActual[0]['CantTiros'], 0) }}</span> TIROS EN <span class="font-semibold">{{ number_format($reporteActual[0]['TiempoReportado'], 2) }}</span> HRS, SE DEBIO DE HABER HECHO EN <span class="font-semibold">{{ number_format((round($reporteActual[0]['SeDebioHacerEnTiem'], 2) + round($reporteActual[0]['SeDebioHacerEnVel'], 2)), 2) }}</span> HRS.</p>
 
         {{--  <p>TIEMPO TOTAL REPORTADO: <span class="font-semibold">{{ number_format($reporteActual[0]['TiempoReportado'], 2) }}</span></p>  --}}
 
+        @if ($reporteActual[0]['Tipo'] == 1)
         <div class="mt-2">
             <p>STD AJUSTE NORMAL: <span class="font-semibold">{{ number_format($reporteActual[0]['AjusteStd'], 2) }}</span></p>
             <p>STD AJUSTE LITERATURA: <span class="font-semibold">{{ number_format($reporteActual[0]['AjusteVWStd'], 2) }}</span></p>
             <p>STD VELOCIDAD DE TIRO: <span class="font-semibold">{{ number_format($reporteActual[0]['VelocidadStd'], 0) }}</span></p>
         </div>
+        @endif
 
         <div class="mt-2">
             <p>TIEMPO MUERTO: <span class="font-semibold">{{ number_format($reporteActual[0]['TotalTiempoMuerto'], 2) }}</span></p>
@@ -51,7 +57,7 @@
                 $porcentaje = $reporteActual[0]['GLOBAL'] ?? 0;
                 $radio = 50;
                 $circunferencia = 2 * pi() * $radio;
-                $offset = $circunferencia - ($porcentaje / 100 * $circunferencia);
+                $offset = ($porcentaje > 100 ? $circunferencia - (100 / 100 * $circunferencia) : $circunferencia - ($porcentaje / 100 * $circunferencia));
             @endphp
             <div class="flex flex-col items-center justify-center">
                 <svg width="120" height="120" class="mb-2">
