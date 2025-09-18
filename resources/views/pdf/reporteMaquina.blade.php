@@ -42,39 +42,23 @@
                         @endcomponent
                     </td>
                     <td width="75%" colspan="4" style="text-align: left; font-size: 20px !important;">
-                        @if ($tiporeporte == 'M')
-                            <b>REPORTE DE PROCESOS X MAQUINA</b>
-                        @elseif ($tiporeporte == 'O')
-                            <b style="margin-left: -80px">REPORTE DE PROCESOS X OPERADOR</b>
-                        @else
-                            <b>REPORTE DE PROCESOS X GRUPO</b>
-                        @endif
+                        <b style="margin-left: -80px">REPORTE DE PROCESOS X OPERADOR</b>
                     </td>
                 </tr>
                 <tr>
-                    @if ($tiporeporte == 'O')
-                        <td style="font-weight: bold">
-                            {{ $operador }}
-                        </td>
-                        <td colspan="3" style="font-weight: bold">
-                            {{ $reporte_detalle[0]->Empleado }}
-                        </td>
-                    @elseif ($tiporeporte == 'M')
-                        <td colspan="4" style="font-weight: bold; text-align: left">
-                            {{ $maquina }}
-                        </td>
-                    @else
-                        <td colspan="4" style="font-weight: bold; text-align: left">
-                            {{ $grupo }}
-                        </td>
-                    @endif
+                    <td style="font-weight: bold">
+                        {{ $operador }}
+                    </td>
+                    <td colspan="3" style="font-weight: bold">
+                        {{ $reporte_detalle[0]->Empleado }}
+                    </td>
                     <td></td>
                     <td></td>
-                    <td style="font-weight: bold">Del : &nbsp; {{ $fecha_inicio }}</td>
-                    <td style="font-weight: bold">Al : &nbsp; {{ $fecha_fin }}</td>
+                    <td style="font-weight: bold">Fecha : &nbsp; {{ $fecha_inicio }}</td>
                 </tr>
             </tbody>
         </table>
+        <br>
         <br>
     </header>
     {{-- <footer>
@@ -88,15 +72,9 @@
                     {{-- <th style="text-align: center; width: 5%">Fin Turno</th> --}}
                     <th style="text-align: center; width: 5%">Orden</th>
                     {{-- <th style="text-align: center; width: 5%">Id Act</th> --}}
-                    @if ($reporte == 'M')
-                    <th style="text-align: center; width: 19%">Nombre Trabajo</th>
-                    <th style="text-align: center; width: 18% !important">Descripción</th>
-                    <th style="text-align: center; width: 8%">Operador</th>
-                    @elseif ($reporte == 'O' || $reporte == 'G')
                     <th style="text-align: center; width: 15%">Nombre Trabajo</th>
                     <th style="text-align: center; width: 15%">Descripción</th>
                         <th style="text-align: center; width: 15%">Maquina</th>
-                    @endif
                     <th style="text-align: center; width: 12%">Proceso</th>
                     <th style="text-align: center; width: 5%">Cantidad</th>
                     <th style="text-align: center; width: 5%">Turno</th>
@@ -131,11 +109,7 @@
                         @else
                             <th>{{ strtoupper($detalle->observacion) }}</th>
                         @endif
-                        @if ($reporte == 'M')
-                            <th>{{ strtoupper($detalle->NumEmpleado) }}</th>
-                        @elseif ($reporte == 'O' || $reporte == 'G')
-                            <th>{{ strtoupper($detalle->Maquina) }}</th>
-                        @endif
+                        <th>{{ strtoupper($detalle->Maquina) }}</th>
                         <th>{{ strtoupper($detalle->proceso) }}</th>
                         <th style="text-align: center">{{ number_format($detalle->Cantidad, 0) }}</th>
                         <th style="text-align: center">{{ $detalle->Turno }}</th>

@@ -2,9 +2,12 @@
 
 namespace App\Livewire\CierreTurno;
 
+use App\Exports\ListRegistroExport;
 use App\Http\Controllers\CierreTurnoController;
+use App\Http\Controllers\ReporteController;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
+use Maatwebsite\Excel\Facades\Excel;
 
 class Index extends Component
 {
@@ -46,6 +49,9 @@ class Index extends Component
     public $filtroSortType = 'asc';
 
     public $maquinas = [];
+
+    public $reportePdf;
+    public $modalPdf = false;
 
     /**
      * Montamos algunas variables para que tengan valor
@@ -429,5 +435,59 @@ class Index extends Component
                 $this->maquinas = [];
             }
         }
+    }
+
+    /**
+     * Función para generar el PDF del reporte
+     *
+     * @return void
+     */
+    public function generarPDF(): void
+    {
+        if (count($this->list) == 0) {
+            $this->dispatch('toast', type: 'error', title: 'No hay datos para generar el reporte');
+            return;
+        }
+
+        $reporteYaGuardado = (new ReporteController())->obtenerReporte([
+            'operador' => $this->operador,
+            'maquina' => $this->maquina,
+            'turno' => $this->turno,
+            'fecha_cierre' => $this->fecha_cierre,
+            'tipo_reporte' => $this->tipo_reporte,
+        ]);
+
+        $data = [
+            'operador' => $this->operador,
+            'maquina' => $this->maquina,
+            'turno' => $this->turno,
+            'fecha_cierre' => $this->fecha_cierre,
+            'tipo_reporte' => $this->tipo_reporte,
+            'tipo_reporte_generar' => $this->reporteActual[0]['Tipo'] ?? 1,
+
+            'filtroSort' => $this->filtroSort,
+            'filtroSortType' => $this->filtroSortType,
+            'reporte_id' => $reporteYaGuardado ? $reporteYaGuardado->id : null,
+        ];
+
+        $this->reportePdf = (new CierreTurnoController())->generarPDF($data);
+
+        $this->modalPdf = true;
+    }
+
+    /**
+     * Función para generar el Excel del reporte
+     *
+     * @return mixed
+     */
+    public function generarExcel()
+    {
+        if (count($this->list) == 0) {
+            $this->dispatch('toast', type: 'error', title: 'No hay datos para generar el reporte');
+            return;
+        }
+
+        // Generamos el excel con excel
+        return Excel::download(new ListRegistroExport($this->list), 'reporte_cierre_turno_' . now()->format('Y_m_d_H_i_s') . '.xlsx');
     }
 }

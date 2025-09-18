@@ -69,6 +69,24 @@
                                     <span class="tooltiptext">Realizar cierre</span>
                                 </div>
                             @endif
+
+                            @if (count($list) > 0)
+                            <div class="tooltip">
+                                <button wire:click="generarPDF()"
+                                    class="text-xs py-2 px-4 bg-emerald-500 hover:bg-emerald-600 text-white rounded">
+                                    <i class="fa-solid fa-file-pdf"></i>
+                                </button>
+                                <span class="tooltiptext">Generar PDF</span>
+                            </div>
+
+                            <div class="tooltip">
+                                <button wire:click="generarExcel()"
+                                    class="text-xs py-2 px-4 bg-blue-500 hover:bg-blue-600 text-white rounded">
+                                    <i class="fa-solid fa-file-excel"></i>
+                                </button>
+                                <span class="tooltiptext">Generar Excel</span>
+                            </div>
+                            @endif
                         </div>
                     @endif
                 </div>
@@ -134,6 +152,12 @@
                         </tr>
                     @endforelse
                 </x-home.table.table>
+
+                <div>
+                    <p class="text-xs mt-2">
+                        {{ count($this->list) }} registros encontrados
+                    </p>
+                </div>
             </div>
 
             @if (count($reporteActual) > 0)
@@ -144,6 +168,7 @@
 
     {{--  Modal para el registro de una nueva capacitación  --}}
     @include('livewire.cierre-turno.components.modal-cierre-turno')
+    @include('livewire.cierre-turno.components.modal-pdf-raw')
     @include('livewire.cierre-turno.components.loader')
 
     {{--  Configuracion e insercion de select2  --}}

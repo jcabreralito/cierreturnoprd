@@ -182,14 +182,6 @@ class CierreTurnoController extends Controller
         $fecha_fin = Carbon::parse($data['fecha_cierre'])->format('d/m/Y');
         $maquina = $data['maquina'];
 
-        $tipo_reporte = $data['tipo_reporte'];
-
-        if ($tipo_reporte == "Maquina") {
-            $reporte = 'M';
-        } else if ($tipo_reporte == "Operador") {
-            $reporte = 'O';
-        }
-
         $reporte_eficiencia = $this->getReporte([
                                 'fecha_cierre' => $data['fecha_cierre'],
                                 'operador' => $data['operador'],
@@ -199,16 +191,10 @@ class CierreTurnoController extends Controller
                             ]);
         $reporte_detalle = $this->getListadoActividades($data);
 
-        $maquinas = DB::select("SELECT *  FROM MetricsWeb.dbo.MaquinasMetrics WHERE maquina NOT LIKE '%SUAJE-01%' AND maquina NOT LIKE '%CORTE_TRI-01%'
-        AND Maquina NOT LIKE '%SUAJE-01%' AND Maquina NOT LIKE '%KOMORI 428%' ORDER BY Maquina ASC");
-        $Grupos = DB::select("SELECT DISTINCT Grupo FROM ETL_MSTR.dbo.etl_ParamStdMaquinas WHERE Grupo IS NOT NULL ORDER BY Grupo ASC");
-        $user = auth()->user()->Login;
-        $datos_usuario = DB::select('exec MetricsWeb.dbo.GetPermisosReportesProduccion @Login=' . $user);
-        $permiso = $datos_usuario[0]->Permiso;
         $titulo = 'Cierre de turno';
 
         $dompdf = App::make("dompdf.wrapper");
-        $dompdf->loadView("pdf/reporteMaquina", ['reporte_eficiencia' => $reporte_eficiencia, 'reporte_detalle' => $reporte_detalle, 'titulo' => $titulo, 'Grupos' => $Grupos, 'maquinas' => $maquinas, 'permiso' => $permiso, 'tiporeporte' => $reporte, 'fecha_inicio' => $fecha_inicio, 'fecha_fin' => $fecha_fin, 'operador' => $nombre_operador, 'maquina' => $maquina, 'grupo' => '', 'reporte' => $reporte, 'supervisorFirma' => $supervisorFirma, 'operadorFirma' => $operadorFirma]);
+        $dompdf->loadView("pdf/reporteMaquina", ['reporte_eficiencia' => $reporte_eficiencia, 'reporte_detalle' => $reporte_detalle, 'titulo' => $titulo, 'fecha_inicio' => $fecha_inicio, 'fecha_fin' => $fecha_fin, 'operador' => $nombre_operador, 'maquina' => $maquina, 'grupo' => '', 'supervisorFirma' => $supervisorFirma, 'operadorFirma' => $operadorFirma]);
 
         // Guardar el PDF en storage/app/public/pdfarchivo.pdf
         $output = $dompdf->output();
@@ -523,7 +509,6 @@ class CierreTurnoController extends Controller
 
             return (new ReporteController())->actualizarFirmaSupervisor($data, $id);
         } catch (\Exception $e) {
-            dd($e->getMessage());
             return "Lo siento, ocurrió un error al finalizar la firma del supervisor.";
         }
     }
@@ -600,6 +585,68 @@ class CierreTurnoController extends Controller
             ]);
         } catch (\Exception $e) {
             return "Lo siento, ocurrió un error al corregir el cierre de turno.";
+        }
+    }
+
+    /**
+     * Función para generar el reporte pdf sin guardar el cierre de turno
+     *
+     * @param array $data
+     * @return mixed
+     */
+    public function generarPDF(array $data)
+    {
+        // Antes de generar el PDF, validamos si ya existe un reporte guardado
+        if ($data['reporte_id'] != null) {
+            $reporteCT = (new DocumentoReporteController())->obtenerPdf($data['reporte_id']);
+
+            if ($reporteCT) {
+                return $reporteCT->archivo;
+            }
+        } else {
+            $reporte_eficiencia = $this->getReporte([
+                                'fecha_cierre' => $data['fecha_cierre'],
+                                'operador' => $data['operador'],
+                                'maquina' => $data['maquina'],
+                                'turno' => $data['turno'],
+                                'tipo_reporte_generar' => $data['tipo_reporte_generar'],
+                            ]);
+
+            $reporte_detalle = $this->getListadoActividades($data);
+            $nombre_operador = $data['operador'];
+            $fecha_inicio = Carbon::parse($data['fecha_cierre'])->format('d/m/Y');
+            $fecha_fin = Carbon::parse($data['fecha_cierre'])->format('d/m/Y');
+            $maquina = $data['maquina'];
+            $tipo_reporte = $data['tipo_reporte'];
+            $titulo = 'Cierre de turno';
+
+            $dompdf = App::make("dompdf.wrapper");
+            $dompdf->loadView("pdf/reporteMaquina", [
+                'reporte_eficiencia' => $reporte_eficiencia,
+                'reporte_detalle' => $reporte_detalle,
+                'titulo' => $titulo,
+                'fecha_inicio' => $fecha_inicio,
+                'fecha_fin' => $fecha_fin,
+                'operador' => $nombre_operador,
+                'maquina' => $maquina,
+                'grupo' => '',
+                'reporte' => $tipo_reporte,
+                'supervisorFirma' => '',
+                'operadorFirma' => '',
+            ]);
+
+            // Guardar el PDF en storage/app/public/pdfarchivo.pdf
+            $output = $dompdf->output();
+            $filename = 'pdfarchivo-'. date('YmdHis').'.pdf';
+            Storage::disk('public')->put($filename, $output);
+
+            // Obtener el contenido y convertirlo a base64
+            $pdfContent = Storage::disk('public')->get($filename);
+
+            // Al guardarlo lo eliminamos
+            Storage::disk('public')->delete($filename);
+
+            return base64_encode($pdfContent);
         }
     }
 }
