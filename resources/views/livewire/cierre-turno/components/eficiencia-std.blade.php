@@ -5,7 +5,7 @@
         <h4><span class="font-semibold text-center text-2xl">{{ number_format($reporteActual->tiempo_ajuste_promedio, 2) }} h</span></h4>
 
         <div class="flex space-x-3 justify-center w-full text-center">
-            <p>No. Ajustes <span class="font-semibold ml-2">{{ number_format($reporteActual->num_ajustes, 2) }}</span></p>
+            <p>No. Ajustes <span class="font-semibold ml-2">{{ number_format($reporteActual->num_ajustes, 2) + number_format($reporteActual->num_ajustes_literatura, 2) }}</span></p>
 
             <p>Tiempo <span class="font-semibold ml-2">{{ number_format($reporteActual->tiempo_ajustes, 2) }}</span> h</p>
         </div>
