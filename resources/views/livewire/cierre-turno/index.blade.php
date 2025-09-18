@@ -73,7 +73,7 @@
                             @if (count($list) > 0)
                             <div class="tooltip">
                                 <button wire:click="generarPDF()"
-                                    class="text-xs py-2 px-4 bg-emerald-500 hover:bg-emerald-600 text-white rounded">
+                                    class="text-xs py-2 px-4 bg-blue-500 hover:bg-blue-600 text-white rounded">
                                     <i class="fa-solid fa-file-pdf"></i>
                                 </button>
                                 <span class="tooltiptext">Generar PDF</span>
@@ -81,7 +81,7 @@
 
                             <div class="tooltip">
                                 <button wire:click="generarExcel()"
-                                    class="text-xs py-2 px-4 bg-blue-500 hover:bg-blue-600 text-white rounded">
+                                    class="text-xs py-2 px-4 bg-emerald-500 hover:bg-emerald-600 text-white rounded">
                                     <i class="fa-solid fa-file-excel"></i>
                                 </button>
                                 <span class="tooltiptext">Generar Excel</span>
