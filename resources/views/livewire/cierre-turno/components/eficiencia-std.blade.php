@@ -4,7 +4,7 @@
 
         <h4><span class="font-semibold text-center text-2xl">{{ number_format($reporteActual->tiempo_ajuste, 2) }} h</span></h4>
 
-        <div class="flex space-x-3 w-full text-center">
+        <div class="flex space-x-3 justify-center w-full text-center">
             <p>No. Ajustes <span class="font-semibold ml-2">{{ number_format($reporteActual->ajustes_normales, 2) }}</span></p>
 
             <p>Tiempo <span class="font-semibold ml-2">{{ number_format($reporteActual->tiempo_ajuste, 2) }}</span> h</p>
@@ -18,7 +18,7 @@
 
         <h4><span class="font-semibold">{{ number_format($reporteActual->velocidad_promedio, 2) }} t/h</span></h4>
 
-        <div class="flex space-x-3">
+        <div class="flex space-x-3 justify-center w-full text-center">
             <p>Tiros <span class="font-semibold ml-2">{{ number_format($reporteActual->tiros, 0) }}</span></p>
 
             <p>Tiempo <span class="font-semibold ml-2">{{ number_format($reporteActual->tiempo_tiro, 2) }}</span> h</p>
@@ -54,7 +54,7 @@
                 $porcentaje = $reporteActual->eficiencia_global ?? 0;
                 $radio = 50;
                 $circunferencia = 2 * pi() * $radio;
-                $offset = $circunferencia - ($porcentaje / 100 * $circunferencia);
+                $offset = ($porcentaje > 100 ? $circunferencia - (100 / 100 * $circunferencia) : $circunferencia - ($porcentaje / 100 * $circunferencia));
             @endphp
             <div class="flex flex-col items-center justify-center">
                 <svg width="120" height="120" class="mb-2">
