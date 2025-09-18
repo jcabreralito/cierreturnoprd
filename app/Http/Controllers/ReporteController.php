@@ -31,6 +31,7 @@ class ReporteController extends Controller
             $reporte->turno = $data['turno'];
             $reporte->firma_supervisor = $data['firma_supervisor']; // Asigna el usuario que cerró el reporte
             $reporte->firma_operador = $data['firma_operador']; // Asigna el usuario que cerró el reporte
+            $reporte->tipo_reporte_generar = $data['tipo_reporte_generar']; // Tipo de reporte a generar
             $reporte->supervisor_id = $data['supervisor_id']; // Asigna el ID del supervisor
             $reporte->usuario_id = auth()->user()->Id_Usuario; // Asigna el ID del usuario autenticado
             $reporte->save();

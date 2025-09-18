@@ -77,57 +77,43 @@ class ReporteProduccionController extends Controller
      */
     public function apiReporte($data)
     {
+        $maquinas = [];
         $fecha_desde = Carbon::parse($data['fecha_desde'])->format('d/m/Y');
         $fecha_hasta = Carbon::parse($data['fecha_hasta'])->format('d/m/Y');
 
-        if ($data['operador'] == null) {
-            $operador = '';
-        } else {
-            $operador = $data['operador'];
+        if (!isset($data['filtroSort'])) {
+            $data['filtroSort'] = 'ID';
         }
 
-        if ($data['maquina'] == null) {
-            $maquina = '';
-        } else {
-            $maquina = $data['maquina'];
+        if (!isset($data['filtroSortType'])) {
+            $data['filtroSortType'] = 'asc';
         }
 
-        if ($data['grupo'] == null) {
-            $grupo = '';
-        } else {
-            $grupo = $data['grupo'];
+        if (!isset($data['maquina'])) {
+            $data['maquina'] = null;
         }
 
-        if ($data['turno'] == 3) {
-            $turno = '';
-        } else {
-            $turno = $data['turno'];
+        if ($data['grupo'] != null && $data['grupo'] != '') {
+            $maquinas = DB::select("SELECT DISTINCT maquina FROM etl_mstr.dbo.etl_ParamStdMaquinas WHERE Grupo LIKE '%" . $data['grupo'] . "%'");
         }
 
-        $tipo_reporte = $data['tipo_reporte'];
-        if ($tipo_reporte == "Maquina") {
-            $reporte = 'M';
-        } else if ($tipo_reporte == "Operador") {
-            $reporte = 'O';
-        } else if ($tipo_reporte == "Grupo") {
-            $reporte = 'G';
-        }
-
-        try {
-            $reporte = DB::select('SET NOCOUNT ON; execute MetricsWeb.dbo.ListaProcesos ?, ?, ?, ?, ?, ?, ?', [
-                $fecha_desde,
-                $fecha_hasta,
-                $maquina,
-                $operador,
-                $turno,
-                $grupo,
-                $reporte,
-            ]);
-        } catch (\Throwable $th) {
-            $reporte = [];
-        }
-
-        return $reporte;
+        return DB::table('v_ListadoActividades')
+                                ->when($data['operador'] != null && $data['operador'] != "", function ($query) use ($data) {
+                                    $operador = explode('-', $data['operador'])[0];
+                                    return $query->where('NumEmpleado', $operador);
+                                })
+                                ->when($data['maquina'] != null && $data['maquina'] != "", function ($query) use ($data) {
+                                    return $query->where('Maquina', $data['maquina']);
+                                })
+                                ->when($data['turno'] != null && $data['turno'] != 3, function ($query) use ($data) {
+                                    return $query->where('Turno', $data['turno']);
+                                })
+                                ->when($data['grupo'] != null && $data['grupo'] != "", function ($query) use ($data, $maquinas) {
+                                    return $query->whereIn('Maquina', collect($maquinas)->pluck('maquina')->toArray());
+                                })
+                                ->whereBetween('fechaproduccion', [$fecha_desde, $fecha_hasta])
+                                ->orderBy($data['filtroSort'], $data['filtroSortType'])
+                                ->get();
     }
 
     /**

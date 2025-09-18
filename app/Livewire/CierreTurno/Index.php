@@ -119,7 +119,9 @@ class Index extends Component
             return in_array($item->KeyProceso, $keysPegadoras);
         })->isNotEmpty();
 
-        $this->reporteActual = (new CierreTurnoController())->getReporte($data, ($existePegadora ? 2 : 1));
+        $data['tipo_reporte_generar'] = ($existePegadora ? 2 : 1);
+
+        $this->reporteActual = (new CierreTurnoController())->getReporte($data);
         $this->yaRealizoCierre = (new CierreTurnoController())->yaRealizoCierre($data);
         $this->color = $this->getEficienciaColor();
         $this->limpiarBuscadores = true;
@@ -203,6 +205,7 @@ class Index extends Component
                 'estatus' => 1,
                 'firma_supervisor' => $this->loginSupervisor,
                 'firma_operador' => $this->loginOperador,
+                'tipo_reporte_generar' => $this->reporteActual[0]['Tipo'],
                 'supervisor_id' => $this->supervisor,
             ],
             'reporteActual' => $this->reporteActual,
@@ -262,7 +265,6 @@ class Index extends Component
     {
         if (count($this->reporteActual) > 0) {
             $global = $this->reporteActual[0]['GLOBAL'];
-            $convencional = $this->reporteActual[0]['CONVENCIONAL'];
 
             $color = '';
 
@@ -274,7 +276,7 @@ class Index extends Component
                 $this->esBueno = false;
             } else if ($global > 50 && $global < 70) {
                 $color = "#FDD17F";
-                $this->esBueno = true;
+                $this->esBueno = false;
             } else if ($global >= 70) {
                 $color = "#63BE7B";
                 $this->esBueno = true;

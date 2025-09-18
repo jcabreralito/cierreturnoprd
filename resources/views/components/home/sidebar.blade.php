@@ -35,7 +35,7 @@
 
         <div class="w-full end-0 mb-5">
             <div>
-                <a href="{{ $routeMain }}/logout" wire:navigate class="btn-logout"><i class="fa-solid fa-right-from-bracket mr-2"></i>
+                <a href="{{ $routeMain }}/logout" class="btn-logout"><i class="fa-solid fa-right-from-bracket mr-2"></i>
                     Salir a Lito Apps
                 </a>
             </div>

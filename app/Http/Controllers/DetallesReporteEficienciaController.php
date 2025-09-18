@@ -34,6 +34,7 @@ class DetallesReporteEficienciaController extends Controller
             $detalles->std_ajuste_normal = $data['std_ajuste_normal'];
             $detalles->std_ajuste_literatura = $data['std_ajuste_literatura'];
             $detalles->std_velocidad_tiro = $data['std_velocidad_tiro'];
+            $detalles->tipo_reporte = $data['tipo_reporte'];
             $detalles->reporte_id = $data['reporte_id'];
 
             $detalles->save();
@@ -70,6 +71,7 @@ class DetallesReporteEficienciaController extends Controller
                 $detalles->std_ajuste_normal = $data['std_ajuste_normal'];
                 $detalles->std_ajuste_literatura = $data['std_ajuste_literatura'];
                 $detalles->std_velocidad_tiro = $data['std_velocidad_tiro'];
+                $detalles->tipo_reporte = $data['tipo_reporte'];
                 $detalles->reporte_id = $data['reporte_id'];
 
                 $detalles->save();

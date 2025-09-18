@@ -26,6 +26,7 @@ class DetallesReporteEficiencia extends Model
         'std_ajuste_normal',
         'std_ajuste_literatura',
         'std_velocidad_tiro',
+        'tipo_reporte',
         'reporte_id',
     ];
 }

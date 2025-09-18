@@ -109,9 +109,11 @@ class CierreTurnoController extends Controller
      * @param int $tipo 1 = Normal, 2 = Pegadora
      * @return mixed
      */
-    public function getReporte($data, $tipo = 1)
+    public function getReporte($data)
     {
         $fecha_cierre = Carbon::parse($data['fecha_cierre'])->format('d/m/Y');
+
+        $tipo = $data['tipo_reporte_generar'];
 
         if ($tipo == 1) {
             $reporte = DB::select('SET NOCOUNT ON; exec sp_GetEficienciaOperador ?, ?, ?, ?', [
@@ -193,6 +195,7 @@ class CierreTurnoController extends Controller
                                 'operador' => $data['operador'],
                                 'maquina' => $data['maquina'],
                                 'turno' => $data['turno'],
+                                'tipo_reporte_generar' => $data['tipo_reporte_generar'],
                             ]);
         $reporte_detalle = $this->getListadoActividades($data);
 
@@ -277,6 +280,7 @@ class CierreTurnoController extends Controller
                         'std_ajuste_normal' => $data['reporteActual'][0]['AjusteStd'],
                         'std_ajuste_literatura' => $data['reporteActual'][0]['AjusteVWStd'],
                         'std_velocidad_tiro' => $data['reporteActual'][0]['VelocidadStd'],
+                        'tipo_reporte' => $data['reporteActual'][0]['Tipo'],
                         'reporte_id' => $reporte->id,
                     ]);
                 }
@@ -349,6 +353,7 @@ class CierreTurnoController extends Controller
                     'operador' => $reporteCT->operador . '-' . $reporteCT->nombre_operador,
                     'maquina' => $reporteCT->maquina,
                     'turno' => $reporteCT->turno,
+                    'tipo_reporte_generar' => $reporteCT->tipo_reporte_generar,
                 ]);
 
                 $dataAdicional = [
@@ -387,6 +392,7 @@ class CierreTurnoController extends Controller
                     'std_ajuste_normal' => $reporte[0]['AjusteStd'],
                     'std_ajuste_literatura' => $reporte[0]['AjusteVWStd'],
                     'std_velocidad_tiro' => $reporte[0]['VelocidadStd'],
+                    'tipo_reporte' => $reporte[0]['Tipo'],
                     'reporte_id' => $reporteCT->id,
                 ]);
 
@@ -399,6 +405,7 @@ class CierreTurnoController extends Controller
                     'tipo_reporte' => $reporteCT->tipo_reporte,
                     'firma_supervisor' => $reporteCT->firma_supervisor,
                     'firma_operador' => $reporteCT->firma_operador,
+                    'tipo_reporte_generar' => $reporteCT->tipo_reporte_generar,
                 ]);
 
                 $archivo = (new DocumentoReporteController())->actualizarDocumentos($pdf, $reporteCT->id);
@@ -435,6 +442,7 @@ class CierreTurnoController extends Controller
                 'operador' => $reporteCT->operador . '-' . $reporteCT->nombre_operador,
                 'maquina' => $reporteCT->maquina,
                 'turno' => $reporteCT->turno,
+                'tipo_reporte_generar' => $reporteCT->tipo_reporte_generar
             ]);
         } else {
             $reporte = [];
@@ -501,6 +509,7 @@ class CierreTurnoController extends Controller
                 'tipo_reporte' => $reporteCT->tipo_reporte,
                 'firma_supervisor' => $supervisor,
                 'firma_operador' => $reporteCT->firma_operador,
+                'tipo_reporte_generar' => $reporteCT->tipo_reporte_generar,
             ]);
 
             $archivo = (new DocumentoReporteController())->actualizarDocumentos($pdf, $reporteCT->id);
@@ -514,6 +523,7 @@ class CierreTurnoController extends Controller
 
             return (new ReporteController())->actualizarFirmaSupervisor($data, $id);
         } catch (\Exception $e) {
+            dd($e->getMessage());
             return "Lo siento, ocurrió un error al finalizar la firma del supervisor.";
         }
     }

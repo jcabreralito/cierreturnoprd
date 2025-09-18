@@ -112,19 +112,19 @@
         @if (count($list) > 0)
             <div>
                 <x-home.table.table :headers="[
-                    [0 => 'N° ORDEN', 1 => false, 2 => 'text-center', 3 => ''],
-                    [0 => 'NOMBRE TRABAJO', 1 => false, 2 => '', 3 => ''],
-                    [0 => 'ID ACT', 1 => false, 2 => '', 3 => ''],
-                    [0 => 'DESCRIPCIÓN', 1 => false, 2 => '', 3 => ''],
-                    [0 => 'PROCESO', 1 => false, 2 => '', 3 => ''],
-                    [0 => 'CANTIDAD', 1 => false, 2 => 'text-center', 3 => ''],
-                    [0 => 'TURNO', 1 => false, 2 => 'text-center', 3 => ''],
-                    [0 => 'TIEMPO (HRS)', 1 => false, 2 => 'text-center', 3 => ''],
-                    [0 => 'FECHA INICIO', 1 => false, 2 => 'text-center', 3 => ''],
-                    [0 => 'FECHA FIN', 1 => false, 2 => 'text-center', 3 => ''],
-                    [0 => 'FECHA PRODUCCIÓN', 1 => false, 2 => 'text-center', 3 => ''],
-                    [0 => 'OPERADOR', 1 => false, 2 => '', 3 => ''],
-                    [0 => 'MAQUINA', 1 => false, 2 => '', 3 => ''],
+                    [0 => 'N° ORDEN', 1 => true, 2 => 'text-center', 3 => 'numOrden'],
+                    [0 => 'NOMBRE TRABAJO', 1 => true, 2 => '', 3 => 'NombreTrabajo'],
+                    [0 => 'ID ACT', 1 => true, 2 => '', 3 => 'idAct'],
+                    [0 => 'DESCRIPCIÓN', 1 => true, 2 => '', 3 => 'observacion'],
+                    [0 => 'PROCESO', 1 => true, 2 => '', 3 => 'proceso'],
+                    [0 => 'CANTIDAD', 1 => true, 2 => 'text-center', 3 => 'Cantidad'],
+                    [0 => 'TURNO', 1 => true, 2 => 'text-center', 3 => 'Turno'],
+                    [0 => 'TIEMPO (HRS)', 1 => true, 2 => 'text-center', 3 => 'Tiempo'],
+                    [0 => 'FECHA INICIO', 1 => true, 2 => 'text-center', 3 => 'HoraInicio'],
+                    [0 => 'FECHA FIN', 1 => true, 2 => 'text-center', 3 => 'HoraFin'],
+                    [0 => 'FECHA PRODUCCIÓN', 1 => true, 2 => 'text-center', 3 => 'fechaproduccion'],
+                    [0 => 'OPERADOR', 1 => true, 2 => '', 3 => 'Empleado'],
+                    [0 => 'MAQUINA', 1 => true, 2 => '', 3 => 'Maquina'],
                 ]" tblClass="tblNormal">
                     @forelse ($this->list as $item)
                         <tr class="hover:bg-gray-100 transition-all duration-300" wire:key="item-{{ $item->idAct }}">
@@ -166,6 +166,12 @@
                         </tr>
                     @endforelse
                 </x-home.table.table>
+
+                <div>
+                    <span class="text-gray-700 text-xs mt-2">
+                        Total de registros: <strong>{{ count($list) }}</strong>
+                    </span>
+                </div>
             </div>
 
             @if (count($reporteActual) > 0)

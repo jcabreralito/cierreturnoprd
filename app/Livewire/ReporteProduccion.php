@@ -117,12 +117,22 @@ class ReporteProduccion extends Component
             'turno' => $this->turno,
             'grupo' => $this->grupo,
             'fecha_desde' => $this->fecha_desde,
-            'fecha_desde' => $this->fecha_desde,
             'fecha_hasta' => $this->fecha_hasta,
             'tipo_reporte' => $this->tipo_reporte,
+            'filtroSort' => $this->filtroSort,
+            'filtroSortType' => $this->filtroSortType,
         ];
 
         $this->list = (new ReporteProduccionController())->apiReporte($data);
+
+        // Espacio para validar si es maquina normal o pegadora dentro del listado
+        $keysPegadoras = [4001, 4031, 4002, 4032, 4003, 4033, 4004, 4034, 4005, 4035, 4006, 4036];
+
+        $existePegadora = $this->list->filter(function ($item) use ($keysPegadoras) {
+            return in_array($item->KeyProceso, $keysPegadoras);
+        })->isNotEmpty();
+
+        $data['tipo_reporte_generar'] = ($existePegadora ? 2 : 1);
 
         $this->reporteActual = (new ReporteProduccionController())->getReporte($data);
         $this->color = $this->getEficienciaColor();
@@ -200,6 +210,24 @@ class ReporteProduccion extends Component
         }
 
         return '#000000'; // Default color
+    }
+
+    /**
+     * Función para ordenar por columnas
+     *
+     * @param string $campo
+     * @return void
+     */
+    public function sort($campo): void
+    {
+        if ($this->filtroSort == $campo) {
+            $this->filtroSortType = $this->filtroSortType === 'asc' ? 'desc' : 'asc';
+        } else {
+            $this->filtroSort = $campo;
+            $this->filtroSortType = 'asc';
+        }
+
+        $this->obtenerData();
     }
 
     /**
