@@ -2,40 +2,40 @@
     <div class="col-span-6 md:col-span-3 space-y-3 text-center">
         <h3 class="font-bold text-lg text-center">Tiempo de ajuste promedio</h3>
 
-        <h4><span class="font-semibold text-center text-2xl">{{ number_format($reporteActual->tiempo_ajuste, 2) }} h</span></h4>
+        <h4><span class="font-semibold text-center text-2xl">{{ number_format($reporteActual->tiempo_ajuste_promedio, 2) }} h</span></h4>
 
         <div class="flex space-x-3 justify-center w-full text-center">
-            <p>No. Ajustes <span class="font-semibold ml-2">{{ number_format($reporteActual->ajustes_normales, 2) }}</span></p>
+            <p>No. Ajustes <span class="font-semibold ml-2">{{ number_format($reporteActual->num_ajustes, 2) }}</span></p>
 
-            <p>Tiempo <span class="font-semibold ml-2">{{ number_format($reporteActual->tiempo_ajuste, 2) }}</span> h</p>
+            <p>Tiempo <span class="font-semibold ml-2">{{ number_format($reporteActual->tiempo_ajustes, 2) }}</span> h</p>
         </div>
 
-        <p>Se debió haber realizado en <span class="font-semibold">{{ number_format($reporteActual->en, 2) }}</span> h</p>
+        <p>Se debió haber realizado en <span class="font-semibold">{{ number_format($reporteActual->se_debio_realizar_en_ajustes, 2) }}</span> h</p>
     </div>
 
     <div class="col-span-6 md:col-span-3 space-y-3 text-center">
         <h3 class="font-bold text-lg">Velocidad Promedio</h3>
 
-        <h4><span class="font-semibold">{{ number_format($reporteActual->velocidad_promedio, 2) }} t/h</span></h4>
+        <h4><span class="font-semibold text-center text-2xl">{{ number_format($reporteActual->velocidad_promedio, 2) }} t/h</span></h4>
 
         <div class="flex space-x-3 justify-center w-full text-center">
-            <p>Tiros <span class="font-semibold ml-2">{{ number_format($reporteActual->tiros, 0) }}</span></p>
+            <p>Tiros <span class="font-semibold ml-2">{{ number_format($reporteActual->num_tiros, 0) }}</span></p>
 
-            <p>Tiempo <span class="font-semibold ml-2">{{ number_format($reporteActual->tiempo_tiro, 2) }}</span> h</p>
+            <p>Tiempo <span class="font-semibold ml-2">{{ number_format($reporteActual->tiempo_tiros, 2) }}</span> h</p>
         </div>
 
-        <p>Se debió haber realizado en <span class="font-semibold">{{ number_format($reporteActual->se_debio_hacer_en, 2) }}</span> h</p>
+        <p>Se debió haber realizado en <span class="font-semibold">{{ number_format($reporteActual->se_debio_realizar_en_tiros, 2) }}</span> h</p>
     </div>
 
     <div class="col-span-6 md:col-span-3 space-y-3 w-full text-center">
-        <p>SE HICIERON <span class="font-semibold">{{ number_format($reporteActual->ajustes_normales, 0) }}</span> AJUSTES NORMALES
+        <p>SE HICIERON <span class="font-semibold">{{ number_format($reporteActual->num_ajustes, 0) }}</span> AJUSTES NORMALES
             @if ($reporteActual->tipo_reporte == 1)
-            , <span class="font-semibold">{{ number_format($reporteActual->ajustes_literatura, 0) }}</span> DE LITERATURA
+            , <span class="font-semibold">{{ number_format($reporteActual->num_ajustes_literatura, 0) }}</span> DE LITERATURA
             @endif
 
-            Y <span class="font-semibold">{{ number_format($reporteActual->tiros, 0) }}</span> TIROS EN <span class="font-semibold">{{ number_format($reporteActual->en, 2) }}</span> HRS, SE DEBIO DE HABER HECHO EN <span class="font-semibold">{{ number_format($reporteActual->se_debio_hacer, 2) }}</span> HRS.</p>
+            Y <span class="font-semibold">{{ number_format($reporteActual->num_tiros, 0) }}</span> TIROS EN <span class="font-semibold">{{ number_format($reporteActual->en, 2) }}</span> HRS, SE DEBIO DE HABER HECHO EN <span class="font-semibold">{{ number_format($reporteActual->debio_hacerce_en, 2) }}</span> HRS.</p>
 
-        <p>TIEMPO TOTAL REPORTADO: <span class="font-semibold">{{ number_format($reporteActual->tiempo_reportado, 2) }}</span></p>
+        {{--  <p>TIEMPO TOTAL REPORTADO: <span class="font-semibold">{{ number_format($reporteActual->tiempo_reportado, 2) }}</span></p>  --}}
 
         @if ($reporteActual->tipo_reporte == 1)
         <div class="mt-2">

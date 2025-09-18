@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\DetalleReporte;
+use App\Models\DetallesReporteEficiencia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -90,6 +91,6 @@ class DetalleReporteController extends Controller
      */
     public function getDetalleReporte($reporteId)
     {
-        return DetalleReporte::where('reporte_id', $reporteId)->first();
+        return DetallesReporteEficiencia::where('reporte_id', $reporteId)->first();
     }
 }
