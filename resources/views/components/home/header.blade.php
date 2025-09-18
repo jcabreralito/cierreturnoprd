@@ -50,7 +50,8 @@
                             <a href="{{ $routeMain }}/dashboard" wire:navigate class="item-sub-menu block text-white px-2 py-2 rounded-md text-base font-medium {{ request()->is('dashboard') ? 'bg-white text-blue-1' : '' }}">Cierre turno</a>
                         @endif
 
-                        @if (auth()->user()->tipoUsuarioCierreTurno == 1 || auth()->user()->tipoUsuarioCierreTurno == 2 || auth()->user()->tipoUsuarioCierreTurno == 3)
+                        @if (auth()->user()->tipoUsuarioCierreTurno == 1 || auth()->user()->tipoUsuarioCierreTurno == 2 || auth()->user()->tipoUsuarioCierreTurno == 3 || auth()->user()->tipoUsuarioCierreTurno == 4)
+                        {{--  Lista de cierres  --}}
                         <a href="{{ $routeMain }}/lista-cierres" wire:navigate class="item-sub-menu block text-white px-2 py-2 rounded-md text-base font-medium {{ request()->is('lista-cierres') ? 'bg-white text-blue-1' : '' }}">Lista de Cierres</a>
                         <a href="{{ $routeMain }}/historico" wire:navigate class="item-sub-menu block text-white px-2 py-2 rounded-md text-base font-medium {{ request()->is('historico') ? 'bg-white text-blue-1' : '' }}">Historico</a>
                         @endif
