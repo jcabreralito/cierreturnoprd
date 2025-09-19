@@ -39,7 +39,7 @@
                     </div>
 
                     <div>
-                        <x-filters.input name="fecha_cierre" labelText="Fecha de Cierre" type="date" :isLive="true" wire:change="operadorTrabajoEnVariasMaquinas" />
+                        <x-filters.input name="fecha_cierre" labelText="Fecha de Cierre" type="date" :isLive="true" wire:change="operadorTrabajoEnVariasMaquinas" :isDisabled="auth()->user()->tipoUsuarioCierreTurno == 3" />
                     </div>
                     @if (
                             ($turno != null && $turno != '') &&
@@ -174,6 +174,8 @@
     {{--  Configuracion e insercion de select2  --}}
     <div wire:ignore>
         <script>
+            const role = @js(auth()->user()->tipoUsuarioCierreTurno);
+
             document.addEventListener("DOMContentLoaded", function() {
                 initSelect2();
             });
@@ -189,6 +191,11 @@
                         allowClear: true,
                         width: '100%'
                     });
+
+                    if (role == 3) {
+                        $('#operador').prop('disabled', true);
+                        $('#fecha_cierre').prop('disabled', true);
+                    }
                 }, 1000);
             }
 

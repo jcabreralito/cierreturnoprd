@@ -53,6 +53,8 @@ class Index extends Component
     public $reportePdf;
     public $modalPdf = false;
 
+    public $operadores = [];
+
     /**
      * Montamos algunas variables para que tengan valor
      *
@@ -60,7 +62,14 @@ class Index extends Component
      */
     public function mount(): void
     {
+        $this->operadores = (new CierreTurnoController())->getOperadores();
+
         if (auth()->user()->tipoUsuarioCierreTurno == 3 || auth()->user()->tipoUsuarioCierreTurno == 2) {
+            $this->operador = $this->operadores->filter(function ($item) {
+                return trim(explode('-', $item['label'])[0]) == auth()->user()->Personal;
+            })->first() ?? '';
+
+            $this->operador = $this->operador['label'] ?? '';
             $this->fecha_cierre = now()->format('Y-m-d');
         }
     }
@@ -72,9 +81,7 @@ class Index extends Component
      */
     public function render(): View
     {
-        return view('livewire.cierre-turno.index', [
-            'operadores' => (new CierreTurnoController())->getOperadores(),
-        ]);
+        return view('livewire.cierre-turno.index');
     }
 
     /**
