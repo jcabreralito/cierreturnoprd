@@ -36,7 +36,7 @@
                         <x-filters.select name="filtroEstatus" labelText="Estatus" id="filtroEstatus" wire:change="obtenerData">
                             <option value="">Seleccione un estatus</option>
                             <option value="1">Pendiente</option>
-                            {{--  <option value="3">Rechazado</option>  --}}
+                            <option value="3">Rechazado</option>
                         </x-filters.select>
                     </div>
 
