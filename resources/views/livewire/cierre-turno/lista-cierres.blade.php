@@ -112,7 +112,7 @@
                         <x-home.table.td class="">{{ ($item->fecha_cierre != null) ? Carbon\Carbon::parse($item->fecha_cierre)->format('Y/m/d') : 'Sin fecha' }}</x-home.table.td>
                         <x-home.table.td class="">{{ ($item->fecha_firma_operador != null) ? Carbon\Carbon::parse($item->fecha_firma_operador)->format('Y/m/d') : 'Sin fecha' }}</x-home.table.td>
                         <x-home.table.td class="">{{ ($item->fecha_firma_supervisor != null) ? Carbon\Carbon::parse($item->fecha_firma_supervisor)->format('Y/m/d') : 'Sin fecha' }}</x-home.table.td>
-                        @if (auth()->user()->tipoUsuarioCierreTurno == 1 || auth()->user()->tipoUsuarioCierreTurno == 2)
+                        @if (auth()->user()->tipoUsuarioCierreTurno == 1 || auth()->user()->tipoUsuarioCierreTurno == 2 || auth()->user()->tipoUsuarioCierreTurno == 4)
                         <x-home.table.td class="text-center">
                             <div>
                                 <x-forms.select name="grt{{ $item->id }}" wire:change="firmarSupervisor({{ $item->id }}, {{ $item->estatus }})" id="grt{{ $item->id }}" :hasEtiqueta="false" :isDisabled="($item->estatus == 2 || $item->estatus == 3) && auth()->user()->tipoUsuarioCierreTurno != 1 ? true : false">
