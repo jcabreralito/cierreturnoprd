@@ -104,6 +104,16 @@
                         <x-home.table.td class="">{{ ($item->fecha_firma_operador != null) ? Carbon\Carbon::parse($item->fecha_firma_operador)->format('Y/m/d') : 'Sin fecha' }}</x-home.table.td>
                         <x-home.table.td class="">{{ ($item->fecha_firma_supervisor != null) ? Carbon\Carbon::parse($item->fecha_firma_supervisor)->format('Y/m/d') : 'Sin fecha' }}</x-home.table.td>
                         <x-home.table.td class="text-center space-x-2">
+                            @if ($item->comentario != null)
+                            <div class="tooltip">
+                                <button onclick="verComentarios('{{ $item->comentario }}')"
+                                    class="text-xxs py-1 px-2 bg-gray-500 hover:bg-gray-600 text-white rounded">
+                                    <i class="fa-solid fa-comment"></i>
+                                </button>
+                                <span class="tooltiptext">Ver comentarios</span>
+                            </div>
+                            @endif
+
                             <div class="tooltip">
                                 <button wire:click="verDetalle('{{ $item->id }}')"
                                     class="text-xxs py-1 px-2 bg-blue-500 hover:bg-blue-600 text-white rounded">
@@ -238,6 +248,20 @@
                 $('#operador').val(null).trigger('change');
                 initSelect2()
             });
+
+            /**
+            * Función para ver comentarios
+            * @param {string} comentario - Comentario a mostrar
+            * @returns {void}
+            */
+            function verComentarios(comentario) {
+                Swal.fire({
+                    title: 'Comentarios',
+                    text: comentario || 'No hay comentarios disponibles.',
+                    icon: 'info',
+                    confirmButtonText: 'Cerrar'
+                });
+            }
         </script>
     </div>
 </div>

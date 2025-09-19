@@ -4,6 +4,7 @@ namespace App\Livewire\CierreTurno;
 
 use App\Http\Controllers\CausaController;
 use App\Http\Controllers\CierreTurnoController;
+use App\Http\Controllers\ComentarioController;
 use App\Http\Controllers\CompromisoController;
 use App\Http\Controllers\DetalleReporteController;
 use App\Http\Controllers\DocumentoReporteController;
@@ -299,5 +300,19 @@ class ListaCierres extends Component
         $this->modalPdf = true;
         $this->reporte = (new ReporteController())->obtenerReportePorId($id);
         $this->reportePdf = (new DocumentoReporteController())->obtenerPdf($id);
+    }
+
+    /**
+     * Función para guardar los comentarios del cierre
+     *
+     * @param $id
+     * @param $comments
+     * @return void
+     */
+    public function guardarComentario($id, $comments)
+    {
+        (new ComentarioController())->guardarComentario($id, $comments);
+        $this->resetPage();
+        $this->dispatch('toast', type: 'success', message: 'Comentarios agregados con éxito.');
     }
 }

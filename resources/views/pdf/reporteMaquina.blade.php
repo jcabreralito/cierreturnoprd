@@ -197,8 +197,8 @@
                             $color = "#63BE7B";
                         }
                     @endphp
-                    <div style="display: inline-block; width: 90px; height: 90px; border-radius: 50%; background: {{ $color }}; line-height: 90px; margin: 12px auto 8px auto;">
-                        <span style="font-size: 18px; font-weight: bold; color: #fff; vertical-align: middle; line-height: 90px; display: inline-block;">
+                    <div style="display: inline-block; width: 90px; height: 90px; border-radius: 50%; color: {{ $color }}; line-height: 90px; margin: 12px auto 8px auto;">
+                        <span style="font-size: 18px; font-weight: bold; vertical-align: middle; line-height: 90px; display: inline-block;">
                             {{ number_format($porcentaje, 2) }}%
                         </span>
                     </div>

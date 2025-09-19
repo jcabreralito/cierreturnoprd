@@ -26,11 +26,11 @@
             </div>
             @endif
 
-            @if (auth()->user()->tipoUsuarioCierreTurno == 1 || auth()->user()->tipoUsuarioCierreTurno == 4)
+            {{--  @if (auth()->user()->tipoUsuarioCierreTurno == 1 || auth()->user()->tipoUsuarioCierreTurno == 4)
             <div class="w-full">
                 <a href="{{ $routeMain }}/ranking" wire:navigate class="{{ request()->is('ranking') ? 'btn-sidebar-active' : 'btn-sidebar' }} block">Ranking</a>
             </div>
-            @endif
+            @endif  --}}
         </div>
 
         <div class="w-full end-0 mb-5">

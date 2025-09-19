@@ -31,7 +31,7 @@
         <div class="mt-4">
             <h3 class="text-xl font-semibold mb-2">Motivos de rechazó</h3>
 
-            <ul class="space-y-1 list-disc list-inside text-gray-700 grid grid-cols-1 md:grid-cols-2">
+            <ul class="space-y-1 list-disc list-inside text-gray-700 grid grid-cols-1">
                 {{--  Listado de los motivos de rechazó  --}}
                 @foreach ($listadoMotivosRechazo as $motivo)
                     <li>{{ $motivo->motivo }} - {{ Carbon\Carbon::parse($motivo->fecha_registro)->format('d/m/Y H:i:s') }}</li>

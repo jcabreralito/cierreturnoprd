@@ -127,6 +127,24 @@
                         </x-home.table.td>
                         @endif
                         <x-home.table.td class="text-center space-x-2">
+                            @if ((auth()->user()->tipoUsuarioCierreTurno == 1 || auth()->user()->tipoUsuarioCierreTurno == 2 || auth()->user()->tipoUsuarioCierreTurno == 4) && $item->estatus == 1)
+                            <div class="tooltip">
+                                <button onclick="agregarComentario('{{ $item->id }}', '{{ $item->comentario }}')"
+                                    class="text-xxs py-1 px-2 bg-sky-500 hover:bg-sky-600 text-white rounded">
+                                    <i class="fa-solid fa-comment-dots"></i>
+                                </button>
+                                <span class="tooltiptext">Agregar comentarios</span>
+                            </div>
+                            @else
+                            <div class="tooltip">
+                                <button onclick="verComentarios('{{ $item->comentario }}')"
+                                    class="text-xxs py-1 px-2 bg-gray-500 hover:bg-gray-600 text-white rounded">
+                                    <i class="fa-solid fa-comment"></i>
+                                </button>
+                                <span class="tooltiptext">Ver comentarios</span>
+                            </div>
+                            @endif
+
                             <div class="tooltip">
                                 <button wire:click="verDetalle('{{ $item->id }}')"
                                     class="text-xxs py-1 px-2 bg-blue-500 hover:bg-blue-600 text-white rounded">
@@ -362,6 +380,34 @@
                     document.getElementById('grt' + id).value = previoEstatus;
                 }
             });
+
+            /**
+            * Función para agregar comentario
+            * @param {string} id - ID del cierre
+            * @param {string} comentario - Comentario a agregar
+            * @returns {void}
+            */
+            function agregarComentario(id, comentario = '') {
+                Swal.fire({
+                    title: 'Agregar Comentario',
+                    input: 'textarea',
+                    inputPlaceholder: 'Escribe tu comentario aquí...',
+                    showCancelButton: true,
+                    confirmButtonText: 'Guardar',
+                    cancelButtonText: 'Cancelar',
+                    inputValue: comentario,
+                    preConfirm: (comentario) => {
+                        if (!comentario) {
+                            Swal.showValidationMessage('El comentario no puede estar vacío');
+                        }
+                        return comentario;
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        @this.call('guardarComentario', id, result.value);
+                    }
+                });
+            }
         </script>
     </div>
 </div>

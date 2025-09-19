@@ -60,13 +60,13 @@
                         <a href="{{ $routeMain }}/reporte-produccion" wire:navigate class="item-sub-menu block text-white px-2 py-2 rounded-md text-base font-medium {{ request()->is('reporte-produccion') ? 'bg-white text-blue-1' : '' }}">Reporte de Producción</a>
                         @endif
 
-                        @if (auth()->user()->tipoUsuarioCierreTurno == 1 || auth()->user()->tipoUsuarioCierreTurno == 4)
+                        {{--  @if (auth()->user()->tipoUsuarioCierreTurno == 1 || auth()->user()->tipoUsuarioCierreTurno == 4)
                         <a href="{{ $routeMain }}/ranking" wire:navigate class="item-sub-menu block text-white px-2 py-2 rounded-md text-base font-medium {{ request()->is('ranking') ? 'bg-white text-blue-1' : '' }}">Ranking</a>
-                        @endif
+                        @endif  --}}
                     </div>
 
                     <div class="bottom-0 top-0">
-                        <a href="{{ $routeMain }}/logout" wire:navigate class="item-sub-menu block text-white px-2 py-2 rounded-md text-base font-medium">
+                        <a href="{{ $routeMain }}/logout" class="item-sub-menu block text-white px-2 py-2 rounded-md text-base font-medium">
                             <i class="fa-solid fa-right-from-bracket mr-2"></i>
                             <span>Regresar a Lito Apps</span>
                         </a>
