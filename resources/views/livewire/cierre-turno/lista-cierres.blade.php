@@ -9,8 +9,8 @@
 
         <div class="mb-4">
             <div class="flex items-start bg-[#E9E9E9] py-1 px-4 shadow-md rounded-md mb-5">
-                <div class="grid grid-cols-1 md:gap-x-4 md:gap-y-0 gap-y-4 w-full {{ auth()->user()->tipoUsuarioCierreTurno == 1 ? 'lg:grid-cols-7' : 'lg:grid-cols-6' }}">
-                    <div wire:ignore class="{{ auth()->user()->tipoUsuarioCierreTurno == 1 || auth()->user()->tipoUsuarioCierreTurno == 2 ? '' : 'hidden' }}">
+                <div class="grid grid-cols-1 md:gap-x-4 md:gap-y-0 gap-y-4 w-full {{ auth()->user()->tipoUsuarioCierreTurno == 1 || auth()->user()->tipoUsuarioCierreTurno == 4 ? 'lg:grid-cols-7' : 'lg:grid-cols-6' }}">
+                    <div wire:ignore class="{{ auth()->user()->tipoUsuarioCierreTurno == 1 || auth()->user()->tipoUsuarioCierreTurno == 2 || auth()->user()->tipoUsuarioCierreTurno == 4 ? '' : 'hidden' }}">
                         <x-filters.select name="operador" labelText="Operador" id="operador">
                             <option value="">Seleccione un operador</option>
                             @foreach ($operadores as $operador)
@@ -19,7 +19,7 @@
                         </x-filters.select>
                     </div>
 
-                    <div wire:ignore class="{{ auth()->user()->tipoUsuarioCierreTurno == 1 || auth()->user()->tipoUsuarioCierreTurno == 3 ? '' : 'hidden' }}">
+                    <div wire:ignore class="{{ auth()->user()->tipoUsuarioCierreTurno == 1 || auth()->user()->tipoUsuarioCierreTurno == 3 || auth()->user()->tipoUsuarioCierreTurno == 4 ? '' : 'hidden' }}">
                         <x-filters.select name="supervisor" labelText="Supervisor" id="supervisor">
                             <option value="">Seleccione un supervisor</option>
                             @foreach ($supervisores as $supervisor)
@@ -36,7 +36,7 @@
                         <x-filters.select name="filtroEstatus" labelText="Estatus" id="filtroEstatus" wire:change="obtenerData">
                             <option value="">Seleccione un estatus</option>
                             <option value="1">Pendiente</option>
-                            <option value="3">Rechazado</option>
+                            {{--  <option value="3">Rechazado</option>  --}}
                         </x-filters.select>
                     </div>
 
@@ -82,7 +82,7 @@
                 [0 => 'FEC. CIERRE', 1 => true, 2 => '', 3 => 'fecha_cierre'],
                 [0 => 'FEC. FIR. OP.', 1 => true, 2 => '', 3 => 'fecha_firma_operador'],
                 [0 => 'FEC. FIR. SUP.', 1 => true, 2 => '', 3 => 'fecha_firma_supervisor'],
-                (auth()->user()->tipoUsuarioCierreTurno == 1 || auth()->user()->tipoUsuarioCierreTurno == 2) ? [0 => 'MARCAR', 1 => false, 2 => 'text-center', 3 => ''] : null,
+                (auth()->user()->tipoUsuarioCierreTurno == 1 || auth()->user()->tipoUsuarioCierreTurno == 2 || auth()->user()->tipoUsuarioCierreTurno == 4) ? [0 => 'MARCAR', 1 => false, 2 => 'text-center', 3 => ''] : null,
                 [0 => 'ACCIONES', 1 => false, 2 => 'text-center', 3 => ''],
             ]" tblClass="tblNormal">
                 @forelse ($cierres as $item)
