@@ -87,12 +87,20 @@
 
                             @if (count($list) > 0)
                             <div class="tooltip">
-                                <button wire:click="generarReportePdf()"
+                                <button wire:click="generarPDF()"
                                     class="text-xs py-2 px-4 bg-cyan-500 hover:bg-cyan-600 text-white rounded">
                                     <i class="fas fa-print"></i>
                                 </button>
 
                                 <span class="tooltiptext">Imprimir reporte</span>
+                            </div>
+
+                            <div class="tooltip">
+                                <button wire:click="generarExcel()"
+                                    class="text-xs py-2 px-4 bg-emerald-500 hover:bg-emerald-600 text-white rounded">
+                                    <i class="fa-solid fa-file-excel"></i>
+                                </button>
+                                <span class="tooltiptext">Generar Excel</span>
                             </div>
                             @endif
                         </div>
@@ -175,8 +183,10 @@
             </div>
 
             @if (count($reporteActual) > 0)
-                @include('livewire.cierre-turno.components.eficiencia-rp')
+                @include('livewire.cierre-turno.components.eficiencia')
             @endif
+
+            @include('livewire.cierre-turno.components.modal-pdf-raw')
         @endif
     </div>
 

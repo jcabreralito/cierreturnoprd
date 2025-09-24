@@ -2,11 +2,11 @@
 
 namespace App\Livewire;
 
+use App\Exports\ReporteProduccionExport;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
-use App\Http\Controllers\CierreTurnoController;
 use App\Http\Controllers\ReporteProduccionController;
-use SebastianBergmann\CodeCoverage\Report\Xml\Report;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ReporteProduccion extends Component
 {
@@ -52,6 +52,9 @@ class ReporteProduccion extends Component
     public $maquinas = [];
     public $operadores = [];
     public $grupos = [];
+
+    public $reportePdf;
+    public $modalPdf = false;
 
     /**
      * Montamos algunas variables para que tengan valor
@@ -177,33 +180,22 @@ class ReporteProduccion extends Component
     public function getEficienciaColor(): string
     {
         if (count($this->reporteActual) > 0) {
-            $global = $this->reporteActual[0]->GLOBAL;
-            $convencional = $this->reporteActual[0]->CONVENCIONAL;
+            $global = $this->reporteActual[0]['GLOBAL'];
 
             $color = '';
 
-            if ($global == null) {
-                if ($convencional < 75) {
-                    $color = "#F8696B"; // Rojo
-                    $this->esBueno = false;
-                } else if ($convencional >= 75 && $convencional < 90) {
-                    $color = "#FDD17F";
-                    $this->esBueno = false;
-                } else if ($convencional >= 90) {
-                    $color = "#63BE7B";
-                    $this->esBueno = true;
-                }
-            } else {
-                if ($global < 60) {
-                    $color = "#F8696B";
-                    $this->esBueno = false;
-                } else if ($global >= 60 && $global < 70) {
-                    $color = "#FDD17F";
-                    $this->esBueno = false;
-                } else if ($global >= 70) {
-                    $color = "#63BE7B";
-                    $this->esBueno = true;
-                }
+            if ($global == 0) {
+                $color = "#000000";
+                $this->esBueno = true;
+            } else if ($global <= 50) {
+                $color = "#F8696B";
+                $this->esBueno = false;
+            } else if ($global > 50 && $global < 70) {
+                $color = "#FDD17F";
+                $this->esBueno = false;
+            } else if ($global >= 70) {
+                $color = "#63BE7B";
+                $this->esBueno = true;
             }
 
             return $color;
@@ -254,24 +246,48 @@ class ReporteProduccion extends Component
     }
 
     /**
-     * Función para genrerar el reporte en PDF
+     * Función para generar el PDF del reporte
      *
      * @return void
      */
-    public function generarReportePdf()
+    public function generarPDF(): void
     {
+        if (count($this->list) == 0) {
+            $this->dispatch('toast', type: 'error', title: 'No hay datos para generar el reporte');
+            return;
+        }
+
         $data = [
             'operador' => $this->operador,
             'maquina' => $this->maquina,
             'turno' => $this->turno,
             'grupo' => $this->grupo,
             'fecha_desde' => $this->fecha_desde,
-            'fecha_desde' => $this->fecha_desde,
             'fecha_hasta' => $this->fecha_hasta,
             'tipo_reporte' => $this->tipo_reporte,
+            'tipo_reporte_generar' => $this->reporteActual[0]['Tipo'] ?? 1,
+
+            'filtroSort' => $this->filtroSort,
+            'filtroSortType' => $this->filtroSortType,
         ];
 
-        $this->dispatch('showPdf', data: $data);
+        $this->reportePdf = (new ReporteProduccionController())->generarPDF($data);
+        $this->modalPdf = true;
     }
 
+    /**
+     * Función para generar el Excel del reporte
+     *
+     * @return mixed
+     */
+    public function generarExcel()
+    {
+        if (count($this->list) == 0) {
+            $this->dispatch('toast', type: 'error', title: 'No hay datos para generar el reporte');
+            return;
+        }
+
+        // Generamos el excel con excel
+        return Excel::download(new ReporteProduccionExport($this->list), 'reporte_cierre_turno_' . now()->format('Y_m_d_H_i_s') . '.xlsx');
+    }
 }
