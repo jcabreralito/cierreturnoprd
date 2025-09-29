@@ -82,7 +82,7 @@
                 [0 => 'FEC. CIERRE', 1 => true, 2 => '', 3 => 'fecha_cierre'],
                 [0 => 'FEC. FIR. OP.', 1 => true, 2 => '', 3 => 'fecha_firma_operador'],
                 [0 => 'FEC. FIR. SUP.', 1 => true, 2 => '', 3 => 'fecha_firma_supervisor'],
-                (auth()->user()->tipoUsuarioCierreTurno == 1 || auth()->user()->tipoUsuarioCierreTurno == 2 || auth()->user()->tipoUsuarioCierreTurno == 4) ? [0 => 'MARCAR', 1 => false, 2 => 'text-center', 3 => ''] : null,
+                (auth()->user()->tipoUsuarioCierreTurno == 1 || auth()->user()->tipoUsuarioCierreTurno == 2) ? [0 => 'MARCAR', 1 => false, 2 => 'text-center', 3 => ''] : null,
                 [0 => 'ACCIONES', 1 => false, 2 => 'text-center', 3 => ''],
             ]" tblClass="tblNormal">
                 @forelse ($cierres as $item)
@@ -112,7 +112,7 @@
                         <x-home.table.td class="">{{ ($item->fecha_cierre != null) ? Carbon\Carbon::parse($item->fecha_cierre)->format('Y/m/d') : 'Sin fecha' }}</x-home.table.td>
                         <x-home.table.td class="">{{ ($item->fecha_firma_operador != null) ? Carbon\Carbon::parse($item->fecha_firma_operador)->format('Y/m/d') : 'Sin fecha' }}</x-home.table.td>
                         <x-home.table.td class="">{{ ($item->fecha_firma_supervisor != null) ? Carbon\Carbon::parse($item->fecha_firma_supervisor)->format('Y/m/d') : 'Sin fecha' }}</x-home.table.td>
-                        @if (auth()->user()->tipoUsuarioCierreTurno == 1 || auth()->user()->tipoUsuarioCierreTurno == 2 || auth()->user()->tipoUsuarioCierreTurno == 4)
+                        @if (auth()->user()->tipoUsuarioCierreTurno == 1 || auth()->user()->tipoUsuarioCierreTurno == 2)
                         <x-home.table.td class="text-center">
                             <div>
                                 <x-forms.select name="grt{{ $item->id }}" wire:change="firmarSupervisor({{ $item->id }}, {{ $item->estatus }})" id="grt{{ $item->id }}" :hasEtiqueta="false" :isDisabled="($item->estatus == 2 || $item->estatus == 3) && auth()->user()->tipoUsuarioCierreTurno != 1 ? true : false">
@@ -127,7 +127,7 @@
                         </x-home.table.td>
                         @endif
                         <x-home.table.td class="text-center space-x-2">
-                            @if ((auth()->user()->tipoUsuarioCierreTurno == 1 || auth()->user()->tipoUsuarioCierreTurno == 2 || auth()->user()->tipoUsuarioCierreTurno == 4) && $item->estatus == 1)
+                            @if ((auth()->user()->tipoUsuarioCierreTurno == 1 || auth()->user()->tipoUsuarioCierreTurno == 2) && $item->estatus == 1)
                             <div class="tooltip">
                                 <button onclick="agregarComentario('{{ $item->id }}', '{{ $item->comentario }}')"
                                     class="text-xxs py-1 px-2 bg-sky-500 hover:bg-sky-600 text-white rounded">
