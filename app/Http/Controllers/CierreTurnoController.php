@@ -451,10 +451,17 @@ class CierreTurnoController extends Controller
                 ->where('Personal', intval($operador))
                 ->value('Departamento');
 
-        return DB::table('v_Supervisores')
-                ->where('Departamento', $area)
-                ->orderBy('Nombre', 'asc')
-                ->get();
+        if ($area == 'ACABADOS ESPECIALES' || $area == 'ACABADO LITOGRAFIA') {
+            return DB::table('v_Supervisores')
+                    ->whereIn('Departamento', ['ACABADOS ESPECIALES', 'ACABADO LITOGRAFIA'])
+                    ->orderBy('Nombre', 'asc')
+                    ->get();
+        } else {
+            return DB::table('v_Supervisores')
+                    ->where('Departamento', $area)
+                    ->orderBy('Nombre', 'asc')
+                    ->get();
+        }
     }
 
     /**

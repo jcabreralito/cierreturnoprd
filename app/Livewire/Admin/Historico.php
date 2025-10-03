@@ -165,7 +165,7 @@ class Historico extends Component
                 $this->esBueno = false;
             } else if ($global > 50 && $global < 70) {
                 $color = "#FDD17F";
-                $this->esBueno = true;
+                $this->esBueno = false;
             } else if ($global >= 70) {
                 $color = "#63BE7B";
                 $this->esBueno = true;

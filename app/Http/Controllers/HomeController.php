@@ -21,7 +21,12 @@ class HomeController extends Controller
 
         // separamos el usuario del personal
         $user = explode('-', $userB64)[0];
-        $personal = explode('-', $userB64)[1];
+
+        if (strpos($userB64, '-') === false) {
+            $personal = null;
+        } else {
+            $personal = explode('-', $userB64)[1];
+        }
 
         // La almacenamos en el usuario
         $user = User::where('login', $user)->where('estatus', 'ACTIVO')
