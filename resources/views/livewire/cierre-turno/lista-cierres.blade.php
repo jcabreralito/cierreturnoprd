@@ -408,6 +408,20 @@
                     }
                 });
             }
+
+            /**
+            * Función para ver comentarios
+            * @param {string} comentario - Comentario a mostrar
+            * @returns {void}
+            */
+            function verComentarios(comentario) {
+                Swal.fire({
+                    title: 'Comentarios',
+                    text: comentario || 'No hay comentarios disponibles.',
+                    icon: 'info',
+                    confirmButtonText: 'Cerrar'
+                });
+            }
         </script>
     </div>
 </div>
