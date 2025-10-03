@@ -17,11 +17,11 @@ class HomeController extends Controller
     public function index(Request $request)
     {
         // Desencriptamos la variable y redirigimos de nueva cuenta
-        $user = base64_decode($request->usuario);
+        $userB64 = base64_decode($request->usuario);
 
         // separamos el usuario del personal
-        $user = explode('-', $user)[0];
-        $personal = explode('-', $user)[1];
+        $user = explode('-', $userB64)[0];
+        $personal = explode('-', $userB64)[1];
 
         // La almacenamos en el usuario
         $user = User::where('login', $user)->where('estatus', 'ACTIVO')
