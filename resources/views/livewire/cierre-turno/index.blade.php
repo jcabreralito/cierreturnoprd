@@ -39,7 +39,9 @@
                     </div>
 
                     <div>
-                        <x-filters.input name="fecha_cierre" labelText="Fecha de Cierre" type="date" :isLive="true" wire:change="operadorTrabajoEnVariasMaquinas" :isDisabled="auth()->user()->tipoUsuarioCierreTurno == 3" />
+                        <x-filters.input name="fecha_cierre" labelText="Fecha de Cierre" type="date" :isLive="true" wire:change="operadorTrabajoEnVariasMaquinas"
+                            :min="(auth()->user()->tipoUsuarioCierreTurno == 3 || auth()->user()->tipoUsuarioCierreTurno == 2) ? date('Y-m-d', strtotime('-1 days')) : date('Y-m-d', strtotime('-100 days'))" :max="date('Y-m-d', strtotime('+1 days'))"
+                            />
                     </div>
                     @if (
                             ($turno != null && $turno != '') &&
@@ -194,7 +196,6 @@
 
                     if (role == 3) {
                         $('#operador').prop('disabled', true);
-                        $('#fecha_cierre').prop('disabled', true);
                     }
                 }, 1000);
             }
