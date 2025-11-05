@@ -163,7 +163,13 @@ class ReporteController extends Controller
                         })
                         ->when(auth()->user()->tipoUsuarioCierreTurno != 1 && auth()->user()->tipoUsuarioCierreTurno != 4, function ($query) {
                             if (auth()->user()->tipoUsuarioCierreTurno == 2) {
-                                return $query->where('supervisor_id', auth()->user()->Id_Usuario);
+
+                                // Marco del real y equintero
+                                if (auth()->user()->Id_Usuario == 2152 || auth()->user()->Id_Usuario == 12451) {
+                                    return $query->where('departamento_operador', 'OFFSET');
+                                } else {
+                                    return $query->where('supervisor_id', auth()->user()->Id_Usuario);
+                                }
                             }
 
                             if (auth()->user()->tipoUsuarioCierreTurno == 3) {
