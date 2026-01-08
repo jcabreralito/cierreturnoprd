@@ -85,21 +85,23 @@ class CierreTurnoController extends Controller
             $data['maquina'] = null;
         }
 
-        return DB::table('v_ListadoActividades')->when($data['fecha_cierre'] != null, function ($query) use ($fecha_cierre) {
-                                    return $query->where('FechaProduccion', $fecha_cierre);
-                                })
-                                ->when($data['operador'] != null, function ($query) use ($data) {
-                                    $operador = explode('-', $data['operador'])[0];
-                                    return $query->where('NumEmpleado', $operador);
-                                })
-                                ->when($data['maquina'] != null, function ($query) use ($data) {
-                                    return $query->where('Maquina', $data['maquina']);
-                                })
-                                ->when($data['turno'] != null && $data['turno'] != 3, function ($query) use ($data) {
-                                    return $query->where('Turno', $data['turno']);
-                                })
-                                ->orderBy($data['filtroSort'], $data['filtroSortType'])
-                                ->get();
+        return DB::table('v_ListadoActividades')
+                        ->when($data['fecha_cierre'] != null, function ($query) use ($fecha_cierre) {
+                            // date format d/m/Y
+                            return $query->where('FechaProduccion', $fecha_cierre);
+                        })
+                        ->when($data['operador'] != null, function ($query) use ($data) {
+                            $operador = explode('-', $data['operador'])[0];
+                            return $query->where('NumEmpleado', $operador);
+                        })
+                        ->when($data['maquina'] != null, function ($query) use ($data) {
+                            return $query->where('Maquina', $data['maquina']);
+                        })
+                        ->when($data['turno'] != null && $data['turno'] != 3, function ($query) use ($data) {
+                            return $query->where('Turno', $data['turno']);
+                        })
+                        ->orderBy($data['filtroSort'], $data['filtroSortType'])
+                        ->get();
     }
 
     /**

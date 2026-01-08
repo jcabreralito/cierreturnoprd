@@ -118,9 +118,17 @@
                                 <x-forms.select name="grt{{ $item->id }}" wire:change="firmarSupervisor({{ $item->id }}, {{ $item->estatus }})" id="grt{{ $item->id }}" :hasEtiqueta="false" :isDisabled="($item->estatus == 2 || $item->estatus == 3) && auth()->user()->tipoUsuarioCierreTurno != 1 ? true : false">
                                     <option value="" disabled>Seleccionar estatus</option>
                                     @foreach ($catEstatus as $est)
+                                        @if ($item->eficiencia_global >= 70)
+                                        @if ($est->id != 3)
                                         <option value="{{ $est->id }}" {{ $item->estatus == $est->id ? 'selected' : '' }}>
                                             {{ $item->estatus == $est->id ? $est->nombre_accionado : $est->nombre }}
                                         </option>
+                                        @endif
+                                        @else
+                                        <option value="{{ $est->id }}" {{ $item->estatus == $est->id ? 'selected' : '' }}>
+                                            {{ $item->estatus == $est->id ? $est->nombre_accionado : $est->nombre }}
+                                        </option>
+                                        @endif
                                     @endforeach
                                 </x-forms.select>
                             </div>

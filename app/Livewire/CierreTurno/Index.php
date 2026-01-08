@@ -426,6 +426,12 @@ class Index extends Component
             }
         }
 
+        // Validamos que el año sea mayor igual a 2025
+        $year = (int) substr($this->fecha_cierre, 0, 4);
+        if ($year < 2025) {
+            return;
+        }
+
         if ($this->operador != null && $this->operador != '' && $this->fecha_cierre != null && $this->fecha_cierre != '' && $this->turno != null && $this->turno != '') {
             $listado = (new CierreTurnoController())->getListadoActividades([
                 'operador' => $this->operador,
