@@ -114,10 +114,10 @@ class ListaCierres extends Component
         $this->listadoMotivosRechazo = (new MotivoRechazoController())->getMotivosRechazo($id);
 
         // Si es operador o admin y el estatus es 3 (rechazado)
-        if ((auth()->user()->tipoUsuarioCierreTurno == 1 || auth()->user()->tipoUsuarioCierreTurno == 3) && $this->reporte->estatus == 3) {
-            $this->observaciones = array_values($this->causas->pluck('causa')->toArray());
-            $this->acciones_correctivas = array_values($this->compromisos->pluck('compromiso')->toArray());
-        }
+        // if ((auth()->user()->tipoUsuarioCierreTurno == 1 || auth()->user()->tipoUsuarioCierreTurno == 3 ) && $this->reporte->estatus == 3 && (count($this->causas) > 0 || count($this->compromisos) > 0)) {
+        // }
+        $this->observaciones = array_values($this->causas->pluck('causa')->toArray());
+        $this->acciones_correctivas = array_values($this->compromisos->pluck('compromiso')->toArray());
     }
 
     /**

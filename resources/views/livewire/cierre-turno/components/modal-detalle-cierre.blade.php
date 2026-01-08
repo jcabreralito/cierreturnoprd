@@ -42,7 +42,7 @@
         <hr class="my-4">
         @endif
 
-        @if (!$esBueno)
+        @if ((count($causas) > 0 || count($compromisos) > 0))
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                 <div class="md:col-span-2">
                     <h3 class="text-xl font-semibold">Información de ineficiencia</h3>
