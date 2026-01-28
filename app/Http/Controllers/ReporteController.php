@@ -120,7 +120,7 @@ class ReporteController extends Controller
                         ->when($data['estatus'], function ($query) use ($data) {
                             return $query->where('estatus', $data['estatus']);
                         })
-                        ->when(auth()->user()->tipoUsuarioCierreTurno != 1 && auth()->user()->tipoUsuarioCierreTurno != 4, function ($query) {
+                        ->when(auth()->user()->tipoUsuarioCierreTurno != 1 && auth()->user()->tipoUsuarioCierreTurno != 4 && auth()->user()->tipoUsuarioCierreTurno != 5, function ($query) {
                             if (auth()->user()->tipoUsuarioCierreTurno == 2) {
                                 return $query->where('supervisor_id', auth()->user()->Id_Usuario);
                             }
