@@ -104,7 +104,7 @@
                         <x-home.table.td class="">{{ ($item->fecha_firma_operador != null) ? Carbon\Carbon::parse($item->fecha_firma_operador)->format('Y/m/d') : 'Sin fecha' }}</x-home.table.td>
                         <x-home.table.td class="">{{ ($item->fecha_firma_supervisor != null) ? Carbon\Carbon::parse($item->fecha_firma_supervisor)->format('Y/m/d') : 'Sin fecha' }}</x-home.table.td>
                         <x-home.table.td class="text-center space-x-2">
-                            @if ($item->comentario != null)
+                            @if ($item->comentario != null && $item->comentario != '')
                             <div class="tooltip">
                                 <button onclick="verComentarios('{{ $item->comentario }}')"
                                     class="text-xxs py-1 px-2 bg-gray-500 hover:bg-gray-600 text-white rounded">
