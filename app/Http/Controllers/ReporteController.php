@@ -177,6 +177,7 @@ class ReporteController extends Controller
                             }
                         })
                         ->whereIn('estatus', [2]) // Solo los que ya fueron recalculados
+                        ->where('es_visible', 1) // Solo los que son visibles en el histórico
                         ->orderBy($data['sort'], $data['sort_type'])
                         ->when($data['pagination'] != 'todos', function ($query) use ($data) {
                             return $query->paginate($data['pagination']);
