@@ -22,7 +22,7 @@ class Historico extends Component
     public $filtroFechaCierreSupervisor;
     public $operador;
     public $supervisor;
-    public $paginationF = 10;
+    public $paginationF = 50;
     public $filtroSort = 'id';
     public $filtroSortType = 'desc';
 
