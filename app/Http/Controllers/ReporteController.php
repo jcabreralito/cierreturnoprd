@@ -130,6 +130,7 @@ class ReporteController extends Controller
                             }
                         })
                         ->whereIn('estatus', [1, 3]) // Solo los que no han sido recalculados
+                        ->where('es_visible', 1) // Solo los cierres de turno visibles
                         ->orderBy($data['sort'], $data['sort_type'])
                         ->when($data['pagination'] != 'todos', function ($query) use ($data) {
                             return $query->paginate($data['pagination']);
